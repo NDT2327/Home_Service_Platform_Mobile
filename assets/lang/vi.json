@@ -1,0 +1,22 @@
+{
+  "app_name": "Cozy Care",
+  "onboarding": {
+    "skip": "Bỏ qua",
+    "next": "Tiếp tục",
+    "start": "Bắt đầu",
+    "title1": "Dịch vụ tiện lợi",
+    "desc1": "Đặt dịch vụ dọn dẹp, sửa chữa, chăm sóc nhà cửa chỉ với vài thao tác.",
+    "title2": "Nhân viên chuyên nghiệp",
+    "desc2": "Đội ngũ nhân viên được đào tạo bài bản, tận tâm phục vụ.",
+    "title3": "Thanh toán dễ dàng",
+    "desc3": "Nhiều phương thức thanh toán an toàn, nhanh chóng và tiện lợi."
+  },
+    "home": {
+        "title": "Trang chủ",
+        "welcome": "Chào mừng đến với Cozy Care",
+        "services": "Dịch vụ",
+        "book_now": "Đặt ngay",
+        "view_all": "Xem tất cả"
+    }
+
+}
