@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/views/home_page.dart';
+import 'package:hsp_mobile/views/on_boarding_screen.dart';
+import 'package:hsp_mobile/views/splash_screen.dart';
 
 class AppRoutes {
+  static const String onBoarding = '/onBoarding';
+  static const String splash = '/splash';
   static const String home = '/';
   static const String login = '/login';
   static const String register = '/sign-in';
@@ -11,6 +15,12 @@ class AppRoutes {
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case AppRoutes.onBoarding:
+        return MaterialPageRoute(builder: (_) => const OnBoardingScreen());
+      case AppRoutes.splash:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
+      case AppRoutes.login:
+        // Assuming you have a LoginPage widget
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomePage());
       default:

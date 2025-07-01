@@ -1,0 +1,21 @@
+{
+  "appName": "Cozy Care",
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "start": "Get Started",
+    "title1": "Convenient Services",
+    "desc1": "Book cleaning, repair, and home care services in just a few steps.",
+    "title2": "Professional Staff",
+    "desc2": "Our staff are well-trained and dedicated to serving you.",
+    "title3": "Easy Payment",
+    "desc3": "Multiple safe, fast, and convenient payment methods."
+  },
+    "home": {
+        "title": "Home",
+        "welcome": "Welcome to Cozy Care",
+        "services": "Services",
+        "bookNow": "Book Now",
+        "viewAll": "View All"
+    }
+}
