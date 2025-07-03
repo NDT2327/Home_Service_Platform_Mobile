@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hsp_mobile/views/home_page.dart';
-import 'package:hsp_mobile/views/on_boarding_screen.dart';
-import 'package:hsp_mobile/views/splash_screen.dart';
+import 'package:hsp_mobile/features/home_page.dart';
+import 'package:hsp_mobile/features/auth/views/login_screen.dart';
+import 'package:hsp_mobile/features/introduction/on_boarding_screen.dart';
+import 'package:hsp_mobile/features/auth/views/sign_up_screen.dart';
+import 'package:hsp_mobile/features/introduction/splash_screen.dart';
 
 class AppRoutes {
   static const String onBoarding = '/onBoarding';
@@ -20,7 +22,9 @@ class RouteGenerator {
       case AppRoutes.splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
       case AppRoutes.login:
-        // Assuming you have a LoginPage widget
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
+      case AppRoutes.register:
+        return MaterialPageRoute(builder: (_) => const SignUpScreen());
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomePage());
       default:

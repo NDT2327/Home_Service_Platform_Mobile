@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hsp_mobile/models/user.dart';
-import '../services/api_service.dart';
+import 'package:hsp_mobile/core/models/user.dart';
+import '../core/services/api_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

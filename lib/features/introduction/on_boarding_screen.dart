@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hsp_mobile/routes/app_routes.dart';
+import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 
