@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:hsp_mobile/models/user.dart';
+import 'package:hsp_mobile/core/models/user.dart';
 import 'package:http/http.dart' as http;
-import 'package:hsp_mobile/utils/constants.dart';
+import 'package:hsp_mobile/core/utils/constants.dart';
 
 class ApiService {
 

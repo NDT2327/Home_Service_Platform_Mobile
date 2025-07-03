@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hsp_mobile/routes/app_routes.dart';
+import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {

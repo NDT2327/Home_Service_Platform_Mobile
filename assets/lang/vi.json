@@ -11,12 +11,65 @@
     "title3": "Thanh toán dễ dàng",
     "desc3": "Nhiều phương thức thanh toán an toàn, nhanh chóng và tiện lợi."
   },
-    "home": {
-        "title": "Trang chủ",
-        "welcome": "Chào mừng đến với Cozy Care",
-        "services": "Dịch vụ",
-        "book_now": "Đặt ngay",
-        "view_all": "Xem tất cả"
-    }
-
+  "home": {
+    "title": "Trang chủ",
+    "welcome": "Chào mừng đến với Cozy Care",
+    "services": "Dịch vụ",
+    "bookNow": "Đặt ngay",
+    "viewAll": "Xem tất cả"
+  },
+  "login": {
+    "welcomeBack": "Chào mừng trở lại",
+    "subtitle": "Vui lòng đăng nhập để tiếp tục",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "forgotPassword": "Quên mật khẩu?",
+    "loginButton": "Đăng nhập",
+    "dontHaveAccount": "Bạn chưa có tài khoản?",
+    "signUpLink": "Đăng ký",
+    "loginSuccess": "Đăng nhập thành công",
+    "loginError": "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.",
+    "emailRequired": "Email là bắt buộc",
+    "passwordRequired": "Mật khẩu là bắt buộc",
+    "invalidEmail": "Email không hợp lệ",
+    "passwordMinLength": "Mật khẩu phải có ít nhất 6 ký tự",
+    "emailInvalidFormat": "Định dạng email không hợp lệ",
+    "emailNotFound": "Email không tồn tại",
+    "passwordIncorrect": "Mật khẩu không chính xác",
+    "accountLocked": "Tài khoản của bạn đã bị khóa do quá nhiều lần đăng nhập không thành công. Vui lòng thử lại sau."
+  },
+  "signUp": {
+    "createAccount": "Tạo tài khoản",
+    "subtitle": "Vui lòng điền thông tin để đăng ký",
+    "fullName": "Họ và tên",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "signUp": "Đăng ký",
+    "alreadyHaveAccount": "Bạn đã có tài khoản?",
+    "login": "Đăng nhập",
+    "otpTitle": "Nhập mã OTP",
+    "otpSubtitle": "Chúng tôi đã gửi mã OTP đến email của bạn. Vui lòng nhập mã để xác nhận.",
+    "otpPlaceholder": "Nhập mã OTP",
+    "otpInvalid": "Mã OTP không hợp lệ",
+    "signUpSuccess": "Đăng ký thành công! ",
+    "signUpError": "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.",
+    "fullNameRequired": "Họ và tên là bắt buộc",
+    "emailRequired": "Email là bắt buộc",
+    "passwordRequired": "Mật khẩu là bắt buộc",
+    "confirmPasswordRequired": "Xác nhận mật khẩu là bắt buộc",
+    "passwordMinLength": "Mật khẩu phải có ít nhất 6 ký tự",
+    "passwordsDoNotMatch": "Mật khẩu và xác nhận mật khẩu không khớp",
+    "emailInvalidFormat": "Định dạng email không hợp lệ",
+    "emailAlreadyExists": "Email đã được sử dụng",
+    "otpRequired": "Mã OTP là bắt buộc",
+    "otpLengthError": "Mã OTP phải có 4 chữ số",
+    "otpSent": "Mã OTP đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư đến.",
+    "otpResend": "Gửi lại mã OTP",
+    "otpResendSuccess": "Mã OTP đã được gửi lại thành công. Vui lòng kiểm tra email của bạn.",
+    "otpResendError": "Gửi lại mã OTP thất bại. Vui lòng thử lại sau.",
+    "accountCreated": "Tài khoản đã được tạo thành công. Vui lòng đăng nhập.",
+    "accountCreationError": "Tạo tài khoản thất bại. Vui lòng thử lại sau."
+  }
 }
