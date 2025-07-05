@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hsp_mobile/features/booking/views/booking_summary_screen.dart';
 import 'package:hsp_mobile/features/home_page.dart';
 import 'package:hsp_mobile/features/auth/views/login_screen.dart';
 import 'package:hsp_mobile/features/introduction/on_boarding_screen.dart';
@@ -11,6 +12,7 @@ class AppRoutes {
   static const String home = '/';
   static const String login = '/login';
   static const String register = '/sign-in';
+  static const String bookingSummary = '/booking-summary';
 }
 
 //Route generator
@@ -27,6 +29,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SignUpScreen());
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomePage());
+      case AppRoutes.bookingSummary:
+        return MaterialPageRoute(builder: (_) => const BookingSummaryScreen(serviceId: 1));
       default:
         return MaterialPageRoute(
           builder:
