@@ -1,5 +1,6 @@
 class Service {
-  final int serviceId;
+  // final int serviceId;
+  final String serviceId;
   final int categoryId;
   final String serviceName;
   final String? description;
