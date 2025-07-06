@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/service.dart';
 // import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/features/booking/widgets/address_section.dart';
+import 'package:hsp_mobile/features/booking/widgets/change_address_sheet.dart';
 import 'package:hsp_mobile/features/booking/widgets/coupon_section.dart';
 import 'package:hsp_mobile/features/booking/widgets/main_service_card.dart';
 import 'package:hsp_mobile/features/booking/widgets/price_summary.dart';
@@ -11,6 +14,9 @@ import 'package:hsp_mobile/features/booking/widgets/suggested_services_section.d
 // import 'package:hsp_mobile/core/widgets/index.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class BookingSummaryScreen extends StatefulWidget {
   final int serviceId;
@@ -24,11 +30,20 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
   bool _isLoading = true;
   Service? _mainService;
   List<Service> _suggestedServices = [];
-  final String _address = "2118 Thornridge California";
+  // final String _address = "2118 Thornridge California";
+  int _selectedAddressIdx = 0;
+  List<AddressItem> _addresses = [
+    AddressItem(label: 'Home', detail: '4517 Washington Ave. Manchester, Kentucky 39495'),
+    AddressItem(label: 'Work', detail: '2118 Thornridge Cir. Syracuse, Connecticut 35624'),
+  ];
   String _couponCode = "";
   final double _discount = 0.0;
   final double _deliveryFee = 0.0;
   int _quantity = 1;
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+  TimeOfDay? _selectedTime;
+  
 
   @override
   void initState() {
@@ -166,12 +181,15 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
               SizedBox(height: 20),
               
               // Address Section
-              AddressSection(address: _address),
+              AddressSection(
+                address: _addresses[_selectedAddressIdx].detail,
+                onChangePressed: _showChangeAddress,
+              ),
               
               SizedBox(height: 20),
               
               // Select Slot Button
-              SelectSlotButton(onPressed: _createBooking)
+              SelectSlotButton(onPressed: _showSlotSelection)
             ],
           ),
         ),
@@ -604,33 +622,204 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
   //   );
   // }
 
-  Future<void> _createBooking() async {
-    try {
-      final response = await http.post(
-        Uri.parse('https://your-api.com/bookings'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'serviceId': widget.serviceId,
-          'quantity': _quantity,
-          'totalAmount': _grandTotal,
-          'promotionCode': _couponCode.isNotEmpty ? _couponCode : null,
-          'address': _address,
-        }),
-      );
+  // Future<void> _createBooking() async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('https://your-api.com/bookings'),
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: json.encode({
+  //         'serviceId': widget.serviceId,
+  //         'quantity': _quantity,
+  //         'totalAmount': _grandTotal,
+  //         'promotionCode': _couponCode.isNotEmpty ? _couponCode : null,
+  //         'address': _address,
+  //       }),
+  //     );
+  //     if (response.statusCode == 201) {
+  //       final data = json.decode(response.body);
+  //       Navigator.pushNamed(
+  //         context,
+  //         '/slot-selection',
+  //         arguments: {'bookingId': data['bookingId']},
+  //       );
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to create booking')),
+  //     );
+  //   }
+  // }
 
-      if (response.statusCode == 201) {
-        final data = json.decode(response.body);
-        Navigator.pushNamed(
-          context,
-          '/slot-selection',
-          arguments: {'bookingId': data['bookingId']},
+  //Select Booking Slot Screen
+  Future<void> _showSlotSelection() async {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Stack(
+            children: [
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                child: Container(color: Colors.transparent),
+              ),
+
+              // → Dùng StatefulBuilder tại đây
+              StatefulBuilder(
+                builder: (context, setModalState) {
+                  return DraggableScrollableSheet(
+                    initialChildSize: 0.6,
+                    minChildSize: 0.4,
+                    maxChildSize: 0.9,
+                    builder: (context, scrollCtrl) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                        child: Container(
+                          color: Colors.white,
+                          child: SingleChildScrollView(
+                            controller: scrollCtrl,
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // … grab bar, title …
+
+                                // 1) Calendar inline
+                                Text('Select Date', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                SizedBox(height: 8),
+                                TableCalendar(
+                                  firstDay: DateTime.now(),
+                                  lastDay: DateTime.now().add(Duration(days: 60)),
+                                  focusedDay: _focusedDay,
+                                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                                  onDaySelected: (selectedDay, focusedDay) {
+                                    // → DÙNG setModalState để rebuild modal
+                                    setModalState(() {
+                                      _selectedDay = selectedDay;
+                                      _focusedDay = focusedDay;
+                                    });
+                                  },
+                                  calendarStyle: CalendarStyle(
+                                    todayDecoration: BoxDecoration(
+                                      color: Colors.blue.withOpacity(0.3),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    selectedDecoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  headerStyle: HeaderStyle(
+                                    formatButtonVisible: false,
+                                    titleCentered: true,
+                                  ),
+                                ),
+
+                                SizedBox(height: 24),
+
+                                // 2) Time picker
+                                Text('Select Time', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                SizedBox(height: 8),
+                                ListTile(
+                                  onTap: () async {
+                                    final now = TimeOfDay.now();
+                                    final picked = await showTimePicker(
+                                      context: context,
+                                      initialTime: _selectedTime ?? now,
+                                    );
+                                    if (picked != null) {
+                                      // → DÙNG setModalState để rebuild modal
+                                      setModalState(() {
+                                        _selectedTime = picked;
+                                      });
+                                    }
+                                  },
+                                  leading: Icon(Icons.access_time, color: Colors.blue),
+                                  title: Text(
+                                    _selectedTime == null
+                                      ? 'Choose time'
+                                      : _selectedTime!.format(context),
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  trailing: Icon(Icons.keyboard_arrow_down),
+                                ),
+
+                                SizedBox(height: 32),
+
+                                // 3) Proceed button
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onPressed: (_selectedDay != null && _selectedTime != null)
+                                      ? () {
+                                          Navigator.of(context).pop();
+                                          // … tiếp tục xử lý checkout …
+                                          if (_selectedDay != null && _selectedTime != null) {
+                                            // Chuyển đổi ngày và giờ đã chọn thành DateTime
+                                            final scheduleDatetime = DateTime(
+                                              _selectedDay!.year,
+                                              _selectedDay!.month,
+                                              _selectedDay!.day,
+                                              _selectedTime!.hour,
+                                              _selectedTime!.minute,
+                                            );
+                                            debugPrint('Selected Date: $_selectedDay, Time: $_selectedTime, scheduleDatetime: $scheduleDatetime');
+                                          }
+                                          
+                                        }
+                                      : null,
+                                    child: Text('Proceed to Checkout'),
+                                    
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+
+            ],
+          ),
         );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create booking')),
-      );
-    }
+      },
+    );
   }
 
+
+  // Hàm hiển thị address sheet
+  Future<void> _showChangeAddress() async{
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ChangeAddressSheet(
+        addresses: _addresses,
+        selectedIndex: _selectedAddressIdx,
+        onSelected: (newIdx) {
+          setState(() {
+            _selectedAddressIdx = newIdx;
+          });
+        },
+        onAddNew: () {
+          // chuyển sang màn thêm địa chỉ
+          // Navigator.pushNamed(context, '/add-address');
+        },
+      ),
+    );
+  }
 }
