@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/service.dart';
 // import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
+import 'package:hsp_mobile/features/booking/widgets/address_section.dart';
+import 'package:hsp_mobile/features/booking/widgets/coupon_section.dart';
+import 'package:hsp_mobile/features/booking/widgets/main_service_card.dart';
+import 'package:hsp_mobile/features/booking/widgets/price_summary.dart';
+import 'package:hsp_mobile/features/booking/widgets/select_slot_button.dart';
+import 'package:hsp_mobile/features/booking/widgets/suggested_services_section.dart';
 // import 'package:hsp_mobile/core/widgets/index.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -122,32 +128,50 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Main Service Section
-              _buildMainServiceCard(),
+              MainServiceCard(
+                service: _mainService!,
+                quantity: _quantity,
+                onIncrement: () => setState(() => _quantity++),
+                onDecrement: () => setState(() {
+                  if (_quantity > 1) _quantity--;
+                }),
+              ),
               
               SizedBox(height: 20),
               
               // Frequently Added Together Section
-              _buildSuggestedServicesSection(),
-              
+              // _buildSuggestedServicesSection(),
+              SuggestedServicesSection(
+                services: _suggestedServices,
+                onAdd: _addServiceToBooking,
+              ),
+
               SizedBox(height: 20),
               
               // Coupon Section
-              _buildCouponSection(),
+              CouponSection(
+                showCouponDialog: _showCouponDialog,
+              ),
               
               SizedBox(height: 20),
               
               // Price Summary Section
-              _buildPriceSummary(),
+              PriceSummary(
+                itemTotal: _itemTotal,
+                discount: _discount,
+                deliveryFee: _deliveryFee,
+                grandTotal: _grandTotal,
+              ),
               
               SizedBox(height: 20),
               
               // Address Section
-              _buildAddressSection(),
+              AddressSection(address: _address),
               
               SizedBox(height: 20),
               
               // Select Slot Button
-              _buildSelectSlotButton(),
+              SelectSlotButton(onPressed: _createBooking)
             ],
           ),
         ),
@@ -155,237 +179,228 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
     );
   }
 
-  Widget _buildMainServiceCard() {
-    if (_mainService == null) return SizedBox();
-    
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              width: 90,
-              height:90,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                image: DecorationImage(
-                  image: NetworkImage('https://placehold.co/90/png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _mainService!.serviceName,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Row(
-                        children: List.generate(5, (index) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 16,
-                        )),
-                      ),
-                      SizedBox(width: 4),
-                      Text('(5.0)', style: TextStyle(color: Colors.grey)),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    '\$${_mainService!.price.toStringAsFixed(0)}',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    if (_quantity > 1) {
-                      setState(() {
-                        _quantity--;
-                      });
-                    }
-                  },
-                  icon: Icon(Icons.remove_circle_outline, color: Colors.grey),
-                ),
-                Text('$_quantity', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _quantity++;
-                    });
-                  },
-                  icon: Icon(Icons.add_circle_outline, color: Colors.blue),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildMainServiceCard() {
+  //   if (_mainService == null) return SizedBox();    
+  //   return Card(
+  //     elevation: 2,
+  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //     child: Padding(
+  //       padding: EdgeInsets.all(16),
+  //       child: Row(
+  //         children: [
+  //           Container(
+  //             width: 90,
+  //             height:90,
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(8),
+  //               image: DecorationImage(
+  //                 image: NetworkImage('https://placehold.co/90/png'),
+  //                 fit: BoxFit.cover,
+  //               ),
+  //             ),
+  //           ),
+  //           SizedBox(width: 16),
+  //           Expanded(
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   _mainService!.serviceName,
+  //                   style: TextStyle(
+  //                     fontSize: 18,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //                 SizedBox(height: 4),
+  //                 Row(
+  //                   children: [
+  //                     Row(
+  //                       children: List.generate(5, (index) => Icon(
+  //                         Icons.star,
+  //                         color: Colors.amber,
+  //                         size: 16,
+  //                       )),
+  //                     ),
+  //                     SizedBox(width: 4),
+  //                     Text('(5.0)', style: TextStyle(color: Colors.grey)),
+  //                   ],
+  //                 ),
+  //                 SizedBox(height: 8),
+  //                 Text(
+  //                   '\$${_mainService!.price.toStringAsFixed(0)}',
+  //                   style: TextStyle(
+  //                     fontSize: 20,
+  //                     fontWeight: FontWeight.bold,
+  //                     color: Colors.blue,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           Column(
+  //             children: [
+  //               IconButton(
+  //                 onPressed: () {
+  //                   if (_quantity > 1) {
+  //                     setState(() {
+  //                       _quantity--;
+  //                     });
+  //                   }
+  //                 },
+  //                 icon: Icon(Icons.remove_circle_outline, color: Colors.grey),
+  //               ),
+  //               Text('$_quantity', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+  //               IconButton(
+  //                 onPressed: () {
+  //                   setState(() {
+  //                     _quantity++;
+  //                   });
+  //                 },
+  //                 icon: Icon(Icons.add_circle_outline, color: Colors.blue),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildSuggestedServicesSection() {
-    if (_suggestedServices.isEmpty) return SizedBox();
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Frequently Added Together',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        SizedBox(height: 16),
-        Container(
-          height: 280,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.only(left: 4, right: 4),
-            itemCount: _suggestedServices.length,
-            separatorBuilder: (context, index) => SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final service = _suggestedServices[index];
-              return _buildSuggestedServiceCard(service);
-            },
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildSuggestedServicesSection() {
+  //   if (_suggestedServices.isEmpty) return SizedBox(); 
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         'Frequently Added Together',
+  //         style: TextStyle(
+  //           fontSize: 18,
+  //           fontWeight: FontWeight.bold,
+  //           color: Colors.black87,
+  //         ),
+  //       ),
+  //       SizedBox(height: 16),
+  //       Container(
+  //         height: 280,
+  //         child: ListView.separated(
+  //           scrollDirection: Axis.horizontal,
+  //           physics: BouncingScrollPhysics(),
+  //           padding: EdgeInsets.only(left: 4, right: 4),
+  //           itemCount: _suggestedServices.length,
+  //           separatorBuilder: (context, index) => SizedBox(width: 12),
+  //           itemBuilder: (context, index) {
+  //             final service = _suggestedServices[index];
+  //             return _buildSuggestedServiceCard(service);
+  //           },
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildSuggestedServiceCard(Service service) {
-    return Container(
-      width: 180,
-      child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image container
-            Container(
-              height: 120,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                image: DecorationImage(
-                  image: NetworkImage('https://placehold.co/180x120/png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            
-            // Content
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Rating
-                    Row(
-                      children: [
-                        ...List.generate(5, (index) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 14,
-                        )),
-                        SizedBox(width: 4),
-                        Text('5.0', style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        )),
-                      ],
-                    ),
-                    
-                    SizedBox(height: 8),
-                    
-                    // Service name
-                    Text(
-                      service.serviceName,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    
-                    SizedBox(height: 8),
-                    
-                    // Price
-                    Text(
-                      '\$${service.price.toStringAsFixed(0)}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                      ),
-                    ),
-                    
-                    Spacer(),
-                    
-                    // Add button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 36,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Add service to booking
-                          _addServiceToBooking(service);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 2,
-                        ),
-                        child: Text(
-                          'Add',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildSuggestedServiceCard(Service service) {
+  //   return Container(
+  //     width: 180,
+  //     child: Card(
+  //       elevation: 3,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           // Image container
+  //           Container(
+  //             height: 120,
+  //             width: double.infinity,
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+  //               image: DecorationImage(
+  //                 image: NetworkImage('https://placehold.co/180x120/png'),
+  //                 fit: BoxFit.cover,
+  //               ),
+  //             ),
+  //           ),        
+  //           // Content
+  //           Expanded(
+  //             child: Padding(
+  //               padding: EdgeInsets.all(12),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   // Rating
+  //                   Row(
+  //                     children: [
+  //                       ...List.generate(5, (index) => Icon(
+  //                         Icons.star,
+  //                         color: Colors.amber,
+  //                         size: 14,
+  //                       )),
+  //                       SizedBox(width: 4),
+  //                       Text('5.0', style: TextStyle(
+  //                         fontSize: 12,
+  //                         color: Colors.grey[600],
+  //                       )),
+  //                     ],
+  //                   ),                 
+  //                   SizedBox(height: 8),              
+  //                   // Service name
+  //                   Text(
+  //                     service.serviceName,
+  //                     style: TextStyle(
+  //                       fontSize: 14,
+  //                       fontWeight: FontWeight.w600,
+  //                       color: Colors.black87,
+  //                     ),
+  //                     maxLines: 2,
+  //                     overflow: TextOverflow.ellipsis,
+  //                   ),              
+  //                   SizedBox(height: 8),             
+  //                   // Price
+  //                   Text(
+  //                     '\$${service.price.toStringAsFixed(0)}',
+  //                     style: TextStyle(
+  //                       fontSize: 16,
+  //                       fontWeight: FontWeight.bold,
+  //                       color: Colors.blue,
+  //                     ),
+  //                   ),                
+  //                   Spacer(),              
+  //                   // Add button
+  //                   SizedBox(
+  //                     width: double.infinity,
+  //                     height: 36,
+  //                     child: ElevatedButton(
+  //                       onPressed: () {
+  //                         // Add service to booking
+  //                         _addServiceToBooking(service);
+  //                       },
+  //                       style: ElevatedButton.styleFrom(
+  //                         backgroundColor: Colors.blue,
+  //                         foregroundColor: Colors.white,
+  //                         shape: RoundedRectangleBorder(
+  //                           borderRadius: BorderRadius.circular(8),
+  //                         ),
+  //                         elevation: 2,
+  //                       ),
+  //                       child: Text(
+  //                         'Add',
+  //                         style: TextStyle(
+  //                           fontSize: 14,
+  //                           fontWeight: FontWeight.w600,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _addServiceToBooking(Service service) {
     // Add logic to add service to booking
@@ -397,36 +412,36 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
     );
   }
 
-  Widget _buildCouponSection() {
-    return InkWell(
-      onTap: () {
-        _showCouponDialog();
-      },
-      child: Container(
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.local_offer, color: Colors.blue),
-            SizedBox(width: 12),
-            Text(
-              'Apply Coupon',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.blue,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Spacer(),
-            Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildCouponSection() {
+  //   return InkWell(
+  //     onTap: () {
+  //       _showCouponDialog();
+  //     },
+  //     child: Container(
+  //       padding: EdgeInsets.all(16),
+  //       decoration: BoxDecoration(
+  //         border: Border.all(color: Colors.grey.shade300),
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //       child: Row(
+  //         children: [
+  //           Icon(Icons.local_offer, color: Colors.blue),
+  //           SizedBox(width: 12),
+  //           Text(
+  //             'Apply Coupon',
+  //             style: TextStyle(
+  //               fontSize: 16,
+  //               color: Colors.blue,
+  //               fontWeight: FontWeight.w500,
+  //             ),
+  //           ),
+  //           Spacer(),
+  //           Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _showCouponDialog() {
     showDialog(
@@ -452,6 +467,11 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
               Navigator.pop(context);
               // Apply coupon logic here
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+            ),
             child: Text('Apply'),
           ),
         ],
@@ -459,130 +479,130 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
     );
   }
 
-  Widget _buildPriceSummary() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          _buildPriceRow('Item Total', _itemTotal),
-          _buildPriceRow('Discount', -_discount),
-          _buildPriceRow('Delivery Fee', _deliveryFee, isBlue: true),
-          Divider(thickness: 1),
-          _buildPriceRow('Grand Total', _grandTotal, isTotal: true),
-        ],
-      ),
-    );
-  }
+  // Widget _buildPriceSummary() {
+  //   return Container(
+  //     padding: EdgeInsets.all(16),
+  //     decoration: BoxDecoration(
+  //       color: Colors.grey[50],
+  //       borderRadius: BorderRadius.circular(12),
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         _buildPriceRow('Item Total', _itemTotal),
+  //         _buildPriceRow('Discount', -_discount),
+  //         _buildPriceRow('Delivery Fee', _deliveryFee, isBlue: true),
+  //         Divider(thickness: 1),
+  //         _buildPriceRow('Grand Total', _grandTotal, isTotal: true),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildPriceRow(String label, double amount, {bool isTotal = false, bool isBlue = false}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isTotal ? 18 : 16,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-              color: isBlue ? Colors.blue : Colors.black87,
-            ),
-          ),
-          Text(
-            (label == 'Delivery Fee' && amount == 0)
-                ? 'Free'
-                : '\$${amount.abs().toStringAsFixed(0)}',
-            style: TextStyle(
-              fontSize: isTotal ? 18 : 16,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-              color: isBlue ? Colors.blue : (isTotal ? Colors.black87 : Colors.black87),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildPriceRow(String label, double amount, {bool isTotal = false, bool isBlue = false}) {
+  //   return Padding(
+  //     padding: EdgeInsets.symmetric(vertical: 6),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Text(
+  //           label,
+  //           style: TextStyle(
+  //             fontSize: isTotal ? 18 : 16,
+  //             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+  //             color: isBlue ? Colors.blue : Colors.black87,
+  //           ),
+  //         ),
+  //         Text(
+  //           (label == 'Delivery Fee' && amount == 0)
+  //               ? 'Free'
+  //               : '\$${amount.abs().toStringAsFixed(0)}',
+  //           style: TextStyle(
+  //             fontSize: isTotal ? 18 : 16,
+  //             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+  //             color: isBlue ? Colors.blue : (isTotal ? Colors.black87 : Colors.black87),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildAddressSection() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.location_on, color: Colors.blue),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Address',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  _address,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              // Change address logic
-            },
-            child: Text(
-              'Change',
-              style: TextStyle(
-                color: Colors.blue,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildAddressSection() {
+  //   return Container(
+  //     padding: EdgeInsets.all(16),
+  //     decoration: BoxDecoration(
+  //       border: Border.all(color: Colors.grey.shade300),
+  //       borderRadius: BorderRadius.circular(12),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Icon(Icons.location_on, color: Colors.blue),
+  //         SizedBox(width: 12),
+  //         Expanded(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 'Address',
+  //                 style: TextStyle(
+  //                   color: Colors.grey[600],
+  //                   fontSize: 14,
+  //                 ),
+  //               ),
+  //               SizedBox(height: 4),
+  //               Text(
+  //                 _address,
+  //                 style: TextStyle(
+  //                   fontSize: 16,
+  //                   fontWeight: FontWeight.w500,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         TextButton(
+  //           onPressed: () {
+  //             // Change address logic
+  //           },
+  //           child: Text(
+  //             'Change',
+  //             style: TextStyle(
+  //               color: Colors.blue,
+  //               fontWeight: FontWeight.w500,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildSelectSlotButton() {
-    return Container(
-      width: double.infinity,
-      height: 54,
-      child: ElevatedButton(
-        onPressed: () {
-          _createBooking();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 2,
-        ),
-        child: Text(
-          'Select Slot',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildSelectSlotButton() {
+  //   return Container(
+  //     width: double.infinity,
+  //     height: 54,
+  //     child: ElevatedButton(
+  //       onPressed: () {
+  //         _createBooking();
+  //       },
+  //       style: ElevatedButton.styleFrom(
+  //         backgroundColor: Colors.blue,
+  //         foregroundColor: Colors.white,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(12),
+  //         ),
+  //         elevation: 2,
+  //       ),
+  //       child: Text(
+  //         'Select Slot',
+  //         style: TextStyle(
+  //           fontSize: 18,
+  //           fontWeight: FontWeight.w600,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Future<void> _createBooking() async {
     try {
@@ -612,4 +632,5 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
       );
     }
   }
+
 }
