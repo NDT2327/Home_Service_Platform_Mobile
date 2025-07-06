@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class AddressSection extends StatelessWidget {
   final String address;
-  // final VoidCallback onChangePressed;
+  final VoidCallback onChangePressed;
 
   const AddressSection({
     super.key,
     required this.address,
-    // required this.onChangePressed,
+    required this.onChangePressed,
   });
 
   @override
@@ -26,37 +26,19 @@ class AddressSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Address',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
-                ),
+                Text('Address',
+                    style: TextStyle(color: Colors.grey[600], fontSize: 14)),
                 const SizedBox(height: 4),
-                Text(
-                  address,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                Text(address,
+                    style:
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
               ],
             ),
           ),
           TextButton(
-            onPressed: () {
-              // onChangePressed();
-              // Placeholder for change address action
-              
-            },
-            child: const Text(
-              'Change',
-              style: TextStyle(
-                color: Colors.blue,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            onPressed: onChangePressed,
+            child: const Text('Change',
+                style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w500)),
           ),
         ],
       ),
