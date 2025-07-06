@@ -9,6 +9,7 @@ class Booking {
   final String? notes;
   final int bookingStatusId;
   final int paymentStatusId;
+  final String? address;
 
   Booking({
     required this.bookingId,
@@ -21,6 +22,7 @@ class Booking {
     this.notes,
     required this.bookingStatusId,
     required this.paymentStatusId,
+    this.address,
   });
 
   // Factory method to create a Booking instance from a map
@@ -37,6 +39,7 @@ class Booking {
       notes: map['notes'],
       bookingStatusId: map['bookingStatusId'],
       paymentStatusId: map['paymentStatusId'],
+      address: map['address'],
     );
   }
 }
