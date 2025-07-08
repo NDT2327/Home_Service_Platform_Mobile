@@ -11,7 +11,7 @@ final String text;
     super.key,
     required this.text,
     required this.onPressed,
-    this.textColor = AppColors.gray,
+    this.textColor = AppColors.mediumGray,
   });
 
   @override

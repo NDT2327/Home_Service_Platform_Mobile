@@ -3,6 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_theme.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
+import 'package:hsp_mobile/features/job/task_claim_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +14,13 @@ void main() async {
       supportedLocales: const [Locale('en'), Locale('vi')],
       path: 'assets/lang',
       fallbackLocale: const Locale('en', 'US'),
-      child: const MyApp(),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => TaskClaimProvider()),
+          // Thêm các provider khác nếu cần
+        ],
+        child: const MyApp(),
+      ),
     ),
   );
 }
@@ -27,7 +35,7 @@ class MyApp extends StatelessWidget {
       locale: context.locale,
       title: AppConstants.appName,
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.bookingSummary,
+      initialRoute: AppRoutes.jobList,
       onGenerateRoute: RouteGenerator.generateRoute,
       debugShowCheckedModeBanner: false,
     );

@@ -43,14 +43,14 @@ class _OtpDialogState extends State<OtpDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       title: Text(
         'signUp.otpTitle'.tr(),
-        style: TextStyle(color: AppColors.textPrimary),
+        style: TextStyle(color: AppColors.mediumGray),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'signUp.otpSubtitle'.tr(),
-            style: TextStyle(color: AppColors.gray),
+            style: TextStyle(color: AppColors.mediumGray),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),

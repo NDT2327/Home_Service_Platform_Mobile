@@ -1,0 +1,393 @@
+{
+  "CozyCare.IdentityDb": {
+    "Accounts": [
+      {
+        "accountId": 1,
+        "email": "customer1@cozycare.com",
+        "password": "hashed_password_1",
+        "fullName": "Nguyễn Văn An",
+        "avatar": "avatar1.png",
+        "address": "123 Lê Lợi, Hà Nội",
+        "phone": "0123456789",
+        "roleId": 2,
+        "statusId": 1,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null,
+        "createdBy": null,
+        "updatedBy": null
+      },
+      {
+        "accountId": 2,
+        "email": "customer2@cozycare.com",
+        "password": "hashed_password_2",
+        "fullName": "Trần Thị Bình",
+        "avatar": "avatar2.png",
+        "address": "456 Nguyễn Trãi, TP.HCM",
+        "phone": "0987654321",
+        "roleId": 2,
+        "statusId": 1,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null,
+        "createdBy": null,
+        "updatedBy": null
+      },
+      {
+        "accountId": 3,
+        "email": "housekeeper1@cozycare.com",
+        "password": "hashed_password_3",
+        "fullName": "Lê Văn Cường",
+        "avatar": "avatar3.png",
+        "address": "789 Trần Hưng Đạo, Đà Nẵng",
+        "phone": "0912345678",
+        "roleId": 3,
+        "statusId": 1,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null,
+        "createdBy": null,
+        "updatedBy": null
+      },
+      {
+        "accountId": 4,
+        "email": "housekeeper2@cozycare.com",
+        "password": "hashed_password_4",
+        "fullName": "Phạm Thị Dung",
+        "avatar": "avatar4.png",
+        "address": "321 Hai Bà Trưng, Hà Nội",
+        "phone": "0932145678",
+        "roleId": 3,
+        "statusId": 1,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null,
+        "createdBy": null,
+        "updatedBy": null
+      }
+    ],
+    "Roles": [
+      {"roleId": 1, "roleName": "ADMIN"},
+      {"roleId": 2, "roleName": "CUSTOMER"},
+      {"roleId": 3, "roleName": "HOUSEKEEPER"},
+      {"roleId": 4, "roleName": "STAFF"}
+    ],
+    "AccountStatuses": [
+      {"statusId": 1, "statusName": "ACTIVE"},
+      {"statusId": 2, "statusName": "INACTIVE"}
+    ]
+  },
+  "CozyCare.CatalogDb": {
+    "Categories": [
+      {
+        "categoryId": 1,
+        "categoryName": "House Cleaning",
+        "description": "General house cleaning services",
+        "image": "house_cleaning.png",
+        "isActive": true,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null
+      },
+      {
+        "categoryId": 2,
+        "categoryName": "Deep Cleaning",
+        "description": "In-depth cleaning for specific areas",
+        "image": "deep_cleaning.png",
+        "isActive": true,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null
+      },
+      {
+        "categoryId": 3,
+        "categoryName": "Window Cleaning",
+        "description": "Professional window cleaning",
+        "image": "window_cleaning.png",
+        "isActive": true,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null
+      }
+    ],
+    "Services": [
+      {
+        "serviceId": 1,
+        "categoryId": 1,
+        "serviceName": "Standard House Cleaning",
+        "description": "Basic cleaning for entire house",
+        "image": "standard_cleaning.png",
+        "price": 50.00,
+        "duration": 120,
+        "isActive": true,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null
+      },
+      {
+        "serviceId": 2,
+        "categoryId": 2,
+        "serviceName": "Kitchen Deep Cleaning",
+        "description": "Deep cleaning for kitchen appliances",
+        "image": "kitchen_cleaning.png",
+        "price": 100.00,
+        "duration": 180,
+        "isActive": true,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null
+      },
+      {
+        "serviceId": 3,
+        "categoryId": 3,
+        "serviceName": "Window Cleaning",
+        "description": "Cleaning for windows and glass surfaces",
+        "image": "window_cleaning.png",
+        "price": 30.00,
+        "duration": 60,
+        "isActive": true,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null
+      }
+    ],
+    "ServiceDetails": [
+      {
+        "serviceDetailId": 1,
+        "serviceId": 1,
+        "optionName": "Full House Cleaning",
+        "optionType": "PACKAGE",
+        "basePrice": 50.00,
+        "unit": "House",
+        "duration": 120,
+        "description": "Cleaning for all rooms",
+        "isActive": true
+      },
+      {
+        "serviceDetailId": 2,
+        "serviceId": 2,
+        "optionName": "Kitchen Deep Clean",
+        "optionType": "PACKAGE",
+        "basePrice": 100.00,
+        "unit": "Kitchen",
+        "duration": 180,
+        "description": "Includes appliances and cabinets",
+        "isActive": true
+      },
+      {
+        "serviceDetailId": 3,
+        "serviceId": 3,
+        "optionName": "Window Set Cleaning",
+        "optionType": "PER_WINDOW",
+        "basePrice": 10.00,
+        "unit": "Window",
+        "duration": 20,
+        "description": "Per window cleaning",
+        "isActive": true
+      }
+    ]
+  },
+  "CozyCare.BookingDb": {
+    "Bookings": [
+      {
+        "bookingId": 1,
+        "bookingNumber": "BOOK001",
+        "customerId": 1,
+        "promotionCode": null,
+        "bookingDate": "2025-07-08T08:58:00Z",
+        "deadline": "2025-07-09T08:58:00Z",
+        "totalAmount": 50.00,
+        "notes": "Please clean living room thoroughly",
+        "bookingStatusId": 1,
+        "paymentStatusId": 1
+      },
+      {
+        "bookingId": 2,
+        "bookingNumber": "BOOK002",
+        "customerId": 2,
+        "promotionCode": null,
+        "bookingDate": "2025-07-08T08:58:00Z",
+        "deadline": "2025-07-10T08:58:00Z",
+        "totalAmount": 200.00,
+        "notes": "Focus on kitchen and bathroom",
+        "bookingStatusId": 2,
+        "paymentStatusId": 2
+      },
+      {
+        "bookingId": 3,
+        "bookingNumber": "BOOK003",
+        "customerId": 1,
+        "promotionCode": null,
+        "bookingDate": "2025-07-08T08:58:00Z",
+        "deadline": "2025-07-09T08:58:00Z",
+        "totalAmount": 90.00,
+        "notes": "Clean all windows",
+        "bookingStatusId": 1,
+        "paymentStatusId": 1
+      },
+      {
+        "bookingId": 4,
+        "bookingNumber": "BOOK004",
+        "customerId": 2,
+        "promotionCode": null,
+        "bookingDate": "2025-07-08T08:58:00Z",
+        "deadline": "2025-07-11T08:58:00Z",
+        "totalAmount": 80.00,
+        "notes": "Use eco-friendly products",
+        "bookingStatusId": 1,
+        "paymentStatusId": 1
+      }
+    ],
+    "BookingDetails": [
+      {
+        "detailId": 1,
+        "bookingId": 1,
+        "serviceId": 1,
+        "scheduleDatetime": "2025-07-08T10:58:00Z",
+        "quantity": 1,
+        "unitPrice": 50.00
+      },
+      {
+        "detailId": 2,
+        "bookingId": 2,
+        "serviceId": 2,
+        "scheduleDatetime": "2025-07-09T08:58:00Z",
+        "quantity": 2,
+        "unitPrice": 100.00
+      },
+      {
+        "detailId": 3,
+        "bookingId": 3,
+        "serviceId": 3,
+        "scheduleDatetime": "2025-07-08T13:58:00Z",
+        "quantity": 3,
+        "unitPrice": 30.00
+      },
+      {
+        "detailId": 4,
+        "bookingId": 4,
+        "serviceId": 1,
+        "scheduleDatetime": "2025-07-10T08:58:00Z",
+        "quantity": 1,
+        "unitPrice": 80.00
+      }
+    ],
+    "BookingStatuses": [
+      {"statusId": 1, "statusName": "PENDING"},
+      {"statusId": 2, "statusName": "CONFIRMED"},
+      {"statusId": 3, "statusName": "CANCELLED"}
+    ]
+  },
+  "CozyCare.JobDb": {
+    "TaskClaims": [
+      {
+        "claimId": 2,
+        "detailId": 2,
+        "housekeeperId": 4,
+        "claimDate": "2025-07-08T08:58:00Z",
+        "statusId": 2,
+        "note": null
+      },
+      {
+        "claimId": 3,
+        "detailId": 3,
+        "housekeeperId": 3,
+        "claimDate": "2025-07-08T08:58:00Z",
+        "statusId": 1,
+        "note": null
+      }
+    ],
+    "Reviews": [
+      {
+        "reviewId": 1,
+        "customerId": 2,
+        "detailId": 2,
+        "reviewTarget": "HOUSEKEEPER",
+        "rating": 5,
+        "comment": "Excellent service, very thorough!",
+        "reviewDate": "2025-07-08T08:58:00Z"
+      },
+      {
+        "reviewId": 2,
+        "customerId": 1,
+        "detailId": 3,
+        "reviewTarget": "SERVICE",
+        "rating": 4,
+        "comment": "Windows were clean, but missed a spot.",
+        "reviewDate": "2025-07-08T08:58:00Z"
+      }
+    ],
+    "TaskClaimStatuses": [
+      {"statusId": 1, "statusName": "CLAIMED"},
+      {"statusId": 2, "statusName": "COMPLETED"},
+      {"statusId": 3, "statusName": "CANCELLED"}
+    ]
+  },
+  "CozyCare.PaymentDb": {
+    "Promotions": [
+      {
+        "code": "SUMMER2025",
+        "discountType": "PERCENT",
+        "discountAmount": null,
+        "discountPercent": 20.0,
+        "startDate": "2025-07-08T08:58:00Z",
+        "endDate": "2025-08-07T08:58:00Z",
+        "minOrderAmount": 50.00,
+        "maxDiscountAmount": 50.00,
+        "createdDate": "2025-07-08T08:58:00Z"
+      },
+      {
+        "code": "WELCOME10",
+        "discountType": "AMOUNT",
+        "discountAmount": 10.00,
+        "discountPercent": null,
+        "startDate": "2025-07-08T08:58:00Z",
+        "endDate": "2025-07-23T08:58:00Z",
+        "minOrderAmount": 30.00,
+        "maxDiscountAmount": null,
+        "createdDate": "2025-07-08T08:58:00Z"
+      }
+    ],
+    "Payments": [
+      {
+        "paymentId": 1,
+        "bookingId": 1,
+        "amount": 50.00,
+        "paymentMethod": "CASH",
+        "statusId": 1,
+        "paymentDate": null,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null,
+        "notes": "Pending payment"
+      },
+      {
+        "paymentId": 2,
+        "bookingId": 2,
+        "amount": 200.00,
+        "paymentMethod": "CARD",
+        "statusId": 2,
+        "paymentDate": "2025-07-08T08:58:00Z",
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null,
+        "notes": "Paid via credit card"
+      },
+      {
+        "paymentId": 3,
+        "bookingId": 3,
+        "amount": 90.00,
+        "paymentMethod": "MOBILE",
+        "statusId": 1,
+        "paymentDate": null,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null,
+        "notes": "Awaiting payment"
+      },
+      {
+        "paymentId": 4,
+        "bookingId": 4,
+        "amount": 80.00,
+        "paymentMethod": "CASH",
+        "statusId": 1,
+        "paymentDate": null,
+        "createdDate": "2025-07-08T08:58:00Z",
+        "updatedDate": null,
+        "notes": "Use eco-friendly products"
+      }
+    ],
+    "PaymentStatuses": [
+      {"statusId": 1, "statusName": "UNPAID"},
+      {"statusId": 2, "statusName": "PAID"},
+      {"statusId": 3, "statusName": "REFUNDED"}
+    ]
+  }
+}

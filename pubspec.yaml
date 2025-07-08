@@ -41,6 +41,9 @@ dependencies:
   table_calendar: ^3.0.8
   #images
   flutter_svg: ^2.2.0
+  provider: ^6.1.5
+  #responsive
+  flutter_screenutil: ^5.7.0
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +80,7 @@ flutter:
     - assets/images/
     - assets/logo/
     - assets/lang/
+    - assets/data/mock_booking.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:

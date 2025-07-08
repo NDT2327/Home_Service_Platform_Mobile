@@ -5,6 +5,7 @@ import 'package:hsp_mobile/features/auth/views/login_screen.dart';
 import 'package:hsp_mobile/features/introduction/on_boarding_screen.dart';
 import 'package:hsp_mobile/features/auth/views/sign_up_screen.dart';
 import 'package:hsp_mobile/features/introduction/splash_screen.dart';
+import 'package:hsp_mobile/features/job/views/job_list_screen.dart';
 
 class AppRoutes {
   static const String onBoarding = '/onBoarding';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/sign-in';
   static const String bookingSummary = '/booking-summary';
+  static const String jobList = '/task-list';
 }
 
 //Route generator
@@ -31,6 +33,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const HomePage());
       case AppRoutes.bookingSummary:
         return MaterialPageRoute(builder: (_) => const BookingSummaryScreen(serviceId: 1));
+      case AppRoutes.jobList:
+        return MaterialPageRoute(builder: (_) => const JobListScreen());
       default:
         return MaterialPageRoute(
           builder:

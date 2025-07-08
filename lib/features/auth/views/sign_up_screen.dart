@@ -8,6 +8,7 @@ import 'package:hsp_mobile/core/widgets/custom_text_field.dart';
 import 'package:hsp_mobile/core/widgets/link_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hsp_mobile/features/auth/widgets/otp_dialog.dart';
+import 'package:hsp_mobile/core/utils/responsive.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -38,7 +39,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
-  void _onSignUp() async{
+  void _onSignUp() async {
     if (_fullNameController.text.isEmpty) {
       _showError('signUp.fullNameRequired'.tr());
       return;
@@ -68,13 +69,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-        // Hiển thị dialog nhập OTP
+    // Hiển thị dialog nhập OTP
     await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => OtpDialog(
         onConfirm: (otp) {
-          // Xử lý khi nhập đúng OTP
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -104,7 +104,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       updatedDate: null,
       updatedBy: null,
     );
-
   }
 
   void _showError(String message) {
@@ -119,6 +118,114 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  Widget _buildSignUpForm(double maxWidth) {
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 40),
+            // Logo
+            const Center(child: AppLogo(size: 80)),
+            const SizedBox(height: 24),
+            // Title
+            Text(
+              'signUp.createAccount'.tr(),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            // Subtitle
+            Text(
+              'signUp.subtitle'.tr(),
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.mediumGray,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            // Name
+            CustomTextField(
+              controller: _fullNameController,
+              labelText: 'signUp.fullName'.tr(),
+            ),
+            const SizedBox(height: 16),
+            // Email
+            CustomTextField(
+              controller: _emailController,
+              labelText: 'signUp.email'.tr(),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16),
+            // Phone
+            CustomTextField(
+              controller: _phoneController,
+              labelText: 'signUp.phone'.tr(),
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 16),
+            // Password
+            CustomTextField(
+              controller: _passwordController,
+              labelText: 'signUp.password'.tr(),
+              obscureText: _obscurePassword,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: _togglePasswordVisibility,
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Confirm Password
+            CustomTextField(
+              controller: _confirmPasswordController,
+              labelText: 'signUp.confirmPassword'.tr(),
+              obscureText: _obscureConfirmPassword,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: _toggleConfirmPasswordVisibility,
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Signup Button
+            CustomButton(
+              text: 'signUp.signUp'.tr(),
+              onPressed: _onSignUp,
+            ),
+            const SizedBox(height: 24),
+            // Already have account
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'signUp.alreadyHaveAccount'.tr(),
+                  style: TextStyle(color: AppColors.mediumGray),
+                ),
+                LinkButton(
+                  text: 'signUp.login'.tr(),
+                  textColor: AppColors.primary,
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.login);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,105 +233,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 40),
-              // Logo
-              const Center(child: AppLogo(size: 80)),
-              const SizedBox(height: 24),
-              // Title
-              Text(
-                'signUp.createAccount'.tr(),
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              // Subtitle
-              Text(
-                'signUp.subtitle'.tr(),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.gray,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              // Name
-              CustomTextField(
-                controller: _fullNameController,
-                labelText: 'signUp.fullName'.tr(),
-              ),
-              const SizedBox(height: 16),
-              // Email
-              CustomTextField(
-                controller: _emailController,
-                labelText: 'signUp.email'.tr(),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16),
-              // Phone
-              CustomTextField(
-                controller: _phoneController,
-                labelText: 'signUp.phone'.tr(),
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 16),
-              // Password
-              CustomTextField(
-                controller: _passwordController,
-                labelText: 'signUp.password'.tr(),
-                obscureText: _obscurePassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: _togglePasswordVisibility,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Confirm Password
-              CustomTextField(
-                controller: _confirmPasswordController,
-                labelText: 'signUp.confirmPassword'.tr(),
-                obscureText: _obscureConfirmPassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: _toggleConfirmPasswordVisibility,
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Signup Button
-              CustomButton(
-                text: 'signUp.signUp'.tr(),
-                onPressed: _onSignUp,
-              ),
-              const SizedBox(height: 24),
-              // Already have account
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'signUp.alreadyHaveAccount'.tr(),
-                    style: TextStyle(color: AppColors.gray),
-                  ),
-                  LinkButton(
-                    text: 'signUp.login'.tr(),
-                    textColor: AppColors.primary,
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.login);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-            ],
+          child: Responsive(
+            mobile: _buildSignUpForm(400),
+            tablet: _buildSignUpForm(500),
+            desktop: _buildSignUpForm(400),
           ),
         ),
       ),
