@@ -12,7 +12,6 @@ class BookingDetail {
   final double totalAmount;
   final String? notes;
   final String status;
-  final String? image;
 
   BookingDetail({
     required this.detailId,
@@ -21,14 +20,13 @@ class BookingDetail {
     required this.scheduleDatetime,
     required this.quantity,
     required this.unitPrice,
-        required this.serviceName,
+    required this.serviceName,
     required this.customerName,
     required this.customerPhone,
     required this.customerAddress,
     required this.totalAmount,
     this.notes,
     required this.status,
-    this.image,
   });
 
   // Factory method to create a BookingDetail instance from a map
@@ -37,7 +35,9 @@ class BookingDetail {
       detailId: map['detailId'] ?? 0,
       bookingId: map['bookingId'] ?? 0,
       serviceId: map['serviceId'] ?? 0,
-      scheduleDatetime: DateTime.parse(map['scheduleDatetime'] ?? DateTime.now().toIso8601String()),
+      scheduleDatetime: DateTime.parse(
+        map['scheduleDatetime'] ?? DateTime.now().toIso8601String(),
+      ),
       quantity: map['quantity'] ?? 1,
       unitPrice: (map['unitPrice'] as num?)?.toDouble() ?? 0.0,
       serviceName: map['serviceName'] ?? 'Unknown',
@@ -47,7 +47,6 @@ class BookingDetail {
       totalAmount: (map['totalAmount'] as num?)?.toDouble() ?? 0.0,
       notes: map['notes'],
       status: map['status'] ?? 'PENDING',
-      image: map['image'],
     );
   }
 }

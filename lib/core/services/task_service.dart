@@ -11,9 +11,9 @@ class TaskService {
       print('JSON Content: $jsonString');
       final Map<String, dynamic> jsonData = jsonDecode(jsonString);
 
-      final List<dynamic> bookingDetails = jsonData['CozyCare.BookingDb']['BookingDetails'] ?? [];
-      final List<dynamic> taskClaims = jsonData['CozyCare.JobDb']['TaskClaims'] ?? [];
-      final List<dynamic> services = jsonData['CozyCare.ServiceDb']['Services'] ?? [];
+final List<dynamic> bookingDetails = jsonData['CozyCare.BookingDb']?['BookingDetails'] ?? [];
+final List<dynamic> services = jsonData['CozyCare.CatalogDb']?['Services'] ?? [];
+final List<dynamic> taskClaims = jsonData['CozyCare.JobDb']?['TaskClaims'] ?? [];
       
       // Map serviceId to image
       final Map<int, String?> serviceImages = {
