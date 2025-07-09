@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       locale: context.locale,
       title: AppConstants.appName,
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.jobList,
+      initialRoute: AppRoutes.mainListBooking,
       onGenerateRoute: RouteGenerator.generateRoute,
       debugShowCheckedModeBanner: false,
     );
