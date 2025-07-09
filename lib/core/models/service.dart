@@ -1,6 +1,6 @@
 class Service {
-  // final int serviceId;
-  final String serviceId;
+  final int serviceId;
+  // final String serviceId;
   final int categoryId;
   final String serviceName;
   final String? description;
@@ -37,6 +37,22 @@ class Service {
       isActive: map['isActive'] ?? true,
       createdDate: map['createdDate'] != null ? DateTime.parse(map['createdDate']) : null,
       updatedDate: map['updatedDate'] != null ? DateTime.parse(map['updatedDate']) : null,
+    );
+  }
+
+  // Factory method to create a Service instance from JSON
+  factory Service.fromJson(Map<String, dynamic> json) {
+    return Service(
+      serviceId: json['serviceId'],
+      categoryId: json['categoryId'],
+      serviceName: json['serviceName'],
+      description: json['description'],
+      image: json['image'],
+      price: (json['price'] as num).toDouble(),
+      duration: json['duration'],
+      isActive: json['isActive'] ?? true,
+      createdDate: json['createdDate'] != null ? DateTime.parse(json['createdDate']) : null,
+      updatedDate: json['updatedDate'] != null ? DateTime.parse(json['updatedDate']) : null,
     );
   }
 }

@@ -49,4 +49,24 @@ class BookingDetail {
       status: map['status'] ?? 'PENDING',
     );
   }
+
+  // Factory method to create a BookingDetail instance from JSON
+  factory BookingDetail.fromJson(Map<String, dynamic> json) {
+    return BookingDetail(
+      detailId: json['detailId'] ?? 0,
+      bookingId: json['bookingId'] ?? 0,
+      serviceId: json['serviceId'] ?? 0,
+      scheduleDatetime: DateTime.parse(json['scheduleDatetime'] ?? DateTime.now().toIso8601String()),
+      quantity: json['quantity'] ?? 1,
+      unitPrice: (json['unitPrice'] as num?)?.toDouble() ?? 0.0,
+      serviceName: json['serviceName'] ?? 'Unknown',
+      customerName: json['customerName'] ?? 'Unknown',
+      customerPhone: json['customerPhone'] ?? '',
+      customerAddress: json['customerAddress'] ?? '',
+      totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
+      notes: json['notes'],
+      status: json['status'] ?? 'PENDING',
+      image: json['image'],
+    );
+  }
 }

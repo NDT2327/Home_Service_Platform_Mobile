@@ -42,4 +42,18 @@ class Booking {
       address: map['address'],
     );
   }
+
+  factory Booking.fromJson(Map<String, dynamic> json) => Booking(
+        bookingId: json['bookingId'],
+        bookingNumber: json['bookingNumber'],
+        customerId: json['customerId'],
+        promotionCode: json['promotionCode'],
+        bookingDate: DateTime.parse(json['bookingDate']),
+        deadline: DateTime.parse(json['deadline']),
+        totalAmount: (json['totalAmount'] as num).toDouble(),
+        notes: json['notes'],
+        bookingStatusId: json['bookingStatusId'],
+        paymentStatusId: json['paymentStatusId'],
+        address: json['address'],
+      );
 }
