@@ -1,3 +1,5 @@
+import 'package:hsp_mobile/core/models/booking_detail.dart';
+
 class TaskClaim {
   final int claimId;
   final int detailId;
@@ -6,6 +8,8 @@ class TaskClaim {
   final int statusId;
   final String? note;
 
+  BookingDetail? detail;
+
   TaskClaim({
     required this.claimId,
     required this.detailId,
@@ -13,6 +17,7 @@ class TaskClaim {
     this.claimDate,
     required this.statusId,
     this.note,
+    this.detail,
   });
 
   // Factory method to create a TaskClaim instance from a map
