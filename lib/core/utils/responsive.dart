@@ -32,4 +32,22 @@ class Responsive extends StatelessWidget {
       return desktop;
     }
   }
+
+  static double getMaxWidth(BuildContext context) {
+  if (isMobile(context)) return MediaQuery.of(context).size.width;
+  if (isTablet(context)) return 500;
+  return 800;
+}
+
+static double getFontSize(BuildContext context, {required double base}) {
+  if (isMobile(context)) return base * 0.9;
+  if (isTablet(context)) return base * 1.0;
+  return base * 1.2;
+}
+
+static EdgeInsets getPadding(BuildContext context) {
+  if (isMobile(context)) return const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  if (isTablet(context)) return const EdgeInsets.symmetric(horizontal: 24, vertical: 24);
+  return const EdgeInsets.symmetric(horizontal: 32, vertical: 32);
+}
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_theme.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
@@ -40,13 +41,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    //Initialize ScreenUtil
+    ScreenUtil.init(
+      context,
+      designSize: const Size(360, 690), // Kích thước thiết kế của bạn
+      minTextAdapt: true,
+      splitScreenMode: true,
+    );
     return MaterialApp(
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       title: AppConstants.appName,
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.categoryScreen,
+      initialRoute: AppRoutes.housekeeperHome,
       onGenerateRoute: RouteGenerator.generateRoute,
       debugShowCheckedModeBanner: false,
     );
