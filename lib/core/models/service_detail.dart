@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ServiceDetail {
   final int serviceDetailId;
   final int serviceId;
@@ -33,6 +35,21 @@ class ServiceDetail {
       duration: map['duration'],
       description: map['description'],
       isActive: map['isActive'] ?? true,
+    );
+  }
+
+  //Factory method to create a ServiceDetail instance from JSON
+  factory ServiceDetail.fromJson(Map<String, dynamic> json) {
+    return ServiceDetail(
+      serviceDetailId: json['serviceDetailId'],
+      serviceId: json['serviceId'],
+      optionName: json['optionName'],
+      optionType: json['optionType'],
+      basePrice: (json['basePrice'] as num).toDouble(),
+      unit: json['unit'],
+      duration: json['duration'],
+      description: json['description'],
+      isActive: json['isActive'] ?? true,
     );
   }
 }

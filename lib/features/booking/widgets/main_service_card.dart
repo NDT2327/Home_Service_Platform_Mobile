@@ -42,8 +42,8 @@ class MainServiceCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           image: DecorationImage(
-            // image: NetworkImage(service.image ?? 'https://placehold.co/90/png'),
-            image: NetworkImage('https://placehold.co/90/png'),
+            image: NetworkImage(service.image ?? 'https://placehold.co/90/png'),
+            // image: NetworkImage('https://placehold.co/90/png'),
 
             fit: BoxFit.cover,
           ),

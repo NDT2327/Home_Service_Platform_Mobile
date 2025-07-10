@@ -29,4 +29,17 @@ class Category {
       updatedDate: map['updatedDate'] != null ? DateTime.parse(map['updatedDate']) : null,
     );
   }
+
+  // Factory method to create a Category instance from JSON
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+      categoryId: json['categoryId'],
+      categoryName: json['categoryName'],
+      description: json['description'],
+      image: json['image'],
+      isActive: json['isActive'] ?? true,
+      createdDate: json['createdDate'] != null ? DateTime.parse(json['createdDate']) : null,
+      updatedDate: json['updatedDate'] != null ? DateTime.parse(json['updatedDate']) : null,
+    );
+  }
 }

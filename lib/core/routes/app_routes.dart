@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/features/booking/views/booking_summary_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
+import 'package:hsp_mobile/features/catalog/view/category_screen.dart';
 import 'package:hsp_mobile/features/home_page.dart';
 import 'package:hsp_mobile/features/auth/views/login_screen.dart';
 import 'package:hsp_mobile/features/introduction/on_boarding_screen.dart';
@@ -17,6 +18,7 @@ class AppRoutes {
   static const String bookingSummary = '/booking-summary';
   static const String jobList = '/task-list';
   static const String mainListBooking = '/main-list-booking';
+  static const String categoryScreen = '/category-screen';
 }
 
 //Route generator
@@ -38,7 +40,9 @@ class RouteGenerator {
       case AppRoutes.jobList:
         return MaterialPageRoute(builder: (_) => const JobListScreen());
       case AppRoutes.mainListBooking:
-        return MaterialPageRoute(builder: (_) => const MainListBooking()); // Assuming this is the main
+        return MaterialPageRoute(builder: (_) => const MainListBooking());
+      case AppRoutes.categoryScreen:
+        return MaterialPageRoute(builder: (_) => const CategoryScreen());
       default:
         return MaterialPageRoute(
           builder:
