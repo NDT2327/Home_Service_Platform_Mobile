@@ -27,8 +27,8 @@ class SuggestedServiceCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 image: DecorationImage(
-                  // image: NetworkImage(service.image ?? 'https://placehold.co/180x120/png'),
-                  image: NetworkImage('https://placehold.co/180x120/png'),
+                  image: NetworkImage(service.image ?? 'https://placehold.co/180x120/png'),
+                  // image: NetworkImage('https://placehold.co/180x120/png'),
                   fit: BoxFit.cover,
                 ),
               ),
