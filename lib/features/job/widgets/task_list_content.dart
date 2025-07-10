@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/core/widgets/custom_button.dart';
-import 'package:hsp_mobile/features/job/task_claim_provider.dart';
+import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
 import 'package:hsp_mobile/features/job/widgets/task_list_item.dart';
 
 class TaskListContent extends StatelessWidget {
@@ -59,7 +59,7 @@ class TaskListContent extends StatelessWidget {
       itemCount: provider.availableTasks.length,
       itemBuilder: (context, index) {
         final booking = provider.availableTasks[index];
-        return TaskListItem(detail: booking);
+        return TaskListItem(data: booking);
       },
     );
   }

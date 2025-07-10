@@ -7,8 +7,10 @@ import 'package:hsp_mobile/core/widgets/custom_button.dart';
 import 'package:hsp_mobile/core/widgets/custom_text_field.dart';
 import 'package:hsp_mobile/core/widgets/link_button.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:hsp_mobile/features/auth/providers/account_provider.dart';
 import 'package:hsp_mobile/features/auth/widgets/otp_dialog.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -23,9 +25,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _confirmPasswordController = TextEditingController();
   final _fullNameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-  String _otpValue = '';
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -70,49 +72,65 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     // Hiển thị dialog nhập OTP
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => OtpDialog(
-        onConfirm: (otp) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'signUp.signUpSuccess'.tr(),
-                style: TextStyle(color: AppColors.white),
-              ),
-              backgroundColor: AppColors.success,
-            ),
-          );
-          Navigator.pushReplacementNamed(context, AppRoutes.login);
-        },
-      ),
-    );
+    // await showDialog(
+    //   context: context,
+    //   barrierDismissible: false,
+    //   builder:
+    //       (context) => OtpDialog(
+    //         onConfirm: (otp) {
+    //           ScaffoldMessenger.of(context).showSnackBar(
+    //             SnackBar(
+    //               content: Text(
+    //                 'signUp.signUpSuccess'.tr(),
+    //                 style: TextStyle(color: AppColors.white),
+    //               ),
+    //               backgroundColor: AppColors.success,
+    //             ),
+    //           );
+    //           Navigator.pushReplacementNamed(context, AppRoutes.login);
+    //         },
+    //       ),
+    // );
 
     final account = Account(
       accountId: 0,
       email: _emailController.text,
       password: _passwordController.text,
       fullName: _fullNameController.text,
-      avatar: null,
-      address: null,
+      avatar: 'https://ui-avatars.com/api/?name=${_fullNameController.text}',
+      address: _addressController.text,
       phone: _phoneController.text,
       roleId: 1,
-      statusId: 1,
+      statusId: 2,
       createdDate: null,
       createdBy: null,
       updatedDate: null,
       updatedBy: null,
     );
+
+    try {
+      final provider = context.read<AccountProvider>();
+      await provider.addAccount(account);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'signUp.signUpSuccess'.tr(),
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: AppColors.success,
+        ),
+      );
+
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    } catch (e) {
+      _showError('${e.toString()}');
+    }
   }
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-        ),
+        content: Text(message, style: const TextStyle(color: Colors.white)),
         backgroundColor: AppColors.error,
       ),
     );
@@ -143,10 +161,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             // Subtitle
             Text(
               'signUp.subtitle'.tr(),
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.mediumGray,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.mediumGray),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -161,6 +176,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _emailController,
               labelText: 'signUp.email'.tr(),
               keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16),
+            //address
+            CustomTextField(
+              controller: _addressController,
+              labelText: 'signUp.address'.tr(),
+              keyboardType: TextInputType.streetAddress,
             ),
             const SizedBox(height: 16),
             // Phone
@@ -190,18 +212,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
               obscureText: _obscureConfirmPassword,
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                  _obscureConfirmPassword
+                      ? Icons.visibility_off
+                      : Icons.visibility,
                 ),
                 onPressed: _toggleConfirmPasswordVisibility,
               ),
             ),
             const SizedBox(height: 24),
             // Signup Button
-            CustomButton(
-              text: 'signUp.signUp'.tr(),
-              onPressed: _onSignUp,
-            ),
-            const SizedBox(height: 24),
+            CustomButton(text: 'signUp.signUp'.tr(), onPressed: _onSignUp),
+            const SizedBox(height: 26),
             // Already have account
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

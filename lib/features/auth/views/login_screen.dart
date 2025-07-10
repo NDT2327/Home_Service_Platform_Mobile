@@ -4,6 +4,8 @@ import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/widgets/index.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
+import 'package:hsp_mobile/features/auth/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,12 +26,23 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Đăng nhập thành công')));
+      final input = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      final authProvider = context.read<AuthProvider>();
+      final success = await authProvider.login(input, password);
+      if (success) {
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, AppRoutes.home); // hoặc Home
+      } else {
+        final error = authProvider.errorMessage ?? 'Đăng nhập thất bại';
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(error)));
+      }
     }
   }
 
@@ -60,17 +73,14 @@ class _LoginScreenState extends State<LoginScreen> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.mediumGray,
+                color: AppColors.black,
               ),
             ),
             const SizedBox(height: 8),
             // Subtitle text
             Text(
               'login.subtitle'.tr(),
-              style: TextStyle(
-                fontSize: 16,
-                color: AppColors.mediumGray,
-              ),
+              style: TextStyle(fontSize: 16, color: AppColors.mediumGray),
             ),
             const SizedBox(height: 32),
             // Email input
@@ -119,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Text(
                   'login.dontHaveAccount'.tr(),
-                  style: TextStyle(color: AppColors.lightGray),
+                  style: TextStyle(color: AppColors.black),
                 ),
                 LinkButton(
                   text: 'login.signUpLink'.tr(),
@@ -137,6 +147,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = context.watch<AuthProvider>().isLoading;
+
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Scaffold(
       backgroundColor: AppColors.white,
       body: SafeArea(

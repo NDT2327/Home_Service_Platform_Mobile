@@ -45,6 +45,7 @@ dependencies:
   provider: ^6.1.5
   #responsive
   flutter_screenutil: ^5.7.0
+  supabase_flutter: ^2.9.1
 
 dev_dependencies:
   flutter_test:

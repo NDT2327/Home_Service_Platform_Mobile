@@ -8,6 +8,8 @@ import 'package:hsp_mobile/features/introduction/on_boarding_screen.dart';
 import 'package:hsp_mobile/features/auth/views/sign_up_screen.dart';
 import 'package:hsp_mobile/features/introduction/splash_screen.dart';
 import 'package:hsp_mobile/features/job/views/job_list_screen.dart';
+import 'package:hsp_mobile/features/job/views/my_task_screen.dart';
+import 'package:hsp_mobile/features/profile/views/profile_screen.dart';
 
 class AppRoutes {
   static const String onBoarding = '/onBoarding';
@@ -19,6 +21,8 @@ class AppRoutes {
   static const String jobList = '/task-list';
   static const String housekeeperHome = "/housekeeper/home";
   static const String mainListBooking = '/main-list-booking';
+  static const String housekeeperProfile = '/housekeeper/profile';
+  static const String housekeeperMyTask = '/housekeeper/my-task';
 }
 
 //Route generator
@@ -36,13 +40,23 @@ class RouteGenerator {
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomePage());
       case AppRoutes.bookingSummary:
-        return MaterialPageRoute(builder: (_) => const BookingSummaryScreen(serviceId: 1));
+        return MaterialPageRoute(
+          builder: (_) => const BookingSummaryScreen(serviceId: 1),
+        );
       case AppRoutes.jobList:
         return MaterialPageRoute(builder: (_) => const JobListScreen());
-        case AppRoutes.housekeeperHome:
-        return MaterialPageRoute(builder: (_) => const HousekeeperHomeScreen(currentUserName: "Thinh"));
+      case AppRoutes.housekeeperHome:
+        return MaterialPageRoute(
+          builder: (_) => const HousekeeperHomeScreen(currentUserName: "Thinh"),
+        );
       case AppRoutes.mainListBooking:
-        return MaterialPageRoute(builder: (_) => const MainListBooking()); // Assuming this is the main
+        return MaterialPageRoute(
+          builder: (_) => const MainListBooking(),
+        ); // Assuming this is the main
+      case AppRoutes.housekeeperProfile:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case AppRoutes.housekeeperMyTask:
+      return MaterialPageRoute(builder: (_) => const MyTaskScreen());
       default:
         return MaterialPageRoute(
           builder:
