@@ -6,7 +6,9 @@
   "navigation":{
     "home": "Home",
     "profile": "Profile",
-    "menu": "Menu"
+    "menu": "Menu",
+    "category": "Category",
+    "booking": "Booking"
   },
   "onboarding": {
     "skip": "Skip",

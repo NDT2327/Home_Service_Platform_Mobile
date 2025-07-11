@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/features/account/views/profile_screen.dart';
+import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
+import 'package:hsp_mobile/features/catalog/view/category_screen.dart';
 import 'package:hsp_mobile/features/home_page.dart';
 
 /// Widget chính quản lý navigation layout cho toàn bộ app
@@ -23,6 +25,8 @@ class _NavigationLayoutState extends State<NavigationLayout> {
   final List<Widget> _screens = const [
     HomePage(), // Màn hình Home (index 0)
     ProfileScreen(), // Màn hình Profile (index 1)
+    CategoryScreen(),
+    MainListBooking(),
   ];
 
   /// Hàm xử lý khi người dùng nhấn vào tab
@@ -44,6 +48,16 @@ class _NavigationLayoutState extends State<NavigationLayout> {
       icon: Icons.person_outline, // Icon khi chưa được chọn
       selectedIcon: Icons.person, // Icon khi được chọn
       label: 'navigation.profile', // Text hiển thị (sẽ được dịch)
+    ),
+    NavigationItem(
+      icon: Icons.menu_outlined, // Icon khi chưa được chọn
+      selectedIcon: Icons.menu, // Icon khi được chọn
+      label: 'navigation.menu', // Text hiển thị (sẽ được dịch)
+    ),
+    NavigationItem(
+      icon: Icons.category_outlined, // Icon khi chưa được chọn
+      selectedIcon: Icons.category, // Icon khi được chọn
+      label: 'navigation.booking', // Text hiển thị (sẽ được dịch)
     ),
   ];
 
