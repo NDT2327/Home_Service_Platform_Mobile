@@ -1,30 +1,42 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsp_mobile/core/models/booking_detail.dart';
+import 'package:hsp_mobile/core/models/task_claim.dart';
 import 'package:hsp_mobile/core/utils/helpers.dart';
-import 'package:hsp_mobile/features/job/task_claim_provider.dart';
 import 'package:hsp_mobile/features/job/views/task_detail_modal.dart';
 import 'package:hsp_mobile/features/job/widgets/claim_dialog.dart';
 import 'package:hsp_mobile/features/job/widgets/task_card.dart';
-import 'package:provider/provider.dart';
 
 class TaskListItem extends StatelessWidget {
-  final BookingDetail detail;
+  final dynamic data;
+  //final BookingDetail detail;
   final bool showActions;
 
   const TaskListItem({
     super.key,
-    required this.detail,
+    required this.data,
+    //required this.detail,
     this.showActions = true,
   });
 
+  BookingDetail? _getBookingDetail() {
+    if (data is BookingDetail) {
+      return data as BookingDetail;
+    } else if (data is TaskClaim) {
+      return (data as TaskClaim).detail;
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<TaskClaimProvider>(context);
+    final booking = _getBookingDetail();
 
+    if (booking == null) {
+      return const SizedBox.shrink(); // hoặc hiển thị lỗi
+    }
     return TaskCard(
-      bookingDetail: detail,
+      bookingDetail: booking,
       showActions: showActions,
       onJobDetail: (booking) {
         showModalBottomSheet(

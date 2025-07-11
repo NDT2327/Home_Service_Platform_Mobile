@@ -1,7 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/core/widgets/custom_appbar.dart';
+import 'package:hsp_mobile/features/home_page.dart';
+import 'package:hsp_mobile/features/profile/views/profile_screen.dart';
 
 class NavigationLayout extends StatefulWidget {
   const NavigationLayout({super.key});
@@ -12,13 +15,27 @@ class NavigationLayout extends StatefulWidget {
 
 class _NavigationLayoutState extends State<NavigationLayout> {
   int _selectedIndex = 0;
-  final List<Widget> _screens = [];
+  final List<Widget> _screens = const [HomePage(), ProfileScreen()];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
+
+  // Danh sách các mục navigation
+  final List<NavigationItem> _navigationItems = [
+    NavigationItem(
+      icon: Icons.home,
+      label: 'navigation.home',
+      showTabBar: false, // Hiển thị tab bar khi ở màn hình này
+    ),
+    NavigationItem(
+      icon: Icons.person,
+      label: 'navigation.profile',
+      showTabBar: false,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -32,24 +49,21 @@ class _NavigationLayoutState extends State<NavigationLayout> {
   //mobile
   Widget _buildMobileLayout(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(
-        currentUserName: 'Le Van Cuong',
-        showTabBar: _selectedIndex == 0,
-      ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.primaryLight,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: AppColors.white,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
-            label: 'navigation.home'.tr(),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
-            label: 'navigation.profile'.tr(),
-          ),
-        ],
+        items:
+            _navigationItems.map((item) {
+              return BottomNavigationBarItem(
+                icon: Icon(item.icon),
+                label: item.label.tr(),
+              );
+            }).toList(),
       ),
     );
   }
@@ -57,10 +71,6 @@ class _NavigationLayoutState extends State<NavigationLayout> {
   //tablet
   Widget _buildTabletLayout(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(
-        currentUserName: 'Lê Văn Cường',
-        showTabBar: _selectedIndex == 0,
-      ),
       body: Row(
         children: [
           NavigationRail(
@@ -87,10 +97,6 @@ class _NavigationLayoutState extends State<NavigationLayout> {
   //desktop
   Widget _buildDesktopLayout(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(
-        currentUserName: 'Lê Văn Cường',
-        showTabBar: _selectedIndex == 0,
-      ),
       body: Row(
         children: [
           Drawer(
@@ -133,4 +139,16 @@ class _NavigationLayoutState extends State<NavigationLayout> {
       ),
     );
   }
+}
+
+class NavigationItem {
+  final IconData icon;
+  final String label;
+  final bool showTabBar;
+
+  NavigationItem({
+    required this.icon,
+    required this.label,
+    this.showTabBar = false,
+  });
 }

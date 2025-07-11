@@ -47,6 +47,7 @@
     "fullName": "Họ và tên",
     "email": "Email",
     "phone": "Số điện thoại",
+    "address": "Địa Chỉ",
     "password": "Mật khẩu",
     "confirmPassword": "Xác nhận mật khẩu",
     "signUp": "Đăng ký",

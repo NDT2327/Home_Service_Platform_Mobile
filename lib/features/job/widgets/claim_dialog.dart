@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsp_mobile/core/models/booking_detail.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
-import 'package:hsp_mobile/features/job/task_claim_provider.dart';
+import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
 import 'package:provider/provider.dart';
 
 class ClaimDialog extends StatelessWidget {

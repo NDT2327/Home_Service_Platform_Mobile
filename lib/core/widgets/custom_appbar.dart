@@ -42,19 +42,6 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
         if (actions != null) ...actions!,
       ],
-      bottom:
-          showTabBar
-              ? TabBar(
-                controller: tabController,
-                labelColor: Colors.blue,
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: Colors.blue,
-                tabs: [
-                  Tab(text: 'taskClaim.availableTasks'.tr(args: ['2'])),
-                  Tab(text: 'taskClaim.myTasks'.tr(args: ['2'])),
-                ],
-              )
-              : null,
     );
   }
 }

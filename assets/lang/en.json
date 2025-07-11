@@ -3,6 +3,11 @@
   "common":{
     "close": "Close"
   },
+  "navigation":{
+    "home": "Home",
+    "profile": "Profile",
+    "menu": "Menu"
+  },
   "onboarding": {
     "skip": "Skip",
     "next": "Next",
@@ -47,6 +52,7 @@
     "fullName": "Full Name",
     "email": "Email",
     "phone": "Phone Number",
+    "address": "Address",
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "signUp": "Sign Up",
