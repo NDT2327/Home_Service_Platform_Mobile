@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +13,14 @@ import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+ class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
@@ -20,6 +30,7 @@ void main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6ZHVrcG5oYWh4dWtobXhxZmFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxNjYxMzIsImV4cCI6MjA2Mzc0MjEzMn0.nwDLqFRgblTcIk4gDkTKocUiG6Tzzpcf05MxXopjCF8',
   );
+  HttpOverrides.global = MyHttpOverrides(); // Bỏ qua chứng chỉ SSL không hợp lệ
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('vi')],

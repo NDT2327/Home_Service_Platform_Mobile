@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hsp_mobile/features/booking/views/booking_summary_screen.dart';
 import 'package:hsp_mobile/features/home/housekeeper_home_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
+import 'package:hsp_mobile/features/catalog/view/category_screen.dart';
 import 'package:hsp_mobile/features/home_page.dart';
 import 'package:hsp_mobile/features/auth/views/login_screen.dart';
 import 'package:hsp_mobile/features/introduction/on_boarding_screen.dart';
@@ -23,6 +24,7 @@ class AppRoutes {
   static const String mainListBooking = '/main-list-booking';
   static const String housekeeperProfile = '/housekeeper/profile';
   static const String housekeeperMyTask = '/housekeeper/my-task';
+  static const String categoryScreen = '/category-screen';
 }
 
 //Route generator
@@ -57,6 +59,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case AppRoutes.housekeeperMyTask:
       return MaterialPageRoute(builder: (_) => const MyTaskScreen());
+      case AppRoutes.categoryScreen:
+        return MaterialPageRoute(builder: (_) => const CategoryScreen());
       default:
         return MaterialPageRoute(
           builder:
