@@ -8,7 +8,7 @@ class BookingCard extends StatelessWidget {
 
   const BookingCard({Key? key, required this.booking}) : super(key: key);
 
-  // Ánh xạ bookingStatusId thành chuỗi và màu sắc
+  // Map bookingStatusId to status text, icon and colors
   Map<String, dynamic> _getBookingStatusInfo(int statusId) {
     switch (statusId) {
       case 1:
@@ -42,7 +42,7 @@ class BookingCard extends StatelessWidget {
     }
   }
 
-  // Ánh xạ paymentStatusId thành chuỗi và màu sắc
+  // Map paymentStatusId to status text, icon and colors
   Map<String, dynamic> _getPaymentStatusInfo(int statusId) {
     switch (statusId) {
       case 1:
@@ -68,7 +68,7 @@ class BookingCard extends StatelessWidget {
         };
       default:
         return {
-          'text': 'Không xác định',
+          'text': 'UNKNOWN',
           'color': Colors.grey,
           'icon': Icons.help_outline,
           'bgColor': Colors.grey.withOpacity(0.1),
@@ -76,13 +76,13 @@ class BookingCard extends StatelessWidget {
     }
   }
 
-  // Định dạng ngày tháng
+  // Format date to display
   String _formatDate(DateTime? date) {
     if (date == null) return 'N/A';
     return DateFormat('dd/MM/yyyy HH:mm').format(date);
   }
 
-  // Widget tạo status chip
+  // Build a status chip widget
   Widget _buildStatusChip(Map<String, dynamic> statusInfo) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -113,7 +113,7 @@ class BookingCard extends StatelessWidget {
     );
   }
 
-  // Widget tạo info row
+  // Build an information row with icon, label and value
   Widget _buildInfoRow(IconData icon, String label, String value, {Color? iconColor}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -192,7 +192,7 @@ class BookingCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header với mã đặt lịch và status
+                // Header with booking code and status
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -201,7 +201,7 @@ class BookingCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Mã đặt lịch',
+                            'Booking Code',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[600],
@@ -223,57 +223,57 @@ class BookingCard extends StatelessWidget {
                     _buildStatusChip(bookingStatusInfo),
                   ],
                 ),
-                
+
                 const SizedBox(height: 20),
-                
-                // Divider
+
+                // Divider line
                 Container(
                   height: 1,
                   color: Colors.grey[200],
                 ),
-                
+
                 const SizedBox(height: 16),
-                
-                // Thông tin chi tiết
+
+                // Booking details
                 _buildInfoRow(
                   Icons.calendar_today,
-                  'Ngày đặt',
+                  'Booking Date',
                   _formatDate(booking.bookingDate),
                   iconColor: Colors.blue,
                 ),
-                
+
                 _buildInfoRow(
                   Icons.alarm,
-                  'Hạn chót',
+                  'Deadline',
                   _formatDate(booking.deadline),
                   iconColor: Colors.orange,
                 ),
-                
+
                 _buildInfoRow(
                   Icons.attach_money,
-                  'Tổng tiền',
+                  'Total Amount',
                   '\$${booking.totalAmount.toStringAsFixed(2)}',
                   iconColor: Colors.green,
                 ),
-                
+
                 if (booking.address != null) ...[
                   const SizedBox(height: 4),
                   _buildInfoRow(
                     Icons.location_on,
-                    'Địa chỉ',
+                    'Address',
                     booking.address!,
                     iconColor: Colors.red,
                   ),
                 ],
-                
+
                 const SizedBox(height: 16),
-                
-                // Footer với payment status
+
+                // Footer with payment status
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Trạng thái thanh toán',
+                      'Payment Status',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -283,8 +283,8 @@ class BookingCard extends StatelessWidget {
                     _buildStatusChip(paymentStatusInfo),
                   ],
                 ),
-                
-                // Tap indicator
+
+                // Tap instruction
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -296,7 +296,7 @@ class BookingCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Nhấn để xem chi tiết',
+                      'Tap to view details',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[500],

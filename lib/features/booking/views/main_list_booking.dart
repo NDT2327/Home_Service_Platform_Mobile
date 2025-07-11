@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/booking.dart';
 import 'package:hsp_mobile/core/services/api_service.dart';
+import 'package:hsp_mobile/core/services/booking_service.dart';
+import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/features/booking/widgets/booking_card.dart';
 
 class MainListBooking extends StatefulWidget {
@@ -17,7 +19,15 @@ class _MainListBookingState extends State<MainListBooking> {
   void initState() {
     super.initState();
     // Gọi API để lấy danh sách bookings
-    _bookings = ApiService().getBookingsForUser(1);
+    _bookings = _fetchBookings();
+  }
+
+  Future<List<Booking>> _fetchBookings() async {
+    final int? userId = await SharedPrefsUtils.getAccountId();
+    if (userId == null) {
+      return [];
+    }
+    return BookingService().getBookingsForUser(userId);
   }
 
   @override

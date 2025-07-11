@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/models/booking.dart';
 import 'package:hsp_mobile/core/models/booking_detail.dart';
+import 'package:hsp_mobile/core/models/dtos/base_response.dart';
 import 'package:hsp_mobile/core/models/service.dart';
+import 'package:hsp_mobile/core/services/account_service.dart';
 import 'package:hsp_mobile/core/services/api_service.dart';
+import 'package:hsp_mobile/core/services/booking_service.dart';
 import 'package:intl/intl.dart';
 
 class BookingDetailScreen extends StatefulWidget {
@@ -16,48 +20,50 @@ class BookingDetailScreen extends StatefulWidget {
 
 class _BookingDetailScreenState extends State<BookingDetailScreen> {
   late Future<List<BookingDetail>> _bookingDetails;
+  late Future<BaseResponse<Account>> _account;
 
   @override
   void initState() {
     super.initState();
-    _bookingDetails = ApiService().getBookingDetailsByBookingId(widget.booking.bookingId);
+    _bookingDetails = BookingService().getBookingDetailsByBookingId(widget.booking.bookingId);
+    _account = AccountService().getAccountById(widget.booking.customerId);
   }
 
   // Ánh xạ status thành thông tin hiển thị
-  Map<String, dynamic> _getStatusInfo(String status) {
-    switch (status.toUpperCase()) {
-      case 'PENDING':
-        return {
-          'text': 'Chờ xử lý',
-          'color': Colors.orange,
-          'icon': Icons.schedule,
-        };
-      case 'CONFIRMED':
-        return {
-          'text': 'Đã xác nhận',
-          'color': Colors.green,
-          'icon': Icons.check_circle,
-        };
-      case 'COMPLETED':
-        return {
-          'text': 'Hoàn thành',
-          'color': Colors.blue,
-          'icon': Icons.done_all,
-        };
-      case 'CANCELLED':
-        return {
-          'text': 'Đã hủy',
-          'color': Colors.red,
-          'icon': Icons.cancel,
-        };
-      default:
-        return {
-          'text': status,
-          'color': Colors.grey,
-          'icon': Icons.help_outline,
-        };
-    }
-  }
+  // Map<String, dynamic> _getStatusInfo(String status) {
+  //   switch (status.toUpperCase()) {
+  //     case 'PENDING':
+  //       return {
+  //         'text': 'Chờ xử lý',
+  //         'color': Colors.orange,
+  //         'icon': Icons.schedule,
+  //       };
+  //     case 'CONFIRMED':
+  //       return {
+  //         'text': 'Đã xác nhận',
+  //         'color': Colors.green,
+  //         'icon': Icons.check_circle,
+  //       };
+  //     case 'COMPLETED':
+  //       return {
+  //         'text': 'Hoàn thành',
+  //         'color': Colors.blue,
+  //         'icon': Icons.done_all,
+  //       };
+  //     case 'CANCELLED':
+  //       return {
+  //         'text': 'Đã hủy',
+  //         'color': Colors.red,
+  //         'icon': Icons.cancel,
+  //       };
+  //     default:
+  //       return {
+  //         'text': status,
+  //         'color': Colors.grey,
+  //         'icon': Icons.help_outline,
+  //       };
+  //   }
+  // }
 
   Map<String, dynamic> _getBookingStatusInfo(int statusId) {
     switch (statusId) {
@@ -193,7 +199,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   }
 
   Widget _buildServiceCard(BookingDetail detail) {
-    final statusInfo = _getStatusInfo(detail.status);
+    // final statusInfo = _getStatusInfo(detail.status);
     
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -273,7 +279,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 ),
               ),
               
-              _buildStatusChip(statusInfo),
+              // _buildStatusChip(statusInfo),
             ],
           ),
             
@@ -301,20 +307,59 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               iconColor: Colors.green,
             ),
             
-            _buildInfoRow(
-              Icons.person,
-              'Khách hàng',
-              detail.customerName,
-              iconColor: Colors.purple,
+            FutureBuilder<BaseResponse<Account>>(
+              future: _account,
+              builder: (context, accSnap) {
+                if (accSnap.connectionState != ConnectionState.done) {
+                  return Row(
+                    children: [
+                      SizedBox(width: 20),
+                      CircularProgressIndicator(strokeWidth: 2),
+                      SizedBox(width: 8),
+                      Text('Đang tải khách hàng…'),
+                    ],
+                  );
+                }
+                if (accSnap.hasError || accSnap.data == null || accSnap.data!.data == null) {
+                  // Hiển thị fallback nếu lỗi
+                  return Column(
+                    children: [
+                      _buildInfoRow(
+                        Icons.person,
+                        'Khách hàng',
+                        'Không xác định',
+                        iconColor: Colors.purple,
+                      ),
+                      _buildInfoRow(
+                        Icons.phone,
+                        'Số điện thoại',
+                        '—',
+                        iconColor: Colors.teal,
+                      ),
+                    ],
+                  );
+                }
+
+                final account = accSnap.data!.data!;
+                return Column(
+                  children: [
+                    _buildInfoRow(
+                      Icons.person,
+                      'Khách hàng',
+                      account.fullName,
+                      iconColor: Colors.purple,
+                    ),
+                    _buildInfoRow(
+                      Icons.phone,
+                      'Số điện thoại',
+                      account.phone,
+                      iconColor: Colors.teal,
+                    ),
+                  ],
+                );
+              },
             ),
-            
-            _buildInfoRow(
-              Icons.phone,
-              'Số điện thoại',
-              detail.customerPhone,
-              iconColor: Colors.teal,
-            ),
-            
+
             _buildInfoRow(
               Icons.location_on,
               'Địa chỉ',
