@@ -58,7 +58,7 @@ class RouteGenerator {
       case AppRoutes.housekeeperProfile:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case AppRoutes.housekeeperMyTask:
-      return MaterialPageRoute(builder: (_) => const MyTaskScreen());
+        return MaterialPageRoute(builder: (_) => const MyTaskScreen());
       case AppRoutes.categoryScreen:
         return MaterialPageRoute(builder: (_) => const CategoryScreen());
       default:
