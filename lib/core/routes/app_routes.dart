@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hsp_mobile/core/models/account.dart';
+import 'package:hsp_mobile/features/account/views/edit_profile_screen.dart';
 import 'package:hsp_mobile/features/booking/views/booking_summary_screen.dart';
 import 'package:hsp_mobile/features/home/housekeeper_home_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
@@ -10,7 +12,7 @@ import 'package:hsp_mobile/features/auth/views/sign_up_screen.dart';
 import 'package:hsp_mobile/features/introduction/splash_screen.dart';
 import 'package:hsp_mobile/features/job/views/job_list_screen.dart';
 import 'package:hsp_mobile/features/job/views/my_task_screen.dart';
-import 'package:hsp_mobile/features/profile/views/profile_screen.dart';
+import 'package:hsp_mobile/features/account/views/profile_screen.dart';
 
 class AppRoutes {
   static const String onBoarding = '/onBoarding';
@@ -25,6 +27,11 @@ class AppRoutes {
   static const String housekeeperProfile = '/housekeeper/profile';
   static const String housekeeperMyTask = '/housekeeper/my-task';
   static const String categoryScreen = '/category-screen';
+
+  static const String editProfile = '/profile/edit';
+  static const String privacy = '/privacy';
+  static const String termsConditions = '/terms';
+  static const String profile = '/profile';
 }
 
 //Route generator
@@ -61,6 +68,13 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const MyTaskScreen());
       case AppRoutes.categoryScreen:
         return MaterialPageRoute(builder: (_) => const CategoryScreen());
+      case AppRoutes.profile:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case AppRoutes.editProfile:
+        final account = settings.arguments as Account;
+        return MaterialPageRoute(
+          builder: (_) => EditProfileScreen(account: account),
+        );
       default:
         return MaterialPageRoute(
           builder:

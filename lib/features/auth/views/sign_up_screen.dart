@@ -7,7 +7,7 @@ import 'package:hsp_mobile/core/widgets/custom_button.dart';
 import 'package:hsp_mobile/core/widgets/custom_text_field.dart';
 import 'package:hsp_mobile/core/widgets/link_button.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:hsp_mobile/features/auth/providers/account_provider.dart';
+import 'package:hsp_mobile/features/account/account_provider.dart';
 import 'package:hsp_mobile/features/auth/widgets/otp_dialog.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:provider/provider.dart';

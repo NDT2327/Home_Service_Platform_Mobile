@@ -2,10 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
-import 'package:hsp_mobile/core/widgets/custom_appbar.dart';
+import 'package:hsp_mobile/features/account/views/profile_screen.dart';
 import 'package:hsp_mobile/features/home_page.dart';
-import 'package:hsp_mobile/features/profile/views/profile_screen.dart';
 
+/// Widget chính quản lý navigation layout cho toàn bộ app
+/// Hỗ trợ 3 loại layout: Mobile, Tablet, Desktop
 class NavigationLayout extends StatefulWidget {
   const NavigationLayout({super.key});
 
@@ -14,53 +15,93 @@ class NavigationLayout extends StatefulWidget {
 }
 
 class _NavigationLayoutState extends State<NavigationLayout> {
+  // Biến lưu trữ chỉ số của tab hiện tại được chọn
+  // 0 = Home, 1 = Profile
   int _selectedIndex = 0;
-  final List<Widget> _screens = const [HomePage(), ProfileScreen()];
 
+  // Danh sách các màn hình tương ứng với từng tab
+  final List<Widget> _screens = const [
+    HomePage(), // Màn hình Home (index 0)
+    ProfileScreen(), // Màn hình Profile (index 1)
+  ];
+
+  /// Hàm xử lý khi người dùng nhấn vào tab
+  /// [index] - chỉ số của tab được nhấn
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedIndex = index; // Cập nhật tab hiện tại
     });
   }
 
-  // Danh sách các mục navigation
+  // Danh sách thông tin các tab navigation
   final List<NavigationItem> _navigationItems = [
     NavigationItem(
-      icon: Icons.home,
-      label: 'navigation.home',
-      showTabBar: false, // Hiển thị tab bar khi ở màn hình này
+      icon: Icons.home_outlined, // Icon khi chưa được chọn
+      selectedIcon: Icons.home, // Icon khi được chọn
+      label: 'navigation.home', // Text hiển thị (sẽ được dịch)
     ),
     NavigationItem(
-      icon: Icons.person,
-      label: 'navigation.profile',
-      showTabBar: false,
+      icon: Icons.person_outline, // Icon khi chưa được chọn
+      selectedIcon: Icons.person, // Icon khi được chọn
+      label: 'navigation.profile', // Text hiển thị (sẽ được dịch)
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    // Sử dụng widget Responsive để tự động chọn layout phù hợp
     return Responsive(
-      mobile: _buildMobileLayout(context),
-      tablet: _buildTabletLayout(context),
-      desktop: _buildDesktopLayout(context),
+      mobile: _buildMobileLayout(context), // Layout cho điện thoại
+      tablet: _buildTabletLayout(context), // Layout cho tablet
+      desktop: _buildDesktopLayout(context), // Layout cho desktop
     );
   }
 
-  //mobile
+  /// Xây dựng layout cho mobile (điện thoại)
+  /// Sử dụng BottomNavigationBar ở phía dưới màn hình
   Widget _buildMobileLayout(BuildContext context) {
     return Scaffold(
+      // Hiển thị màn hình tương ứng với tab được chọn
       body: _screens[_selectedIndex],
+
+      // Thanh navigation ở phía dưới
       bottomNavigationBar: BottomNavigationBar(
+        // Màu của item được chọn
         selectedItemColor: AppColors.primary,
+
+        // Màu của item chưa được chọn
         unselectedItemColor: AppColors.primaryLight,
-        type: BottomNavigationBarType.fixed,
+
+        // Màu nền của thanh navigation
         backgroundColor: AppColors.white,
+
+        // Chỉ số của tab hiện tại
         currentIndex: _selectedIndex,
+
+        // Hàm callback khi nhấn vào tab
         onTap: _onItemTapped,
+
+        // Kích thước font cho text của tab được chọn
+        selectedFontSize: Responsive.getFontSize(context, base: 12),
+
+        // Kích thước font cho text của tab chưa được chọn
+        unselectedFontSize: Responsive.getFontSize(context, base: 12),
+
+        // Tạo danh sách các item cho BottomNavigationBar
         items:
             _navigationItems.map((item) {
               return BottomNavigationBarItem(
-                icon: Icon(item.icon),
+                // Icon khi chưa được chọn
+                icon: Icon(
+                  item.icon,
+                  size: Responsive.getFontSize(context, base: 24),
+                ),
+                // Icon khi được chọn
+                activeIcon: Icon(
+                  item.selectedIcon,
+                  size: Responsive.getFontSize(context, base: 24),
+                ),
+                // Text hiển thị (được dịch theo ngôn ngữ)
                 label: item.label.tr(),
               );
             }).toList(),
@@ -68,87 +109,188 @@ class _NavigationLayoutState extends State<NavigationLayout> {
     );
   }
 
-  //tablet
+  /// Xây dựng layout cho tablet
+  /// Sử dụng NavigationRail ở phía bên trái màn hình
   Widget _buildTabletLayout(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
       body: Row(
         children: [
-          NavigationRail(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: _onItemTapped,
-            labelType: NavigationRailLabelType.all,
-            destinations: [
-              NavigationRailDestination(
-                icon: const Icon(Icons.home),
-                label: Text('navigation.home'.tr()),
+          // NavigationRail bên trái với tiêu đề
+          Column(
+            children: [
+              Container(
+                height: 80,
+                width: 72,
+                color: AppColors.primary,
+                child: Center(
+                  child: RotatedBox(
+                    quarterTurns: 3,
+                    child: Text(
+                      'CozyCare',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: Responsive.getFontSize(context, base: 14),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.person),
-                label: Text('navigation.profile'.tr()),
+              Expanded(
+                child: NavigationRail(
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: _onItemTapped,
+                  labelType: NavigationRailLabelType.all,
+                  backgroundColor: AppColors.white,
+                  selectedIconTheme: IconThemeData(
+                    color: AppColors.primary,
+                    size: 28,
+                  ),
+                  unselectedIconTheme: IconThemeData(
+                    color: AppColors.primaryLight,
+                    size: 24,
+                  ),
+                  selectedLabelTextStyle: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  unselectedLabelTextStyle: const TextStyle(
+                    color: AppColors.primaryLight,
+                  ),
+                  destinations:
+                      _navigationItems.map((item) {
+                        return NavigationRailDestination(
+                          icon: Icon(item.icon),
+                          selectedIcon: Icon(item.selectedIcon),
+                          label: Text(item.label.tr()),
+                        );
+                      }).toList(),
+                ),
               ),
             ],
           ),
-          Expanded(child: _screens[_selectedIndex]),
+
+          // Nội dung bên phải
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              child: _screens[_selectedIndex],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  //desktop
+  /// Xây dựng layout cho desktop
+  /// Sử dụng sidebar menu ở phía bên trái
   Widget _buildDesktopLayout(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
       body: Row(
         children: [
-          Drawer(
-            child: ListView(
-              padding: EdgeInsets.zero,
+          // Sidebar trái
+          Container(
+            width: 240,
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(1, 0),
+                ),
+              ],
+            ),
+            child: Column(
               children: [
-                DrawerHeader(
-                  decoration: const BoxDecoration(color: Colors.blue),
-                  child: Text(
-                    'navigation.menu'.tr(),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: Responsive.getFontSize(context, base: 24),
+                Container(
+                  height: 80,
+                  color: AppColors.backgroundLight,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/logo/logo.jpg',
+                      width: 150,
+                      height: 150,
                     ),
                   ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.home),
-                  title: Text('navigation.home'.tr()),
-                  selected: _selectedIndex == 0,
-                  onTap: () {
-                    _onItemTapped(0);
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  title: Text('navigation.profile'.tr()),
-                  selected: _selectedIndex == 1,
-                  onTap: () {
-                    _onItemTapped(1);
-                    Navigator.pop(context);
-                  },
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _navigationItems.length,
+                    itemBuilder: (context, index) {
+                      final item = _navigationItems[index];
+                      final isSelected = _selectedIndex == index;
+                      return Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              isSelected
+                                  ? AppColors.primary.withOpacity(0.1)
+                                  : Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            isSelected ? item.selectedIcon : item.icon,
+                            color:
+                                isSelected
+                                    ? AppColors.primary
+                                    : AppColors.primaryLight,
+                          ),
+                          title: Text(
+                            item.label.tr(),
+                            style: TextStyle(
+                              color:
+                                  isSelected
+                                      ? AppColors.primary
+                                      : AppColors.primaryLight,
+                              fontWeight:
+                                  isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                            ),
+                          ),
+                          onTap: () => _onItemTapped(index),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
           ),
-          Expanded(child: _screens[_selectedIndex]),
+
+          // Nội dung bên phải
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(32),
+              constraints: BoxConstraints(
+                maxWidth: Responsive.getMaxWidth(context),
+              ),
+              child: _screens[_selectedIndex],
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
+/// Class định nghĩa thông tin cho một item navigation
 class NavigationItem {
-  final IconData icon;
-  final String label;
-  final bool showTabBar;
+  final IconData icon; // Icon khi chưa được chọn
+  final IconData selectedIcon; // Icon khi được chọn
+  final String label; // Text hiển thị
 
   NavigationItem({
     required this.icon,
+    required this.selectedIcon,
     required this.label,
-    this.showTabBar = false,
   });
 }

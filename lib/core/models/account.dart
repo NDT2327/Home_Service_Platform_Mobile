@@ -3,7 +3,7 @@ class Account {
   final String email;
   final String password;
   final String fullName;
-  final String? avatar;
+  final String avatar;
   final String address;
   final String phone;
   final int roleId;
@@ -18,7 +18,7 @@ class Account {
     required this.email,
     required this.password,
     required this.fullName,
-    this.avatar,
+    required this.avatar,
     required this.address,
     required this.phone,
     required this.roleId,
