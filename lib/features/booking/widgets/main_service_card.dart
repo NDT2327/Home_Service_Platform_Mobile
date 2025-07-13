@@ -1,4 +1,5 @@
 // lib/widgets/main_service_card.dart
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/service.dart';
 
@@ -17,6 +18,11 @@ class MainServiceCard extends StatelessWidget {
     required this.onDecrement,
   });
 
+  String _formatVND(double amount) {
+    
+    return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -58,7 +64,7 @@ class MainServiceCard extends StatelessWidget {
             SizedBox(height: 4),
             Row(children: List.generate(5, (_) => Icon(Icons.star, color: Colors.amber, size: 16))),
             SizedBox(height: 8),
-            Text('\$${service.price.toStringAsFixed(0)}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text('${_formatVND(service.price)}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ],
         ),
       );

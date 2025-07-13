@@ -13,6 +13,47 @@ class PaymentService {
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
+  Future<String> createPayment({
+    required int bookingId,
+    required int userId,
+    required double amount,
+    required DateTime paymentDate,
+    String notes = '',
+  }) async {
+    final url = Uri.parse('${AppConstants.baseLocalUrl}/payment/momo/create');
+
+    final body = jsonEncode({
+      'bookingId': bookingId,
+      'userId': userId,
+      'amount': amount,
+      'paymentDate': paymentDate.toIso8601String(),
+      'notes': notes,
+    });
+
+    print('Making payment request to: $url');
+    print('Request body: $body');
+
+    final response = await http.post(url, headers: await _headers, body: body);
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      print('Parsed JSON: $jsonData');
+      
+      final paymentUrl = jsonData['data'];
+      print('Payment URL from response: $paymentUrl');
+      
+      if (paymentUrl != null && paymentUrl is String && paymentUrl.isNotEmpty) {
+        return paymentUrl;
+      } else {
+        throw Exception('Invalid response: missing or empty payment URL. Response: $jsonData');
+      }
+    } else {
+      throw Exception('Failed to create payment: ${response.statusCode} ${response.body}');
+    }
+  } 
 
   Future<Promotion> getPromotionByCode(String code) async {
     final url = Uri.parse('${AppConstants.baseLocalUrl}/payment/promotions/$code');
