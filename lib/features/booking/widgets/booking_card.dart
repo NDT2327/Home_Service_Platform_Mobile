@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/booking.dart';
+import 'package:hsp_mobile/core/services/payment_service.dart';
+import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/features/booking/views/booking_detail_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BookingCard extends StatelessWidget {
   final Booking booking;
@@ -83,7 +86,6 @@ class BookingCard extends StatelessWidget {
   }
 
   String _formatVND(double amount) {
-    
     return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
   }
 
@@ -159,10 +161,98 @@ class BookingCard extends StatelessWidget {
     );
   }
 
+  // Handle payment
+  Future<void> _handlePayment(BuildContext context) async {
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
+      final userId = await SharedPrefsUtils.getAccountId();
+      if (userId == null) {
+        Navigator.pop(context); // Close loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not found')),
+        );
+        return;
+      }
+
+      final paymentService = PaymentService();
+      final paymentUrl = await paymentService.createPayment(
+        bookingId: booking.bookingId,
+        userId: userId,
+        amount: booking.totalAmount,
+        paymentDate: DateTime.now(),
+        notes: 'Payment for booking ${booking.bookingNumber}',
+      );
+
+      Navigator.pop(context); // Close loading dialog
+
+      // Launch payment URL
+      if (await canLaunchUrl(Uri.parse(paymentUrl))) {
+        await launchUrl(
+          Uri.parse(paymentUrl),
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch payment URL')),
+        );
+      }
+    } catch (e) {
+      Navigator.pop(context); // Close loading dialog
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Payment failed: $e')),
+      );
+    }
+  }
+
+  // Build Pay Now button
+  Widget _buildPayNowButton(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 16),
+      child: ElevatedButton(
+        onPressed: () => _handlePayment(context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          elevation: 2,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.payment, size: 20),
+            const SizedBox(width: 8),
+            const Text(
+              'Pay Now',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bookingStatusInfo = _getBookingStatusInfo(booking.bookingStatusId);
     final paymentStatusInfo = _getPaymentStatusInfo(booking.paymentStatusId);
+    final showPayButton = booking.bookingStatusId == 1 && booking.paymentStatusId == 1;
 
     return GestureDetector(
       onTap: () {
@@ -288,6 +378,9 @@ class BookingCard extends StatelessWidget {
                     _buildStatusChip(paymentStatusInfo),
                   ],
                 ),
+
+                // Pay Now button (only show when booking is pending and payment is unpaid)
+                if (showPayButton) _buildPayNowButton(context),
 
                 // Tap instruction
                 const SizedBox(height: 12),
