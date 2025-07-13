@@ -2,9 +2,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/service.dart';
 import 'package:hsp_mobile/core/models/account.dart';
+import 'package:hsp_mobile/core/models/promotion.dart';
 import 'package:hsp_mobile/core/services/booking_service.dart';
 import 'package:hsp_mobile/core/services/catalog_service.dart';
 import 'package:hsp_mobile/core/services/account_service.dart';
+import 'package:hsp_mobile/core/services/payment_service.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/features/booking/widgets/add_address.dart';
@@ -16,7 +18,6 @@ import 'package:hsp_mobile/features/booking/widgets/main_service_card.dart';
 import 'package:hsp_mobile/features/booking/widgets/price_summary.dart';
 import 'package:hsp_mobile/features/booking/widgets/select_slot_button.dart';
 import 'package:hsp_mobile/features/booking/widgets/suggested_services_section.dart';
-// import 'package:hsp_mobile/features/booking/screens/add_address_screen.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class BookingSummaryScreen extends StatefulWidget {
@@ -31,6 +32,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
   final _catalog = CatalogService();
   final _bookingService = BookingService();
   final _accountService = AccountService();
+  final _paymentService = PaymentService();
   
   bool _isLoading = true;
   Service? _mainService;
@@ -41,7 +43,8 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
   List<AddressItem> _addresses = [];
   
   String _couponCode = "";
-  final double _discount = 0.0;
+  Promotion? _appliedPromotion;
+  double _discount = 0.0;
   final double _deliveryFee = 0.0;
   int _quantity = 1;
   DateTime _focusedDay = DateTime.now();
@@ -111,15 +114,12 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
 
   void _setupAddresses() {
     _addresses = [
-      // Địa chỉ Home từ user account
       if (_userAccount != null && _userAccount!.address.isNotEmpty)
         AddressItem(label: 'Home', detail: _userAccount!.address),
       
-      // Địa chỉ work mặc định (có thể thay thế bằng logic khác)
       AddressItem(label: 'Work', detail: '2118 Thornridge Cir. Syracuse, Connecticut 35624'),
     ];
     
-    // Nếu không có địa chỉ nào, thêm địa chỉ mặc định
     if (_addresses.isEmpty) {
       _addresses.add(
         AddressItem(label: 'Default', detail: 'Please add your address'),
@@ -133,6 +133,34 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
 
   double get _grandTotal {
     return _itemTotal - _discount + _deliveryFee;
+  }
+
+  double _calculateDiscount() {
+    if (_appliedPromotion == null) return 0.0;
+    
+    final itemTotal = _itemTotal;
+    
+    // Check minimum order amount
+    if (_appliedPromotion!.minOrderAmount != null && 
+        itemTotal < _appliedPromotion!.minOrderAmount!) {
+      return 0.0;
+    }
+    
+    double calculatedDiscount = 0.0;
+    
+    if (_appliedPromotion!.discountType == 'PERCENT') {
+      calculatedDiscount = itemTotal * (_appliedPromotion!.discountPercent! / 100);
+    } else if (_appliedPromotion!.discountType == 'AMOUNT') {
+      calculatedDiscount = _appliedPromotion!.discountAmount!;
+    }
+    
+    // Apply maximum discount limit if specified
+    if (_appliedPromotion!.maxDiscountAmount != null && 
+        calculatedDiscount > _appliedPromotion!.maxDiscountAmount!) {
+      calculatedDiscount = _appliedPromotion!.maxDiscountAmount!;
+    }
+    
+    return calculatedDiscount;
   }
 
   @override
@@ -170,7 +198,6 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Main Service Section
               MainServiceCard(
                 service: _mainService!,
                 quantity: _quantity,
@@ -182,7 +209,6 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
               
               SizedBox(height: 20),
               
-              // Frequently Added Together Section
               SuggestedServicesSection(
                 services: _suggestedServices,
                 onAdd: _addServiceToBooking,
@@ -190,14 +216,12 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
 
               SizedBox(height: 20),
               
-              // Coupon Section
               CouponSection(
                 showCouponDialog: _showCouponDialog,
               ),
               
               SizedBox(height: 20),
               
-              // Price Summary Section
               PriceSummary(
                 itemTotal: _itemTotal,
                 discount: _discount,
@@ -207,7 +231,6 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
               
               SizedBox(height: 20),
               
-              // Address Section
               AddressSection(
                 address: _addresses.isNotEmpty ? _addresses[_selectedAddressIdx].detail : 'No address available',
                 onChangePressed: _showChangeAddress,
@@ -215,7 +238,6 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
               
               SizedBox(height: 20),
               
-              // Select Slot Button
               SelectSlotButton(onPressed: _showSlotSelection)
             ],
           ),
@@ -234,37 +256,135 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
   }
 
   void _showCouponDialog() {
+    final TextEditingController couponController = TextEditingController();
+    bool isLoading = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Apply Coupon'),
-        content: TextField(
-          onChanged: (value) => _couponCode = value,
-          decoration: InputDecoration(
-            hintText: 'Enter coupon code',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text('Apply Coupon'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: couponController,
+                decoration: InputDecoration(
+                  hintText: 'Enter coupon code',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              if (_appliedPromotion != null) ...[
+                SizedBox(height: 12),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.green),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Coupon "${_appliedPromotion!.code}" applied successfully!',
+                          style: TextStyle(color: Colors.green, fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            if (_appliedPromotion != null)
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _appliedPromotion = null;
+                    _couponCode = "";
+                    _discount = 0.0;
+                  });
+                  Navigator.pop(context);
+                },
+                child: Text('Remove', style: TextStyle(color: Colors.red)),
+              ),
+            ElevatedButton(
+              onPressed: isLoading ? null : () async {
+                final code = couponController.text.trim();
+                if (code.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please enter a coupon code')),
+                  );
+                  return;
+                }
+
+                setDialogState(() {
+                  isLoading = true;
+                });
+
+                try {
+                  final promotion = await _paymentService.getPromotionByCode(code);
+                  
+                  // Check if promotion is valid (not expired)
+                  final now = DateTime.now();
+                  if (now.isBefore(promotion.startDate) || now.isAfter(promotion.endDate)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('This coupon has expired or is not yet valid')),
+                    );
+                    return;
+                  }
+
+                  setState(() {
+                    _appliedPromotion = promotion;
+                    _couponCode = code;
+                    _discount = _calculateDiscount();
+                  });
+
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Coupon applied successfully! You saved \$${_discount.toStringAsFixed(2)}'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Invalid coupon code or coupon not found')),
+                  );
+                } finally {
+                  setDialogState(() {
+                    isLoading = false;
+                  });
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+              ),
+              child: isLoading 
+                  ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Text('Apply'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Apply coupon logic here
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
-            ),
-            child: Text('Apply'),
-          ),
-        ],
       ),
     );
   }
@@ -302,7 +422,6 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Calendar section
                                 Text('Select Date', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                 SizedBox(height: 8),
                                 TableCalendar(
@@ -334,7 +453,6 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
 
                                 SizedBox(height: 24),
 
-                                // Time picker
                                 Text('Select Time', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                 SizedBox(height: 8),
                                 ListTile(
@@ -362,7 +480,6 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
 
                                 SizedBox(height: 32),
 
-                                // Proceed button
                                 SizedBox(
                                   width: double.infinity,
                                   height: 50,
@@ -483,7 +600,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
           });
         },
         onAddNew: () {
-          Navigator.of(context).pop(); // Close bottom sheet first
+          Navigator.of(context).pop();
           _navigateToAddAddress();
         },
       ),
@@ -498,7 +615,6 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
           onAddressAdded: (newAddress) {
             setState(() {
               _addresses.add(newAddress);
-              // Set as selected if it's marked as default
               if (newAddress.isDefault) {
                 _selectedAddressIdx = _addresses.length - 1;
               }
