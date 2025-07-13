@@ -107,6 +107,23 @@ class AccountProvider extends ChangeNotifier {
   //   await fetchAccounts();
   // }
 
+  //load current account
+  Future<void> loadCurrentAccount() async {
+    final accountId = await SharedPrefsUtils.getAccountId();
+    if (accountId == null) {
+      print("Account ID not found in SharedPreferences");
+      return;
+    }
+
+    try {
+      final response = await _accountService.getAccountById(accountId);
+      _currentAccount = response.data;
+      notifyListeners();
+    } catch (e) {
+      print("Error loading account: $e");
+    }
+  }
+
   //Logout
   Future<void> logout() async {
     _currentAccount = null;

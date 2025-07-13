@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
+import 'package:hsp_mobile/features/account/account_provider.dart';
 import 'package:hsp_mobile/features/account/widgets/edit_profile_content.dart';
+import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Account account;
@@ -13,9 +15,11 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AccountProvider>();
+    final account = provider.currentAccount ?? widget.account;
+
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
@@ -34,7 +38,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: EditProfileContent(account: widget.account),
+      body:
+          provider.isLoading
+              ? Center(child: CircularProgressIndicator())
+              : EditProfileContent(account: account),
     );
   }
 }
