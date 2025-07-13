@@ -35,4 +35,9 @@ class Promotion {
       createdDate: map['createdDate'] != null ? DateTime.parse(map['createdDate']) : null,
     );
   }
+
+  // Factory method to create a Promotion instance from JSON
+  factory Promotion.fromJson(Map<String, dynamic> json) {
+    return Promotion.fromMap(json);
+  }
 }
