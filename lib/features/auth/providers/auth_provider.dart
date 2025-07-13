@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/models/dtos/base_response.dart';
 import 'package:hsp_mobile/core/models/dtos/login_response.dart';
 import 'package:hsp_mobile/core/services/auth_service.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
+import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:provider/provider.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -11,7 +14,7 @@ class AuthProvider extends ChangeNotifier {
   String? errorMessage;
   LoginResponse? loginData;
 
-  Future<bool> login(String input, String password) async {
+  Future<bool> login(BuildContext context, String input, String password) async {
     isLoading = true;
     errorMessage = null;
     notifyListeners();
@@ -24,13 +27,18 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.data != null) {
         loginData = response.data;
-        isLoading = false;
         // lưu session
         await SharedPrefsUtils.saveSession(
           accountId: response.data!.account.accountId,
           accessToken: response.data!.accessToken,
           roleId: response.data!.account.roleId,
         );
+
+        //load current account
+        final accountProvider = Provider.of<AccountProvider>(context, listen: false);
+        await accountProvider.loadCurrentAccount();
+        
+        isLoading = false;
         notifyListeners();
         return true;
       } else {

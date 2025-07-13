@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final password = _passwordController.text.trim();
 
       final authProvider = context.read<AuthProvider>();
-      final success = await authProvider.login(input, password);
+      final success = await authProvider.login(context, input, password);
       if (success) {
         if (!mounted) return;
         Navigator.pushReplacementNamed(context, AppRoutes.home); // hoặc Home

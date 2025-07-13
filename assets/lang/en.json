@@ -8,7 +8,9 @@
     "profile": "Profile",
     "menu": "Menu",
     "category": "Category",
-    "booking": "Booking"
+    "booking": "Booking",
+    "jobs": "Jobs",
+    "my_tasks":"Tasks"
   },
   "onboarding": {
     "skip": "Skip",

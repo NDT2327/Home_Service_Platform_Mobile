@@ -9,7 +9,6 @@ import 'package:hsp_mobile/features/account/views/edit_profile_screen.dart';
 import 'package:hsp_mobile/features/account/widgets/navigation_list.dart';
 import 'package:hsp_mobile/features/account/widgets/profile_content.dart';
 import 'package:hsp_mobile/features/account/widgets/profile_header.dart';
-import 'package:hsp_mobile/features/account/widgets/profile_item.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -35,14 +34,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
-        }
-
-        if (!snapshot.hasData || !snapshot.data!) {
-          // Chuyển hướng đến màn hình đăng nhập nếu chưa đăng nhập
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacementNamed(context, AppRoutes.login);
-          });
-          return const Scaffold(body: Center(child: Text('Please log in')));
         }
 
         // Kiểm tra dữ liệu tài khoản

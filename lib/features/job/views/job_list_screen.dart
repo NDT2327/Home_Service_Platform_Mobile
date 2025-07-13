@@ -16,6 +16,7 @@ class JobListScreen extends StatelessWidget {
           color: AppColors.textLight,
         )),
         centerTitle: false,
+        automaticallyImplyLeading: false,
 
         backgroundColor: AppColors.backgroundLight,
         elevation: 0,

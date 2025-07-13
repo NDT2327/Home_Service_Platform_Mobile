@@ -1,18 +1,19 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:hsp_mobile/core/models/account.dart';
-import 'package:hsp_mobile/core/models/dtos/request/update_account_request.dart';
-import 'package:hsp_mobile/core/utils/validators.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hsp_mobile/core/models/account.dart';
+import 'package:hsp_mobile/core/models/dtos/request/update_account_request.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
-import 'package:hsp_mobile/core/utils/responsive.dart';
+import 'package:hsp_mobile/core/utils/validators.dart';
 import 'package:hsp_mobile/core/widgets/custom_button.dart';
 import 'package:hsp_mobile/core/widgets/custom_text_field.dart';
+import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/core/utils/responsive.dart';
 
 class EditProfileContent extends StatefulWidget {
   final Account account;
@@ -29,6 +30,7 @@ class _EditProfileContentState extends State<EditProfileContent> {
   late TextEditingController _phoneController;
   late TextEditingController _addressController;
   File? _selectedImage;
+  Uint8List? _selectedImageBytes; // Dành cho web
   bool _isUploading = false;
 
   @override
@@ -39,108 +41,99 @@ class _EditProfileContentState extends State<EditProfileContent> {
     _addressController = TextEditingController(text: widget.account.address);
   }
 
-  // Chọn ảnh từ mobile (image_picker) hoặc desktop (file_picker)
+  // Chọn ảnh từ thiết bị
   Future<void> _pickImage() async {
     try {
-      if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-        // Sử dụng file_picker cho web và desktop
+      if (kIsWeb) {
         final result = await FilePicker.platform.pickFiles(
-          type: FileType.custom,
-          allowedExtensions: ['jpg', 'jpeg', 'png'],
+          type: FileType.image,
           withData: true,
         );
-
-        if (result != null && result.files.single.path != null) {
+        if (result != null && result.files.single.bytes != null) {
           setState(() {
-            _selectedImage = File(result.files.single.path!);
+            _selectedImageBytes = result.files.single.bytes;
+            _selectedImage = null; // Đặt lại _selectedImage cho web
           });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No image selected')),
-          );
         }
-      } else if (Platform.isAndroid || Platform.isIOS) {
-        // Sử dụng image_picker cho mobile
+      } else {
         final picker = ImagePicker();
-        final pickedFile = await picker.pickImage(
-          source: ImageSource.gallery,
-          imageQuality: 80, // Giảm chất lượng để tối ưu kích thước
-          maxWidth: 800, // Giới hạn kích thước ảnh
-        );
-
+        final pickedFile = await picker.pickImage(source: ImageSource.gallery);
         if (pickedFile != null) {
           setState(() {
             _selectedImage = File(pickedFile.path);
+            _selectedImageBytes =
+                null; // Đặt lại _selectedImageBytes cho mobile
           });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No image selected')),
-          );
         }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Image picking is not supported on this platform'),
-          ),
-        );
       }
     } catch (e) {
-      print('Error picking image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Image pick error: $e')));
+      }
     }
   }
 
-  // Tải ảnh lên Supabase và lấy URL công khai
-  Future<String?> _uploadImageToSupabase(int accountId) async {
-    if (_selectedImage == null) return null;
+  // Tải ảnh lên Supabase và trả về URL
+  Future<String?> _uploadImage(int accountId) async {
+    if (_selectedImage == null && _selectedImageBytes == null) return null;
 
-    setState(() {
-      _isUploading = true;
-    });
-
+    setState(() => _isUploading = true);
     try {
       final supabase = Supabase.instance.client;
-      final fileName = 'avatar_$accountId${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final fileName =
+          'avatar_${accountId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final path = 'avatars/$fileName';
 
-      // Kiểm tra định dạng tệp
-      final extension = _selectedImage!.path.split('.').last.toLowerCase();
-      if (extension != 'jpg' && extension != 'jpeg' && extension != 'png') {
-        throw Exception('Only JPG or PNG images are supported');
+      print('Uploading to path: $path');
+      if (kIsWeb && _selectedImageBytes != null) {
+        // Upload cho web với dữ liệu byte
+        await supabase.storage
+            .from('cozycare')
+            .uploadBinary(path, _selectedImageBytes!);
+      } else if (_selectedImage != null && await _selectedImage!.exists()) {
+        // Upload cho mobile với File
+        await supabase.storage.from('cozycare').upload(path, _selectedImage!);
+      } else {
+        throw Exception('Invalid image file');
       }
 
-      // Tải ảnh lên Supabase Storage
-      await supabase.storage.from('avatars').upload(path, _selectedImage!);
-
-      // Lấy URL công khai
-      final publicUrl = supabase.storage.from('avatars').getPublicUrl(path);
-      print('Uploaded image URL: $publicUrl');
+      final publicUrl = supabase.storage.from('cozycare').getPublicUrl(path);
+      print('Public URL: $publicUrl');
 
       // Xóa ảnh cũ nếu có
-      if (widget.account.avatar != null && widget.account.avatar!.isNotEmpty) {
-        final oldPath = widget.account.avatar!.split('/').last;
-        await supabase.storage.from('avatars').remove(['avatars/$oldPath']);
+      final oldUrl = widget.account.avatar;
+      if (oldUrl.isNotEmpty) {
+        final oldPath = oldUrl.split('/cozycare/').last;
+        print('Removing old image: avatars/$oldPath');
+        await supabase.storage.from('cozycare').remove(['avatars/$oldPath']);
       }
-
       return publicUrl;
     } catch (e) {
-      print('Error uploading image to Supabase: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to upload image: $e')),
-      );
+      print('Upload error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Upload error: $e')));
+      }
       return null;
     } finally {
-      setState(() {
-        _isUploading = false;
-      });
+      if (mounted) setState(() => _isUploading = false);
     }
   }
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final accountProvider = Provider.of<AccountProvider>(context);
+    final provider = context.watch<AccountProvider>();
 
     return SingleChildScrollView(
       padding: Responsive.getPadding(context),
@@ -149,24 +142,23 @@ class _EditProfileContentState extends State<EditProfileContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Avatar section
             Center(
               child: Stack(
                 children: [
                   CircleAvatar(
                     radius: 60,
-                    backgroundImage: _selectedImage != null
-                        ? FileImage(_selectedImage!)
-                        : widget.account.avatar != null && widget.account.avatar!.isNotEmpty
-                            ? NetworkImage(widget.account.avatar!)
-                            : const AssetImage('assets/images/avatar.png') as ImageProvider,
+                    backgroundImage:
+                        _selectedImage != null
+                            ? FileImage(_selectedImage!)
+                            : (_selectedImageBytes != null
+                                    ? MemoryImage(_selectedImageBytes!)
+                                    : (widget.account.avatar.isNotEmpty
+                                        ? NetworkImage(widget.account.avatar)
+                                        : const AssetImage(
+                                          'assets/images/avatar.png',
+                                        )))
+                                as ImageProvider,
                     backgroundColor: AppColors.lightGray,
-                    onBackgroundImageError: (exception, stackTrace) {
-                      print('Error loading avatar: $exception');
-                    },
-                    child: widget.account.avatar == null || widget.account.avatar!.isEmpty
-                        ? const Icon(Icons.person, size: 60, color: AppColors.white)
-                        : null,
                   ),
                   Positioned(
                     bottom: 0,
@@ -179,16 +171,18 @@ class _EditProfileContentState extends State<EditProfileContent> {
                           color: AppColors.primary,
                           shape: BoxShape.circle,
                         ),
-                        child: _isUploading
-                            ? const CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
-                                strokeWidth: 2,
-                              )
-                            : const Icon(
-                                Icons.camera_alt_rounded,
-                                color: AppColors.white,
-                                size: 20,
-                              ),
+                        child:
+                            _isUploading
+                                ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(
+                                    AppColors.white,
+                                  ),
+                                  strokeWidth: 2,
+                                )
+                                : const Icon(
+                                  Icons.camera_alt,
+                                  color: AppColors.white,
+                                ),
                       ),
                     ),
                   ),
@@ -196,7 +190,6 @@ class _EditProfileContentState extends State<EditProfileContent> {
               ),
             ),
             const SizedBox(height: 30),
-            // Form fields
             CustomTextField(
               controller: _nameController,
               labelText: 'Full Name',
@@ -216,18 +209,20 @@ class _EditProfileContentState extends State<EditProfileContent> {
               validator: Validators.validateAddress,
             ),
             const SizedBox(height: 24),
-            // Save button
-            accountProvider.isLoading || _isUploading
+            provider.isLoading || _isUploading
                 ? const Center(child: CircularProgressIndicator())
                 : CustomButton(
-                    text: 'Save Changes',
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        // Tải ảnh lên Supabase
-                        final avatarUrl = await _uploadImageToSupabase(widget.account.accountId);
-
-                        // Cập nhật thông tin tài khoản
-                        await accountProvider.updateAccount(
+                  text: 'Save Changes',
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        final avatarUrl = await _uploadImage(
+                          widget.account.accountId,
+                        );
+                        print(
+                          'Before update: ${provider.currentAccount?.toJson()}',
+                        );
+                        await provider.updateAccount(
                           widget.account.accountId,
                           UpdateAccountRequest(
                             fullName: _nameController.text,
@@ -236,33 +231,44 @@ class _EditProfileContentState extends State<EditProfileContent> {
                             avatar: avatarUrl ?? widget.account.avatar,
                           ),
                         );
+                        await provider.fetchAccountById(
+                          widget.account.accountId,
+                        ); // Làm mới dữ liệu
+                        print(
+                          'After update: ${provider.currentAccount?.toJson()}',
+                        );
 
-                        if (accountProvider.errorMessage == null) {
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              provider.errorMessage ??
+                                  'Profile updated successfully',
+                            ),
+                          ),
+                        );
+                        if (provider.errorMessage == null) {
+                          Navigator.pop(
+                            context,
+                            provider.currentAccount,
+                          ); // Trả về dữ liệu mới
+                        }
+                      } catch (e) {
+                        print('Update failed: $e');
+                        if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Profile updated successfully')),
-                          );
-                          Navigator.pop(context);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(accountProvider.errorMessage!)),
+                            SnackBar(content: Text('Update failed: $e')),
                           );
                         }
                       }
-                    },
-                    backgroundColor: AppColors.primary,
-                    textColor: AppColors.white,
-                  ),
+                    }
+                  },
+                  backgroundColor: AppColors.primary,
+                  textColor: AppColors.white,
+                ),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
-    _addressController.dispose();
-    super.dispose();
   }
 }

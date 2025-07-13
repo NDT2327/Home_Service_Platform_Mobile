@@ -33,7 +33,7 @@ class TaskListItem extends StatelessWidget {
     final booking = _getBookingDetail();
 
     if (booking == null) {
-      return const SizedBox.shrink(); // hoặc hiển thị lỗi
+      return const SizedBox.shrink(); // trả về widget rỗng
     }
     return TaskCard(
       bookingDetail: booking,
