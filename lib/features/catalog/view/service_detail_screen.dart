@@ -43,6 +43,10 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     _futureDetails = _catalog.getServiceDetailsByServiceId(widget.serviceId);
   }
 
+  String _formatVND(double amount) {
+    return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
+  }
+
   Widget _buildActionButton(IconData icon, String label, VoidCallback onTap) {
     return Expanded(
       child: InkWell(
@@ -114,7 +118,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _currencyFmt.format(widget.price),
+                  _formatVND(widget.price),
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -123,7 +127,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                 ),
                 if (widget.price < widget.originalPrice)
                   Text(
-                    _currencyFmt.format(widget.originalPrice),
+                    _formatVND(widget.originalPrice),
                     style: const TextStyle(
                       fontSize: 12,
                       color: Colors.grey,

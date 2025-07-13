@@ -19,6 +19,11 @@ class ServiceScreen extends StatefulWidget {
   State<ServiceScreen> createState() => _ServiceScreenState();
 }
 
+  String _formatVND(double amount) {
+    
+    return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
+  }
+
 class _ServiceScreenState extends State<ServiceScreen> {
   late Future<List<Service>> _futureServices;
   final _service = CatalogService();
@@ -151,13 +156,13 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             Row(
                               children: [
                                 Text(
-                                  priceFormatter.format(svc.price),
+                                  _formatVND(svc.price),
                                   style: const TextStyle(
                                       fontSize: 16, fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  priceFormatter.format(originalPrice),
+                                  _formatVND(originalPrice),
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,

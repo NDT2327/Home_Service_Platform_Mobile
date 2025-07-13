@@ -18,6 +18,7 @@ import 'package:hsp_mobile/features/booking/widgets/main_service_card.dart';
 import 'package:hsp_mobile/features/booking/widgets/price_summary.dart';
 import 'package:hsp_mobile/features/booking/widgets/select_slot_button.dart';
 import 'package:hsp_mobile/features/booking/widgets/suggested_services_section.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class BookingSummaryScreen extends StatefulWidget {
@@ -133,6 +134,10 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
 
   double get _grandTotal {
     return _itemTotal - _discount + _deliveryFee;
+  }
+
+  String _formatVND(double amount) {
+    return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
   }
 
   double _calculateDiscount() {
@@ -353,7 +358,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Coupon applied successfully! You saved \$${_discount.toStringAsFixed(2)}'),
+                      content: Text('Coupon applied successfully! You saved ${_formatVND(_discount)}'),
                       backgroundColor: Colors.green,
                     ),
                   );
@@ -539,7 +544,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
-                                                      builder: (_) => BookingSuccessScreen(booking: booking),
+                                                      builder: (_) => BookingSuccessScreen(booking: booking, userId: userId,),
                                                     ),
                                                   );
                                                 } catch (e) {

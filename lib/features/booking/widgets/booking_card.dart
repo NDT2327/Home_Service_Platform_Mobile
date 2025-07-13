@@ -82,6 +82,11 @@ class BookingCard extends StatelessWidget {
     return DateFormat('dd/MM/yyyy HH:mm').format(date);
   }
 
+  String _formatVND(double amount) {
+    
+    return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
+  }
+
   // Build a status chip widget
   Widget _buildStatusChip(Map<String, dynamic> statusInfo) {
     return Container(
@@ -252,7 +257,7 @@ class BookingCard extends StatelessWidget {
                 _buildInfoRow(
                   Icons.attach_money,
                   'Total Amount',
-                  '\$${booking.totalAmount.toStringAsFixed(2)}',
+                  _formatVND(booking.totalAmount),
                   iconColor: Colors.green,
                 ),
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PriceSummary extends StatelessWidget {
   final double itemTotal;
@@ -13,6 +14,10 @@ class PriceSummary extends StatelessWidget {
     required this.deliveryFee,
     required this.grandTotal,
   });
+
+  String _formatVND(double amount) {
+    return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
+  }
 
   Widget _buildPriceRow(String label, double amount, {bool isTotal = false, bool isBlue = false}) {
     return Padding(
@@ -31,7 +36,7 @@ class PriceSummary extends StatelessWidget {
           Text(
             (label == 'Delivery Fee' && amount == 0)
                 ? 'Free'
-                : '\$${amount.abs().toStringAsFixed(0)}',
+                : _formatVND(amount.abs()),
             style: TextStyle(
               fontSize: isTotal ? 18 : 16,
               fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,

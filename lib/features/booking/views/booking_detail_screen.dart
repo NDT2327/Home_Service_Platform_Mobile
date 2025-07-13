@@ -29,65 +29,29 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     _account = AccountService().getAccountById(widget.booking.customerId);
   }
 
-  // Ánh xạ status thành thông tin hiển thị
-  // Map<String, dynamic> _getStatusInfo(String status) {
-  //   switch (status.toUpperCase()) {
-  //     case 'PENDING':
-  //       return {
-  //         'text': 'Chờ xử lý',
-  //         'color': Colors.orange,
-  //         'icon': Icons.schedule,
-  //       };
-  //     case 'CONFIRMED':
-  //       return {
-  //         'text': 'Đã xác nhận',
-  //         'color': Colors.green,
-  //         'icon': Icons.check_circle,
-  //       };
-  //     case 'COMPLETED':
-  //       return {
-  //         'text': 'Hoàn thành',
-  //         'color': Colors.blue,
-  //         'icon': Icons.done_all,
-  //       };
-  //     case 'CANCELLED':
-  //       return {
-  //         'text': 'Đã hủy',
-  //         'color': Colors.red,
-  //         'icon': Icons.cancel,
-  //       };
-  //     default:
-  //       return {
-  //         'text': status,
-  //         'color': Colors.grey,
-  //         'icon': Icons.help_outline,
-  //       };
-  //   }
-  // }
-
   Map<String, dynamic> _getBookingStatusInfo(int statusId) {
     switch (statusId) {
       case 1:
         return {
-          'text': 'Chờ xử lý',
+          'text': 'Pending',
           'color': Colors.orange,
           'icon': Icons.schedule,
         };
       case 2:
         return {
-          'text': 'Đã xác nhận',
+          'text': 'Confirmed',
           'color': Colors.green,
           'icon': Icons.check_circle,
         };
       case 3:
         return {
-          'text': 'Đã hủy',
+          'text': 'Cancelled',
           'color': Colors.red,
           'icon': Icons.cancel,
         };
       default:
         return {
-          'text': 'Hoàn thành',
+          'text': 'Completed',
           'color': Colors.blue,
           'icon': Icons.done_all,
         };
@@ -98,25 +62,25 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     switch (statusId) {
       case 1:
         return {
-          'text': 'Chưa thanh toán',
+          'text': 'Unpaid',
           'color': Colors.red,
           'icon': Icons.money_off,
         };
       case 2:
         return {
-          'text': 'Đã thanh toán',
+          'text': 'Paid',
           'color': Colors.green,
           'icon': Icons.payment,
         };
       case 3:
         return {
-          'text': 'Đã hoàn tiền',
+          'text': 'Refunded',
           'color': Colors.purple,
           'icon': Icons.refresh,
         };
       default:
         return {
-          'text': 'Không xác định',
+          'text': 'Unknown',
           'color': Colors.grey,
           'icon': Icons.help_outline,
         };
@@ -125,6 +89,11 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   String _formatDate(DateTime date) {
     return DateFormat('dd/MM/yyyy HH:mm').format(date);
+  }
+
+  String _formatVND(double amount) {
+    
+    return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
   }
 
   Widget _buildStatusChip(Map<String, dynamic> statusInfo) {
@@ -199,8 +168,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   }
 
   Widget _buildServiceCard(BookingDetail detail) {
-    // final statusInfo = _getStatusInfo(detail.status);
-    
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       elevation: 2,
@@ -242,71 +209,64 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   ),
                 const SizedBox(width: 12),
                 Expanded(
-                child: FutureBuilder<Service>(
-                  future: ApiService().getServiceById(detail.serviceId),
-                  builder: (context, snapshot) {
-                    String titleText;
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      titleText = 'Đang tải...';
-                    } else if (snapshot.hasError) {
-                      titleText = 'Không xác định';
-                    } else {
-                      titleText = snapshot.data!.serviceName;
-                    }
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          titleText,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                  child: FutureBuilder<Service>(
+                    future: ApiService().getServiceById(detail.serviceId),
+                    builder: (context, snapshot) {
+                      String titleText;
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        titleText = 'Loading...';
+                      } else if (snapshot.hasError) {
+                        titleText = 'Unknown';
+                      } else {
+                        titleText = snapshot.data!.serviceName;
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            titleText,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '\$${detail.unitPrice.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                          const SizedBox(height: 4),
+                          Text(
+                            _formatVND(detail.unitPrice),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      );
+                    },
+                  ),
                 ),
-              ),
-              
-              // _buildStatusChip(statusInfo),
-            ],
-          ),
-            
+              ],
+            ),
             const SizedBox(height: 16),
-            
             // Service details
             _buildInfoRow(
               Icons.calendar_today,
-              'Ngày thực hiện',
+              'Service Date',
               _formatDate(detail.scheduleDatetime),
               iconColor: Colors.blue,
             ),
-            
             _buildInfoRow(
               Icons.format_list_numbered,
-              'Số lượng',
+              'Quantity',
               '${detail.quantity}',
               iconColor: Colors.orange,
             ),
-            
             _buildInfoRow(
               Icons.attach_money,
-              'Đơn giá',
-              '\$${detail.unitPrice.toStringAsFixed(2)}',
+              'Unit Price',
+              _formatVND(detail.unitPrice),
               iconColor: Colors.green,
             ),
-            
             FutureBuilder<BaseResponse<Account>>(
               future: _account,
               builder: (context, accSnap) {
@@ -316,42 +276,40 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       SizedBox(width: 20),
                       CircularProgressIndicator(strokeWidth: 2),
                       SizedBox(width: 8),
-                      Text('Đang tải khách hàng…'),
+                      Text('Loading customer…'),
                     ],
                   );
                 }
                 if (accSnap.hasError || accSnap.data == null || accSnap.data!.data == null) {
-                  // Hiển thị fallback nếu lỗi
                   return Column(
                     children: [
                       _buildInfoRow(
                         Icons.person,
-                        'Khách hàng',
-                        'Không xác định',
+                        'Customer',
+                        'Unknown',
                         iconColor: Colors.purple,
                       ),
                       _buildInfoRow(
                         Icons.phone,
-                        'Số điện thoại',
+                        'Phone Number',
                         '—',
                         iconColor: Colors.teal,
                       ),
                     ],
                   );
                 }
-
                 final account = accSnap.data!.data!;
                 return Column(
                   children: [
                     _buildInfoRow(
                       Icons.person,
-                      'Khách hàng',
+                      'Customer',
                       account.fullName,
                       iconColor: Colors.purple,
                     ),
                     _buildInfoRow(
                       Icons.phone,
-                      'Số điện thoại',
+                      'Phone Number',
                       account.phone,
                       iconColor: Colors.teal,
                     ),
@@ -359,19 +317,17 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 );
               },
             ),
-
             _buildInfoRow(
               Icons.location_on,
-              'Địa chỉ',
-              widget.booking.address ?? 'Chưa có địa chỉ',
+              'Address',
+              widget.booking.address ?? 'No address provided',
               iconColor: Colors.red,
             ),
-            
             if (detail.notes != null && detail.notes!.isNotEmpty) ...[
               const SizedBox(height: 8),
               _buildInfoRow(
                 Icons.note,
-                'Ghi chú',
+                'Notes',
                 widget.booking.notes!,
                 iconColor: Colors.grey,
               ),
@@ -389,7 +345,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chi tiết đặt lịch'),
+        title: const Text('Booking Details'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -428,7 +384,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Mã đặt lịch',
+                              'Booking ID',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[600],
@@ -449,50 +405,43 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         _buildStatusChip(bookingStatusInfo),
                       ],
                     ),
-                    
                     const SizedBox(height: 20),
-                    
                     // Booking info
                     _buildInfoRow(
                       Icons.calendar_today,
-                      'Ngày đặt',
-                      widget.booking.bookingDate != null 
+                      'Booking Date',
+                      widget.booking.bookingDate != null
                           ? _formatDate(widget.booking.bookingDate!)
                           : 'N/A',
                       iconColor: Colors.blue,
                     ),
-                    
                     _buildInfoRow(
                       Icons.alarm,
-                      'Hạn chót',
+                      'Deadline',
                       _formatDate(widget.booking.deadline),
                       iconColor: Colors.orange,
                     ),
-                    
                     _buildInfoRow(
                       Icons.attach_money,
-                      'Tổng tiền',
-                      '\$${widget.booking.totalAmount.toStringAsFixed(2)}',
+                      'Total Amount',
+                      _formatVND(widget.booking.totalAmount),
                       iconColor: Colors.green,
                     ),
-                    
                     if (widget.booking.address != null) ...[
                       _buildInfoRow(
                         Icons.location_on,
-                        'Địa chỉ',
+                        'Address',
                         widget.booking.address!,
                         iconColor: Colors.red,
                       ),
                     ],
-                    
                     const SizedBox(height: 16),
-                    
                     // Payment status
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Trạng thái thanh toán',
+                          'Payment Status',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[600],
@@ -507,7 +456,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               ),
             ),
           ),
-          
           // Services section
           Expanded(
             child: Container(
@@ -516,7 +464,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Dịch vụ đã đặt',
+                    'Booked Services',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -524,7 +472,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
                   // Services list
                   Expanded(
                     child: FutureBuilder<List<BookingDetail>>(
@@ -544,7 +491,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'Lỗi: ${snapshot.error}',
+                                  'Error: ${snapshot.error}',
                                   style: TextStyle(
                                     color: Colors.red[600],
                                     fontSize: 16,
@@ -565,7 +512,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                 ),
                                 SizedBox(height: 16),
                                 Text(
-                                  'Không tìm thấy dịch vụ nào',
+                                  'No services found',
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 16,
