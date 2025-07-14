@@ -128,4 +128,26 @@ class BookingService {
       throw Exception('Không thể tải danh sách đặt lịch');
     }
   }
+
+  //get booking by bookingId
+    Future<Booking> fetchBookingByBookingId(int bookingId) async {
+    final url = Uri.parse('${AppConstants.baseLocalUrl}/booking/bookings/$bookingId');
+
+    final response = await http.get(
+      url,
+      headers: await _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      print(jsonData);
+      // response JSON: { "data": { ... booking ... }, ... }
+      final bookingJson = jsonData['data'] as Map<String, dynamic>;
+      return Booking.fromJson(bookingJson);
+    } else {
+      throw Exception(
+        'Failed to create booking: ${response.statusCode} ${response.body}',
+      );
+    }
+  }
 }

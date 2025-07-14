@@ -4,7 +4,7 @@ class TaskClaim {
   final int claimId;
   final int detailId;
   final int housekeeperId;
-  final DateTime? claimDate;
+  final DateTime claimDate;
   final int statusId;
   final String? note;
 
@@ -14,7 +14,7 @@ class TaskClaim {
     required this.claimId,
     required this.detailId,
     required this.housekeeperId,
-    this.claimDate,
+    required this.claimDate,
     required this.statusId,
     this.note,
     this.detail,
@@ -26,7 +26,7 @@ class TaskClaim {
       claimId: map['claimId'],
       detailId: map['detailId'],
       housekeeperId: map['housekeeperId'],
-      claimDate: map['claimDate'] != null ? DateTime.parse(map['claimDate']) : null,
+      claimDate: DateTime.parse(map['claimDate']),
       statusId: map['statusId'],
       note: map['note'],
     );

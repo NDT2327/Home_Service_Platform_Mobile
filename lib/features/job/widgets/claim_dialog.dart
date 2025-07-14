@@ -8,12 +8,12 @@ import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
 import 'package:provider/provider.dart';
 
 class ClaimDialog extends StatelessWidget {
-  final BookingDetail detail;
+  final int detailId;
   final int housekeeperId;
 
   const ClaimDialog({
     super.key,
-    required this.detail,
+    required this.detailId,
     required this.housekeeperId,
   });
 
@@ -29,7 +29,11 @@ class ClaimDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.assignment_turned_in_rounded, size: 48.r, color: AppColors.primary),
+            Icon(
+              Icons.assignment_turned_in_rounded,
+              size: 48.r,
+              color: AppColors.primary,
+            ),
             SizedBox(height: 16.h),
             Text(
               'taskClaim.claimConfirm'.tr(),
@@ -41,7 +45,7 @@ class ClaimDialog extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             Text(
-              'taskClaim.claimPrompt'.tr(args: [detail.serviceName]),
+              'taskClaim.claimPrompt'.tr(),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: Responsive.getFontSize(context, base: 16.sp),
@@ -61,26 +65,7 @@ class ClaimDialog extends StatelessWidget {
                 SizedBox(width: 12.w),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () async {
-                      await provider.claimTask(
-                        detailId: detail.detailId,
-                        housekeeperId: housekeeperId,
-                      );
-                      if (context.mounted) Navigator.pop(context);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('taskClaim.claimSuccess'.tr()),
-                            backgroundColor: AppColors.success,
-                            behavior: SnackBarBehavior.floating,
-                            margin: EdgeInsets.all(16.w),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.r),
-                            ),
-                          ),
-                        );
-                      }
-                    },
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.success,
                     ),

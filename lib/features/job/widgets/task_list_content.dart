@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/booking_detail.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
+import 'package:hsp_mobile/features/job/view_model/task_available_view_model.dart';
 import 'package:hsp_mobile/features/job/widgets/task_list_item.dart';
 
 class TaskListContent extends StatelessWidget {
-  final List<BookingDetail> availableTasks;
+  final List<TaskAvailableViewModel> availableTasks;
 
   const TaskListContent({super.key, required this.availableTasks});
 

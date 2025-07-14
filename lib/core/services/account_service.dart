@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:hsp_mobile/core/models/account.dart';
-import 'package:hsp_mobile/core/models/dtos/base_response.dart';
+import 'package:hsp_mobile/core/models/dtos/response/base_response.dart';
 import 'package:hsp_mobile/core/models/dtos/request/update_account_request.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 class AccountService {
   final String baseUrl = '${AppConstants.baseLocalUrl}/identity/account';
-  
+
   // Headers cho các yêu cầu HTTP
   Future<Map<String, String>> get _headers async {
     final token = await SharedPrefsUtils.getAccessToken();
@@ -20,7 +20,7 @@ class AccountService {
 
   //create account
   Future<BaseResponse<Account>> createAccount(Account account) async {
-try {
+    try {
       final response = await http.post(
         Uri.parse(baseUrl),
         headers: await _headers,
@@ -28,10 +28,7 @@ try {
       );
 
       final json = jsonDecode(response.body);
-      return BaseResponse.fromJson(
-        json,
-        (data) => Account.fromMap(data),
-      );
+      return BaseResponse.fromJson(json, (data) => Account.fromMap(data));
     } catch (e) {
       return BaseResponse<Account>(
         statusCode: 500,
@@ -50,18 +47,15 @@ try {
       );
 
       final json = jsonDecode(response.body);
-      print(json);
-      return BaseResponse.fromJson(
-        json,
-        (data) => Account.fromMap(data),
-      );
+      return BaseResponse.fromJson(json, (data) => Account.fromMap(data));
     } catch (e) {
-      return BaseResponse<Account>( 
+      return BaseResponse<Account>(
         statusCode: 500,
         message: 'Failed to fetch account: $e',
       );
     }
   }
+
   //update account
   Future<BaseResponse<Account>> updateAccount(
     int accountId,
@@ -75,10 +69,7 @@ try {
       );
 
       final json = jsonDecode(response.body);
-      return BaseResponse.fromJson(
-        json,
-        (data) => Account.fromMap(data),
-      );
+      return BaseResponse.fromJson(json, (data) => Account.fromMap(data));
     } catch (e) {
       return BaseResponse<Account>(
         statusCode: 500,
@@ -88,7 +79,7 @@ try {
   }
 
   //get current account
-    Future<BaseResponse<Account>> getCurrentAccount() async {
+  Future<BaseResponse<Account>> getCurrentAccount() async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/current'),
@@ -96,12 +87,9 @@ try {
       );
 
       final json = jsonDecode(response.body);
-      return BaseResponse.fromJson(
-        json,
-        (data) => Account.fromMap(data),
-      );
+      return BaseResponse.fromJson(json, (data) => Account.fromMap(data));
     } catch (e) {
-      return BaseResponse<Account>( 
+      return BaseResponse<Account>(
         statusCode: 500,
         message: 'Failed to fetch account: $e',
       );

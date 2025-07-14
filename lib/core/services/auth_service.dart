@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:hsp_mobile/core/models/dtos/base_response.dart';
-import 'package:hsp_mobile/core/models/dtos/login_response.dart';
+import 'package:hsp_mobile/core/models/dtos/response/base_response.dart';
+import 'package:hsp_mobile/core/models/dtos/response/login_response.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
 import 'package:http/http.dart' as http;
 
