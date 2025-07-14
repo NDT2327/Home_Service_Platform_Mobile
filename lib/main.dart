@@ -1,24 +1,30 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
+import 'package:hsp_mobile/core/services/account_service.dart';
+import 'package:hsp_mobile/core/services/booking_detail_service.dart';
+import 'package:hsp_mobile/core/services/booking_service.dart';
+import 'package:hsp_mobile/core/services/catalog_service.dart';
+import 'package:hsp_mobile/core/services/task_service.dart';
 import 'package:hsp_mobile/core/utils/app_theme.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
-import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/core/widgets/navigation_layout.dart';
 import 'package:hsp_mobile/features/account/account_provider.dart';
 import 'package:hsp_mobile/features/auth/providers/auth_provider.dart';
+import 'package:hsp_mobile/features/job/provider/booking_detail_provider.dart';
 import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
+import 'package:hsp_mobile/features/job/repository/task_available_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
- class MyHttpOverrides extends HttpOverrides{
+class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext? context){
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
 
@@ -40,10 +46,22 @@ void main() async {
       fallbackLocale: const Locale('en', 'US'),
       child: MultiProvider(
         providers: [
+          //nạp các provider
           ChangeNotifierProvider(create: (_) => AuthProvider()),
           ChangeNotifierProvider(create: (_) => AccountProvider()),
-          ChangeNotifierProvider(create: (_) => TaskClaimProvider()),
-          // Thêm các provider khác nếu cần
+          ChangeNotifierProvider(
+            create:
+                (_) => TaskClaimProvider(
+                  taskService: TaskService(),
+                  taskAvailableRepository: TaskAvailableRepository(
+                    bookingDetailService: BookingDetailService(),
+                    bookingService: BookingService(),
+                    accountService: AccountService(),
+                    catalogService: CatalogService(),
+                  ),
+                ),
+          ),
+          ChangeNotifierProvider(create: (_) => BookingDetailProvider()),
         ],
         child: const MyApp(),
       ),

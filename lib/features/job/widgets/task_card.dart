@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:hsp_mobile/core/models/booking_detail.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
+import 'package:hsp_mobile/core/utils/enums/booking_status.dart';
 import 'package:hsp_mobile/core/utils/helpers.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
+import 'package:hsp_mobile/features/job/view_model/task_available_view_model.dart';
 
 class TaskCard extends StatelessWidget {
-  final BookingDetail bookingDetail;
+  final TaskAvailableViewModel task;
   final bool showActions;
-  final Function(BookingDetail) onJobDetail;
+  final Function(TaskAvailableViewModel) onJobDetail;
   final Function(int) onClaimJob;
   final Function(int) onCompleteJob;
 
   const TaskCard({
     super.key,
-    required this.bookingDetail,
+    required this.task,
     required this.showActions,
     required this.onJobDetail,
     required this.onClaimJob,
@@ -22,6 +23,7 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bookingStatus = BookingStatusExt.fromId(task.task.bookingStatusId);
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
@@ -29,19 +31,20 @@ class TaskCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () => onJobDetail(bookingDetail),
+        onTap: () => onJobDetail(task),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: Responsive.getPadding(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Title + status badge
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Text(
-                      bookingDetail.serviceName,
+                      task.serviceName,
                       style: TextStyle(
                         fontSize: Responsive.getFontSize(context, base: 18),
                         fontWeight: FontWeight.bold,
@@ -52,22 +55,28 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  _buildStatusBadge(context),
+                  _buildStatusBadge(context, bookingStatus.label),
                 ],
               ),
+
               const SizedBox(height: 16),
-              _buildDetailRow(context, Icons.person, bookingDetail.customerName),
-              _buildDetailRow(context, Icons.location_on, bookingDetail.customerAddress),
-              _buildDetailRow(context, Icons.calendar_today, Helpers.formatDate(bookingDetail.scheduleDatetime)),
-              _buildDetailRow(context, Icons.attach_money, Helpers.formatMoney(bookingDetail.unitPrice)),
+              _buildDetailRow(context, Icons.person, task.customerName),
+              _buildDetailRow(context, Icons.location_on, task.customerAddress),
+              _buildDetailRow(context, Icons.calendar_today,
+                  Helpers.formatDate(task.task.scheduleDatetime)),
+              _buildDetailRow(context, Icons.attach_money,
+                  Helpers.formatMoney(task.task.unitPrice)),
+
               const SizedBox(height: 16),
+
+              // Action buttons
               Align(
                 alignment: Alignment.centerRight,
                 child: Wrap(
                   spacing: 12,
                   children: [
                     OutlinedButton.icon(
-                      onPressed: () => onJobDetail(bookingDetail),
+                      onPressed: () => onJobDetail(task),
                       icon: const Icon(Icons.visibility, size: 18),
                       label: Text(
                         "View detail",
@@ -77,15 +86,17 @@ class TaskCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (showActions && bookingDetail.status == 'PENDING')
+                    if (showActions && task.task.bookingStatusId == 1)
                       ElevatedButton.icon(
-                        onPressed: () => onClaimJob(bookingDetail.detailId),
+                        onPressed: () => onClaimJob(task.task.detailId),
                         icon: const Icon(Icons.check_circle, size: 18),
-                        label: const Text("Claim"),
+                        label: const Text("Claim", style: TextStyle(
+                          color: AppColors.lightGray
+                        ),),
                       ),
-                    if (showActions && bookingDetail.status == 'CLAIMED')
+                    if (showActions && task.task.bookingStatusId == 'CLAIMED')
                       ElevatedButton.icon(
-                        onPressed: () => onCompleteJob(bookingDetail.detailId),
+                        onPressed: () => onCompleteJob(task.task.detailId),
                         icon: const Icon(Icons.check_circle, size: 18),
                         label: const Text("Complete"),
                       ),
@@ -99,8 +110,8 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge(BuildContext context) {
-    Color color = _getStatusColor(bookingDetail.status);
+  Widget _buildStatusBadge(BuildContext context, String status) {
+    Color color = _getStatusColor(status);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -109,7 +120,7 @@ class TaskCard extends StatelessWidget {
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(
-        bookingDetail.status,
+        status,
         style: TextStyle(
           color: color,
           fontSize: 12,
@@ -142,7 +153,7 @@ class TaskCard extends StatelessWidget {
   }
 
   Color _getStatusColor(String status) {
-    switch (status) {
+    switch (status.toUpperCase()) {
       case 'PENDING':
         return AppColors.accentOrange;
       case 'CLAIMED':

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/models/booking.dart';
 import 'package:hsp_mobile/core/models/booking_detail.dart';
-import 'package:hsp_mobile/core/models/dtos/base_response.dart';
+import 'package:hsp_mobile/core/models/dtos/response/base_response.dart';
 import 'package:hsp_mobile/core/models/service.dart';
 import 'package:hsp_mobile/core/services/account_service.dart';
 import 'package:hsp_mobile/core/services/api_service.dart';

@@ -65,19 +65,19 @@ String filter = 'ALL'; // hoặc 'COMPLETED' | 'CLAIMED'
             ],
           ),
         ),
-        Expanded(
-          child: ListView.builder(
-            padding: Responsive.getPadding(context),
-            itemCount: filteredTasks.length,
-            itemBuilder: (context, index) {
-              final booking = filteredTasks[index];
-              return TaskListItem(
-                data: booking,
-                showActions: false, // không cho nhận/hoàn thành nữa
-              );
-            },
-          ),
-        ),
+        // Expanded(
+        //   child: ListView.builder(
+        //     padding: Responsive.getPadding(context),
+        //     itemCount: filteredTasks.length,
+        //     itemBuilder: (context, index) {
+        //       final booking = filteredTasks[index];
+        //       return TaskListItem(
+        //         data: booking,
+        //         showActions: false, // không cho nhận/hoàn thành nữa
+        //       );
+        //     },
+        //   ),
+        // ),
       ],
     );
   }

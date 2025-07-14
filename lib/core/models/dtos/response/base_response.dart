@@ -13,7 +13,7 @@ class BaseResponse<T> {
 
   factory BaseResponse.fromJson(
     Map<String, dynamic> json,
-    T Function(Map<String, dynamic>) fromJsonT,
+    T Function(dynamic json) fromJsonT,
   ) {
     return BaseResponse<T>(
       data: json['data'] != null ? fromJsonT(json['data']) : null,
