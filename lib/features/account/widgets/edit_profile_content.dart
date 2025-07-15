@@ -106,12 +106,10 @@ class _EditProfileContentState extends State<EditProfileContent> {
       final oldUrl = widget.account.avatar;
       if (oldUrl.isNotEmpty) {
         final oldPath = oldUrl.split('/cozycare/').last;
-        print('Removing old image: avatars/$oldPath');
         await supabase.storage.from('cozycare').remove(['avatars/$oldPath']);
       }
       return publicUrl;
     } catch (e) {
-      print('Upload error: $e');
       if (mounted) {
         ScaffoldMessenger.of(
           context,

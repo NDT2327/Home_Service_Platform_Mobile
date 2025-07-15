@@ -100,7 +100,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       avatar: 'https://ui-avatars.com/api/?name=${_fullNameController.text}',
       address: _addressController.text,
       phone: _phoneController.text,
-      roleId: 1,
+      roleId: 2,
       statusId: 2,
       createdDate: null,
       createdBy: null,

@@ -1,46 +1,46 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Colors
-  static const Color primary = Color(0xFF2196F3); // Blue
-  static const Color primaryLight = Color(0xFF64B5F6); // Lighter Blue (Tint)
-  static const Color primaryDark = Color(0xFF1976D2); // Darker Blue (Shade)
+  // ✅ Primary Colors (dùng các màu xanh chủ đạo từ bạn cung cấp)
+  static const Color primary = Color(0xFF1A3343); // big-stone
+  static const Color primaryLight = Color(0xFF4C93A5); // hippie-blue (sáng hơn)
+  static const Color primaryDark = Color(0xFF101819); // bunker (tối hơn)
 
-  // Secondary Colors
-  static const Color secondary = Color(0xFF9C27B0); // Purple
-  static const Color secondaryLight = Color(0xFFCE93D8); // Lighter Purple
-  static const Color secondaryDark = Color(0xFF7B1FA2); // Darker Purple
+  // ✅ Secondary Colors (tông xanh phụ)
+  static const Color secondary = Color(0xFF57AEBB); // fountain-blue
+  static const Color secondaryLight = Color(0xFF517C86); // smalt-blue
+  static const Color secondaryDark = Color(0xFF335861); // spectra
 
-  // Tertiary Colors
-  static const Color tertiary = Color(0xFF4CAF50); // Green
-  static const Color tertiaryLight = Color(0xFF81C784); // Lighter Green
-  static const Color tertiaryDark = Color(0xFF388E3C); // Darker Green
+  // ✅ Tertiary Colors (màu be/trung tính)
+  static const Color tertiary = Color(0xFFF2D8B5); // sidecar
+  static const Color tertiaryLight = Color(0xFFFFFFFF); // trắng
+  static const Color tertiaryDark = Color(0xFF625E59); // chicago
 
-  // Accent Colors
-  static const Color accentYellow = Color(0xFFFFC107); // Yellow
-  static const Color accentOrange = Color(0xFFFF5722); // Orange
+  // ✅ Accent Colors
+  static const Color accentYellow = Color(0xFFF2D8B5); // dùng sidecar làm điểm nhấn nhẹ
+  static const Color accentOrange = Color(0xFF747167); // flint (nhẹ, phù hợp thiết kế tối giản)
 
-  // Neutral Colors
+  // ✅ Neutral Colors
   static const Color white = Color(0xFFFFFFFF);
   static const Color lightGray = Color(0xFFE0E0E0);
   static const Color mediumGray = Color(0xFF9E9E9E);
-  static const Color darkGray = Color(0xFF616161);
+  static const Color darkGray = Color(0xFF424443); // cape-cod
   static const Color black = Color(0xFF000000);
 
-  // Background Colors
-  static const Color backgroundLight = Color(0xFFF5F5F5); // Light Background
-  static const Color backgroundDark = Color(0xFF121212); // Dark Background
+  // ✅ Background Colors
+  static const Color backgroundLight = Color(0xFFF5F5F5); // Light background
+  static const Color backgroundDark = Color(0xFF101819); // bunker
 
-  // Feedback Colors
-  static const Color success = Color(0xFF4CAF50); // Green for Success
-  static const Color error = Color(0xFFF44336); // Red for Error
-  static const Color warning = Color(0xFFFFC107); // Yellow for Warning
+  // ✅ Feedback Colors
+  static const Color success = Color(0xFF4CAF50); // vẫn giữ màu xanh lá thông dụng
+  static const Color error = Color(0xFFF44336);
+  static const Color warning = Color(0xFFFFC107);
 
-  // Text Colors
+  // ✅ Text Colors
   static const Color textLight = Color(0xFF000000);
   static const Color textDark = Color(0xFFFFFFFF);
 
-  // Gradients
+  // ✅ Gradients
   static LinearGradient primaryGradient(BuildContext context) {
     return LinearGradient(
       colors: [
@@ -63,7 +63,7 @@ class AppColors {
     );
   }
 
-  // Helper Methods to Get Colors Based on Theme
+  // ✅ Helpers theo theme
   static Color getPrimary(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark ? primaryDark : primary;
   }
@@ -84,9 +84,8 @@ class AppColors {
     return Theme.of(context).brightness == Brightness.dark ? backgroundDark : backgroundLight;
   }
 
-  // Helper Method for Contrast Adjustment
+  // ✅ Contrast Helper
   static Color adjustContrast(Color color, {double factor = 1.0}) {
-    // Adjust brightness for better contrast (simplified for WCAG compliance)
     return Color.fromRGBO(
       (color.red * factor).clamp(0, 255).toInt(),
       (color.green * factor).clamp(0, 255).toInt(),

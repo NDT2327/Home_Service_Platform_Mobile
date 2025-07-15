@@ -1,81 +1,28 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hsp_mobile/core/models/booking_detail.dart';
-import 'package:hsp_mobile/core/utils/app_color.dart';
-import 'package:hsp_mobile/core/utils/responsive.dart';
-import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
-import 'package:provider/provider.dart';
 
 class ClaimDialog extends StatelessWidget {
-  final int detailId;
-  final int housekeeperId;
+  final VoidCallback onConfirm;
+  final VoidCallback? onCancel;
 
-  const ClaimDialog({
-    super.key,
-    required this.detailId,
-    required this.housekeeperId,
-  });
+  const ClaimDialog({super.key, required this.onConfirm, this.onCancel});
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<TaskClaimProvider>(context, listen: false);
-
-    return Dialog(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-      child: Padding(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.assignment_turned_in_rounded,
-              size: 48.r,
-              color: AppColors.primary,
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              'taskClaim.claimConfirm'.tr(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: Responsive.getFontSize(context, base: 20.sp),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              'taskClaim.claimPrompt'.tr(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: Responsive.getFontSize(context, base: 16.sp),
-                color: AppColors.mediumGray,
-              ),
-            ),
-            SizedBox(height: 24.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text('taskClaim.cancel'.tr()),
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.success,
-                    ),
-                    child: Text('taskClaim.confirm'.tr()),
-                  ),
-                ),
-              ],
-            ),
-          ],
+    return AlertDialog(
+      title: const Text('Xác nhận nhận công việc'),
+      content: const Text('Bạn có chắc chắn muốn nhận công việc này?'),
+      actions: [
+        TextButton(
+          onPressed: onCancel ?? () => Navigator.of(context).pop(),
+          child: const Text('Hủy'),
         ),
+        ElevatedButton(
+          onPressed: onConfirm,
+          child: const Text('Xác nhận'),
+        ),
+      ],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
     );
   }

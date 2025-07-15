@@ -8,7 +8,7 @@
     "profile": "Profile",
     "menu": "Menu",
     "category": "Category",
-    "booking": "Booking",
+    "bookings": "Booking",
     "jobs": "Jobs",
     "my_tasks":"Tasks"
   },
@@ -110,7 +110,7 @@
     "submit": "Submit",
     "cancelSuccess": "Task cancelled successfully!",
     "claimConfirm": "Confirm Task Claim",
-    "claimPrompt": "Do you want to claim the task: {0}?",
+    "claimPrompt": "Do you want to claim this task?",
     "confirm": "Confirm",
     "complete": "Complete Task",
     "completeSuccess": "Task completed successfully!",

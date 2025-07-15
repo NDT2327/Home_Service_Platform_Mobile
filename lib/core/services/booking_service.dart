@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:hsp_mobile/core/models/booking.dart';
 import 'package:hsp_mobile/core/models/booking_detail.dart';
+import 'package:hsp_mobile/core/models/dtos/response/base_response.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:http/http.dart' as http;
@@ -15,6 +16,7 @@ class BookingService {
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
+
   /// Tạo mới một Booking và trả về object Booking vừa được tạo.
   Future<Booking> createBookingAsync({
     required int customerId,
@@ -32,7 +34,8 @@ class BookingService {
     final body = {
       'customerId': customerId,
       if (promotionCode != null) 'promotionCode': promotionCode,
-      if (bookingDate != null) 'bookingDate': bookingDate.toUtc().toIso8601String(),
+      if (bookingDate != null)
+        'bookingDate': bookingDate.toUtc().toIso8601String(),
       'deadline': deadline.toUtc().toIso8601String(),
       'totalAmount': totalAmount,
       if (notes != null) 'notes': notes,
@@ -64,10 +67,12 @@ class BookingService {
     required int serviceId,
     required DateTime scheduleDatetime,
     required int quantity,
-    required double unitPrice
+    required double unitPrice,
   }) async {
     // Implement the logic to create a booking detail
-    final url = Uri.parse('${AppConstants.baseLocalUrl}/booking/booking-details');
+    final url = Uri.parse(
+      '${AppConstants.baseLocalUrl}/booking/booking-details',
+    );
 
     // build request body
     final body = {
@@ -96,10 +101,14 @@ class BookingService {
     }
   }
 
-  Future<List<BookingDetail>> getBookingDetailsByBookingId(int bookingId) async {
+  Future<List<BookingDetail>> getBookingDetailsByBookingId(
+    int bookingId,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('${AppConstants.baseLocalUrl}/booking/booking-details/booking/$bookingId'),
+        Uri.parse(
+          '${AppConstants.baseLocalUrl}/booking/booking-details/booking/$bookingId',
+        ),
         headers: await _headers,
       );
 
@@ -108,7 +117,9 @@ class BookingService {
         final List<dynamic> data = jsonData['data'];
         return data.map((json) => BookingDetail.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to load booking details: ${response.statusCode}');
+        throw Exception(
+          'Failed to load booking details: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Error fetching booking details: $e');
@@ -130,13 +141,12 @@ class BookingService {
   }
 
   //get booking by bookingId
-    Future<Booking> fetchBookingByBookingId(int bookingId) async {
-    final url = Uri.parse('${AppConstants.baseLocalUrl}/booking/bookings/$bookingId');
-
-    final response = await http.get(
-      url,
-      headers: await _headers,
+  Future<Booking> fetchBookingByBookingId(int bookingId) async {
+    final url = Uri.parse(
+      '${AppConstants.baseLocalUrl}/booking/bookings/$bookingId',
     );
+
+    final response = await http.get(url, headers: await _headers);
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -148,6 +158,36 @@ class BookingService {
       throw Exception(
         'Failed to create booking: ${response.statusCode} ${response.body}',
       );
+    }
+  }
+
+  //PUT: Update booking
+  Future<void> updateBooking({
+    required int bookingId,
+    required int bookingStatusId,
+    Map<String, dynamic>? additionalFields,
+  }) async {
+    final url = Uri.parse(
+      '${AppConstants.baseLocalUrl}/booking/bookings/$bookingId',
+    );
+
+    // Construct the body with only necessary fields
+    final body = jsonEncode({
+      'bookingStatusId': bookingStatusId,
+      // Include additional fields if provided (e.g., notes, address)
+      if (additionalFields != null) ...additionalFields,
+    });
+
+    try {
+      final response = await http.put(url, headers: await _headers, body: body);
+
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw Exception(
+          'Failed to update booking: ${response.statusCode} ${response.body}',
+        );
+      } 
+    } catch (e) {
+      throw Exception('Failed to update booking: $e');
     }
   }
 }

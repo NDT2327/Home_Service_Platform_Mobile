@@ -33,7 +33,10 @@ class Booking {
       bookingNumber: map['bookingNumber'],
       customerId: map['customerId'],
       promotionCode: map['promotionCode'],
-      bookingDate: map['bookingDate'] != null ? DateTime.parse(map['bookingDate']) : null,
+      bookingDate:
+          map['bookingDate'] != null
+              ? DateTime.parse(map['bookingDate'])
+              : null,
       deadline: DateTime.parse(map['deadline']),
       totalAmount: (map['totalAmount'] as num).toDouble(),
       notes: map['notes'],
@@ -44,16 +47,17 @@ class Booking {
   }
 
   factory Booking.fromJson(Map<String, dynamic> json) => Booking(
-        bookingId: json['bookingId'],
-        bookingNumber: json['bookingNumber'],
-        customerId: json['customerId'],
-        promotionCode: json['promotionCode'],
-        bookingDate: DateTime.parse(json['bookingDate']),
-        deadline: DateTime.parse(json['deadline']),
-        totalAmount: (json['totalAmount'] as num).toDouble(),
-        notes: json['notes'],
-        bookingStatusId: json['bookingStatusId'],
-        paymentStatusId: json['paymentStatusId'],
-        address: json['address'],
-      );
+    bookingId: json['bookingId'],
+    bookingNumber: json['bookingNumber'],
+    customerId: json['customerId'],
+    promotionCode: json['promotionCode'],
+    bookingDate: DateTime.parse(json['bookingDate']),
+    deadline: DateTime.parse(json['deadline']),
+    totalAmount: (json['totalAmount'] as num).toDouble(),
+    notes: json['notes'],
+    bookingStatusId: json['bookingStatusId'],
+    paymentStatusId: json['paymentStatusId'],
+    address: json['address'],
+  );
+
 }

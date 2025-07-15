@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/task_claim.dart';
+import 'package:hsp_mobile/core/services/booking_service.dart';
 import 'package:hsp_mobile/core/services/task_service.dart';
 import 'package:hsp_mobile/features/job/repository/task_available_repository.dart';
 import 'package:hsp_mobile/features/job/view_model/task_available_view_model.dart';
@@ -69,6 +70,7 @@ class TaskClaimProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
   //PUT: COMPLETE TASK
   // Example method to complete a task
   Future<void> completeTask(int taskId) async {
@@ -143,6 +145,38 @@ class TaskClaimProvider with ChangeNotifier {
     } catch (e) {
       _availableTasks = [];
       _errorMessage = 'Failed to load available tasks: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  //Claim task
+  Future<void> claimTask({
+    required int detailId,
+    required int housekeeperId,
+    required int bookingId
+  }) async {
+    _isLoading = false;
+    notifyListeners();
+
+    try {
+      final response = await _taskService.claimTask(detailId, housekeeperId);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        //fetch claimed tasks again or update state
+        _errorMessage = null;
+        await fetchClaimedTasks();
+        await loadAvailableTasks();
+        final bookingService = BookingService();
+        await bookingService.updateBooking(
+          bookingId: bookingId,
+          bookingStatusId: 2,
+        );
+      } else {
+        _errorMessage = response.message ?? 'Failed to claim task';
+      }
+    } catch (e) {
+      _errorMessage = 'Error while claiming task: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
