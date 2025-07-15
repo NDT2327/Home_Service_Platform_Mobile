@@ -19,11 +19,11 @@ class ProfileItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: isLogout ? AppColors.accentOrange : null),
+      leading: Icon(icon, color: isLogout ? AppColors.error : null),
       title: Text(
         text,
         style: TextStyle(
-          color: isLogout ? AppColors.accentOrange : null,
+          color: isLogout ? AppColors.error : null,
           fontWeight: isLogout ? FontWeight.bold : null,
         ),
       ),

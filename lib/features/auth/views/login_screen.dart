@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
+import 'package:hsp_mobile/core/utils/helpers.dart';
 import 'package:hsp_mobile/core/widgets/index.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/features/auth/providers/auth_provider.dart';
@@ -39,9 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         final error = authProvider.errorMessage ?? 'Đăng nhập thất bại';
         if (!mounted) return;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error)));
+        Helpers.showSnackBar(context, error, isError: true);
       }
     }
   }

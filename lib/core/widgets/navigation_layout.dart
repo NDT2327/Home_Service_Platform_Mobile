@@ -33,8 +33,10 @@ class _NavigationLayoutState extends State<NavigationLayout> {
   //   MainListBooking(),
   // ];
 
-   /// Lấy dữ liệu navigation dựa trên roleId
-  ({List<Widget> screens, List<NavigationItem> items}) _getNavigationData(int roleId) {
+  /// Lấy dữ liệu navigation dựa trên roleId
+  ({List<Widget> screens, List<NavigationItem> items}) _getNavigationData(
+    int roleId,
+  ) {
     switch (roleId) {
       case 1: // Admin
         return (
@@ -47,17 +49,17 @@ class _NavigationLayoutState extends State<NavigationLayout> {
             NavigationItem(
               icon: Icons.dashboard_outlined,
               selectedIcon: Icons.dashboard,
-              label: 'navigation.dashboard',
+              label: 'navigation.dashboard'.tr(),
             ),
             NavigationItem(
               icon: Icons.book_online_outlined,
               selectedIcon: Icons.book_online,
-              label: 'navigation.bookings',
+              label: 'navigation.bookings'.tr(),
             ),
             NavigationItem(
               icon: Icons.person_outline,
               selectedIcon: Icons.person,
-              label: 'navigation.profile',
+              label: 'navigation.profile'.tr(),
             ),
           ],
         );
@@ -73,22 +75,22 @@ class _NavigationLayoutState extends State<NavigationLayout> {
             NavigationItem(
               icon: Icons.home_outlined,
               selectedIcon: Icons.home,
-              label: 'navigation.home',
+              label: 'navigation.home'.tr(),
             ),
             NavigationItem(
               icon: Icons.menu_outlined,
               selectedIcon: Icons.menu,
-              label: 'navigation.menu',
+              label: 'navigation.menu'.tr(),
             ),
             NavigationItem(
               icon: Icons.book_online_outlined,
               selectedIcon: Icons.book_online,
-              label: 'navigation.bookings',
+              label: 'navigation.bookings'.tr(),
             ),
             NavigationItem(
               icon: Icons.person_outline,
               selectedIcon: Icons.person,
-              label: 'navigation.profile',
+              label: 'navigation.profile'.tr(),
             ),
           ],
         );
@@ -109,17 +111,17 @@ class _NavigationLayoutState extends State<NavigationLayout> {
             NavigationItem(
               icon: Icons.work_outline,
               selectedIcon: Icons.work,
-              label: 'navigation.jobs',
+              label: 'navigation.jobs'.tr(),
             ),
             NavigationItem(
               icon: Icons.task_outlined,
               selectedIcon: Icons.task,
-              label: 'navigation.my_tasks',
+              label: 'navigation.my_tasks'.tr(),
             ),
             NavigationItem(
               icon: Icons.person_outline,
               selectedIcon: Icons.person,
-              label: 'navigation.profile',
+              label: 'navigation.profile'.tr(),
             ),
           ],
         );
@@ -130,12 +132,12 @@ class _NavigationLayoutState extends State<NavigationLayout> {
             NavigationItem(
               icon: Icons.home_outlined,
               selectedIcon: Icons.home,
-              label: 'navigation.home',
+              label: 'navigation.home'.tr(),
             ),
             NavigationItem(
               icon: Icons.person_outline,
               selectedIcon: Icons.person,
-              label: 'navigation.profile',
+              label: 'navigation.profile'.tr(),
             ),
           ],
         );
@@ -181,11 +183,9 @@ class _NavigationLayoutState extends State<NavigationLayout> {
     final roleId = accountProvider.currentAccount?.roleId;
     print(roleId);
 
-        // Kiểm tra nếu chưa đăng nhập hoặc roleId không hợp lệ
+    // Kiểm tra nếu chưa đăng nhập hoặc roleId không hợp lệ
     if (roleId == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     // Lấy danh sách màn hình và navigation items dựa trên roleId
@@ -193,39 +193,60 @@ class _NavigationLayoutState extends State<NavigationLayout> {
 
     // Sử dụng widget Responsive để tự động chọn layout phù hợp
     return Responsive(
-      mobile: _buildMobileLayout(context, navigationData), // Layout cho điện thoại
+      mobile: _buildMobileLayout(
+        context,
+        navigationData,
+      ), // Layout cho điện thoại
       tablet: _buildTabletLayout(context, navigationData), // Layout cho tablet
-      desktop: _buildDesktopLayout(context, navigationData), // Layout cho desktop
+      desktop: _buildDesktopLayout(
+        context,
+        navigationData,
+      ), // Layout cho desktop
     );
   }
 
   /// Xây dựng layout cho mobile (điện thoại)
   /// Sử dụng BottomNavigationBar ở phía dưới màn hình
-   /// Layout cho mobile (BottomNavigationBar)
-  Widget _buildMobileLayout(BuildContext context, ({List<Widget> screens, List<NavigationItem> items}) navigationData) {
+  /// Layout cho mobile (BottomNavigationBar)
+  Widget _buildMobileLayout(
+    BuildContext context,
+    ({List<Widget> screens, List<NavigationItem> items}) navigationData,
+  ) {
     return Scaffold(
       body: navigationData.screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.primaryLight,
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.backgroundLight,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         selectedFontSize: Responsive.getFontSize(context, base: 12),
         unselectedFontSize: Responsive.getFontSize(context, base: 12),
-        items: navigationData.items
-            .map((item) => BottomNavigationBarItem(
-                  icon: Icon(item.icon, size: Responsive.getFontSize(context, base: 24)),
-                  activeIcon: Icon(item.selectedIcon, size: Responsive.getFontSize(context, base: 24)),
-                  label: item.label.tr(),
-                ))
-            .toList(),
+        items:
+            navigationData.items
+                .map(
+                  (item) => BottomNavigationBarItem(
+                    icon: Icon(
+                      item.icon,
+                      size: Responsive.getFontSize(context, base: 24),
+                    ),
+                    activeIcon: Icon(
+                      item.selectedIcon,
+                      size: Responsive.getFontSize(context, base: 24),
+                    ),
+                    label: item.label.tr(),
+                  ),
+                )
+                .toList(),
       ),
     );
   }
 
   /// Layout cho tablet (NavigationRail)
-  Widget _buildTabletLayout(BuildContext context, ({List<Widget> screens, List<NavigationItem> items}) navigationData) {
+  Widget _buildTabletLayout(
+    BuildContext context,
+    ({List<Widget> screens, List<NavigationItem> items}) navigationData,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: Row(
@@ -256,17 +277,31 @@ class _NavigationLayoutState extends State<NavigationLayout> {
                   onDestinationSelected: _onItemTapped,
                   labelType: NavigationRailLabelType.all,
                   backgroundColor: AppColors.white,
-                  selectedIconTheme: IconThemeData(color: AppColors.primary, size: 28),
-                  unselectedIconTheme: IconThemeData(color: AppColors.primaryLight, size: 24),
-                  selectedLabelTextStyle: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600),
-                  unselectedLabelTextStyle: const TextStyle(color: AppColors.primaryLight),
-                  destinations: navigationData.items
-                      .map((item) => NavigationRailDestination(
-                            icon: Icon(item.icon),
-                            selectedIcon: Icon(item.selectedIcon),
-                            label: Text(item.label.tr()),
-                          ))
-                      .toList(),
+                  selectedIconTheme: IconThemeData(
+                    color: AppColors.primary,
+                    size: 28,
+                  ),
+                  unselectedIconTheme: IconThemeData(
+                    color: AppColors.primaryLight,
+                    size: 24,
+                  ),
+                  selectedLabelTextStyle: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  unselectedLabelTextStyle: const TextStyle(
+                    color: AppColors.primaryLight,
+                  ),
+                  destinations:
+                      navigationData.items
+                          .map(
+                            (item) => NavigationRailDestination(
+                              icon: Icon(item.icon),
+                              selectedIcon: Icon(item.selectedIcon),
+                              label: Text(item.label.tr()),
+                            ),
+                          )
+                          .toList(),
                 ),
               ),
             ],
@@ -283,20 +318,23 @@ class _NavigationLayoutState extends State<NavigationLayout> {
   }
 
   /// Layout cho desktop (Sidebar)
-  Widget _buildDesktopLayout(BuildContext context, ({List<Widget> screens, List<NavigationItem> items}) navigationData) {
+  Widget _buildDesktopLayout(
+    BuildContext context,
+    ({List<Widget> screens, List<NavigationItem> items}) navigationData,
+  ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.primary,
       body: Row(
         children: [
           Container(
             width: 240,
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: AppColors.primary, // sidebar
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 10,
-                  offset: const Offset(1, 0),
+                  offset: const Offset(2, 0),
                 ),
               ],
             ),
@@ -304,10 +342,10 @@ class _NavigationLayoutState extends State<NavigationLayout> {
               children: [
                 Container(
                   height: 80,
-                  color: AppColors.backgroundLight,
+                  color: AppColors.primary,
                   child: Center(
                     child: Image.asset(
-                      'assets/logo/logo.jpg',
+                      'assets/logo/logo.png',
                       width: 150,
                       height: 150,
                     ),
@@ -317,28 +355,45 @@ class _NavigationLayoutState extends State<NavigationLayout> {
                 Expanded(
                   child: ListView.builder(
                     itemCount: navigationData.items.length,
-                    itemBuilder: (context, index) {
-                      final item = navigationData.items[index];
-                      final isSelected = _selectedIndex == index;
+                    itemBuilder: (ctx, idx) {
+                      final item = navigationData.items[idx];
+                      final isSelected = _selectedIndex == idx;
                       return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
+                          color:
+                              isSelected
+                                  ? AppColors.primaryLight.withOpacity(0.3)
+                                  : Colors.transparent,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: ListTile(
                           leading: Icon(
                             isSelected ? item.selectedIcon : item.icon,
-                            color: isSelected ? AppColors.primary : AppColors.primaryLight,
+                            color:
+                                isSelected
+                                    ? AppColors.white
+                                    : AppColors.tertiaryLight,
                           ),
                           title: Text(
                             item.label.tr(),
                             style: TextStyle(
-                              color: isSelected ? AppColors.primary : AppColors.primaryLight,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                              color:
+                                  isSelected
+                                      ? AppColors.white
+                                      : AppColors.tertiaryLight,
+                              fontWeight:
+                                  isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                              fontSize: 16,
                             ),
                           ),
-                          onTap: () => _onItemTapped(index),
+                          onTap: () => _onItemTapped(idx),
+                          hoverColor: AppColors.primaryLight.withOpacity(0.5),
                         ),
                       );
                     },
@@ -349,8 +404,8 @@ class _NavigationLayoutState extends State<NavigationLayout> {
           ),
           Expanded(
             child: Container(
+              color: AppColors.backgroundLight,
               padding: const EdgeInsets.all(32),
-              constraints: BoxConstraints(maxWidth: Responsive.getMaxWidth(context)),
               child: navigationData.screens[_selectedIndex],
             ),
           ),
