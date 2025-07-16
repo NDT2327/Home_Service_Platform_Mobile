@@ -62,6 +62,25 @@ class BookingService {
     }
   }
 
+  //Patch COMPLETE status for booking
+  Future<void> completeBooking(int bookingId) async {
+    final url = Uri.parse(
+      '${AppConstants.baseLocalUrl}/booking/bookings/completed-task/$bookingId',
+    );
+
+    final response = await http.patch(
+      url,
+      headers: await _headers,
+      body: null, // No body needed for this request
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception(
+        'Failed to complete booking: ${response.statusCode} ${response.body}',
+      );
+    }
+  }
+
   Future<BookingDetail> createBookingDetailAsync({
     required int bookingId,
     required int serviceId,
