@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/booking.dart';
+import 'package:hsp_mobile/core/services/booking_service.dart';
 import 'package:hsp_mobile/core/services/payment_service.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/features/booking/views/booking_detail_screen.dart';
@@ -8,8 +9,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 class BookingCard extends StatelessWidget {
   final Booking booking;
+  final VoidCallback? onRefresh;
 
-  const BookingCard({Key? key, required this.booking}) : super(key: key);
+  const BookingCard({
+    Key? key, 
+    required this.booking,
+    this.onRefresh,
+    }) : super(key: key);
 
   // Map bookingStatusId to status text, icon and colors
   Map<String, dynamic> _getBookingStatusInfo(int statusId) {
@@ -206,6 +212,7 @@ class BookingCard extends StatelessWidget {
           const SnackBar(content: Text('Could not launch payment URL')),
         );
       }
+      if (onRefresh != null) onRefresh!();
     } catch (e) {
       Navigator.pop(context); // Close loading dialog
       ScaffoldMessenger.of(context).showSnackBar(
@@ -248,11 +255,104 @@ class BookingCard extends StatelessWidget {
     );
   }
 
+  //Handle completed booking
+  Future<void> _handleCompletedBooking(BuildContext context) async {
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
+      await BookingService().completeBooking(booking.bookingId);
+
+      Navigator.pop(context); // Close loading dialog
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Booking completed successfully')),
+      );
+      if (onRefresh != null) onRefresh!(); // Refresh bookings if callback provided
+    } catch (e) {
+      Navigator.pop(context); // Close loading dialog
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to complete booking: $e')),
+      );
+    }
+  }
+
+
+  Widget _buildCompletedButton(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 16),
+      child: ElevatedButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                title: const Text('Confirm'),
+                content: const Text('Are you sure you want to mark this booking as completed?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                    child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      _handleCompletedBooking(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    child: const Text('Yes', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          elevation: 2,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(Icons.check_circle, size: 20),
+            SizedBox(width: 8),
+            Text(
+              'Confirm booking completed',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bookingStatusInfo = _getBookingStatusInfo(booking.bookingStatusId);
     final paymentStatusInfo = _getPaymentStatusInfo(booking.paymentStatusId);
     final showPayButton = booking.bookingStatusId == 1 && booking.paymentStatusId == 1;
+    final showCompletedButton = booking.bookingStatusId == 2 && booking.paymentStatusId == 2;
 
     return GestureDetector(
       onTap: () {
@@ -381,7 +481,8 @@ class BookingCard extends StatelessWidget {
 
                 // Pay Now button (only show when booking is pending and payment is unpaid)
                 if (showPayButton) _buildPayNowButton(context),
-
+                // Completed button (only show when booking is confirmed and payment is paid)
+                if (showCompletedButton) _buildCompletedButton(context),
                 // Tap instruction
                 const SizedBox(height: 12),
                 Row(
