@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsp_mobile/core/utils/helpers.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
-import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
+import 'package:hsp_mobile/core/providers/task_claim_provider.dart';
 import 'package:hsp_mobile/features/job/view_model/task_available_view_model.dart';
 import 'package:hsp_mobile/features/job/views/task_detail_modal.dart';
 import 'package:hsp_mobile/features/job/widgets/claim_dialog.dart';

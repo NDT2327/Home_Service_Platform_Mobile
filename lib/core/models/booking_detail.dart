@@ -70,4 +70,22 @@ class BookingDetail {
       image: json['image'],
     );
   }
+
+    Map<String, dynamic> toMap() => {
+        'detailId': detailId,
+        'bookingId': bookingId,
+        'serviceId': serviceId,
+        'scheduleDatetime': scheduleDatetime.toIso8601String(),
+        'quantity': quantity,
+        'unitPrice': unitPrice,
+        'serviceName': serviceName,
+        'customerName': customerName,
+        'customerPhone': customerPhone,
+        'customerAddress': customerAddress,
+        'totalAmount': totalAmount,
+        'notes': notes,
+        'status': status,
+        'image': image,
+      };
+  
 }

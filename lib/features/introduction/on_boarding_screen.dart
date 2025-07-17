@@ -37,6 +37,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('seenOnboard', true);
     Navigator.pushReplacementNamed(context, AppRoutes.login);
+    //context.go(AppRoutes.login);
   }
 
   void _onNext() {

@@ -1,21 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
+import 'package:hsp_mobile/features/account/views/profile_screen.dart';
 
 //implement PreferredSizedWidget to customize the height and width of AppBar or tabBar
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
-  final String currentUserName;
   final String? title; // Tiêu đề tùy chọn, mặc định là appName
   final List<Widget>? actions;
 
-  const CustomAppbar({
-    super.key,
-    required this.currentUserName,
-    this.title,
-    this.actions,
-  });
+  const CustomAppbar({super.key, this.title, this.actions});
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
@@ -30,27 +24,32 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             title?.tr() ?? 'appName'.tr(),
             style: TextStyle(
-              color: AppColors.textLight,
-              fontSize: Responsive.getFontSize(context, base: 20),
+              color: AppColors.primary,
+              fontSize: Responsive.getFontSize(context, base: 25),
               fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Spacer(),
-          Padding(
-            padding: EdgeInsets.only(right: 16.w),
-            child: Text(
-              'home.welcome'.tr(args: [currentUserName]),
-              style: TextStyle(
-                color: AppColors.black,
-                fontSize: Responsive.getFontSize(context, base: 14),
-              ),
             ),
           ),
         ],
       ),
       centerTitle: false,
       automaticallyImplyLeading: false,
-      actions: actions,
+      actions: [
+        //notification
+        // IconButton(
+        //   onPressed: () {},
+        //   icon: Icon(Icons.notifications_outlined, color: AppColors.primary),
+        // ),
+        //icon profile
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+            );
+          },
+          icon: Icon(Icons.person_2_rounded, color: AppColors.primary),
+        ),
+      ],
     );
   }
 }

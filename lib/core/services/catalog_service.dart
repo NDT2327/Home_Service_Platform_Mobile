@@ -101,5 +101,10 @@ class CatalogService {
     }
   }
 
+  //Categories
+  
+
+
+
 
 }

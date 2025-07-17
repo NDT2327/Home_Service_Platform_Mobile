@@ -5,7 +5,7 @@ import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/helpers.dart';
 import 'package:hsp_mobile/core/widgets/index.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
-import 'package:hsp_mobile/features/auth/providers/auth_provider.dart';
+import 'package:hsp_mobile/core/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {

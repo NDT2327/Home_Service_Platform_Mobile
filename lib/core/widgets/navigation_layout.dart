@@ -6,6 +6,7 @@ import 'package:hsp_mobile/features/account/account_provider.dart';
 import 'package:hsp_mobile/features/account/views/profile_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
 import 'package:hsp_mobile/features/catalog/view/category_screen.dart';
+import 'package:hsp_mobile/features/home/views/home_page_screen.dart';
 import 'package:hsp_mobile/features/home_page.dart';
 import 'package:hsp_mobile/features/job/views/job_list_screen.dart';
 import 'package:hsp_mobile/features/job/views/my_task_screen.dart';
@@ -66,7 +67,7 @@ class _NavigationLayoutState extends State<NavigationLayout> {
       case 2: // Customer
         return (
           screens: const [
-            HomePage(),
+            HomePageScreen(),
             CategoryScreen(),
             MainListBooking(),
             ProfileScreen(),
@@ -181,8 +182,6 @@ class _NavigationLayoutState extends State<NavigationLayout> {
     //get current account's role
     final accountProvider = Provider.of<AccountProvider>(context);
     final roleId = accountProvider.currentAccount?.roleId;
-    print(roleId);
-
     // Kiểm tra nếu chưa đăng nhập hoặc roleId không hợp lệ
     if (roleId == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));

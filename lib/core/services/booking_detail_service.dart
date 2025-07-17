@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:hsp_mobile/core/models/booking.dart';
 import 'package:hsp_mobile/core/models/booking_detail.dart';
 import 'package:hsp_mobile/core/models/dtos/response/base_response.dart';
 import 'package:hsp_mobile/core/models/dtos/response/task_available_response.dart';
@@ -65,6 +66,28 @@ class BookingDetailService {
       return BaseResponse<List<TaskAvailableResponse>>(
         statusCode: 500,
         message: 'Failed to get available tasks: $e',
+      );
+    }
+  }
+
+  //fetch booking detail by Id
+  Future<BaseResponse<BookingDetail>> fetchBookingDetailById(
+    int detailId,
+  ) async {
+    try {
+      //get url
+      final response = await http.get(
+        Uri.parse('$baseUrl/$detailId'),
+        headers: await _headers,
+      );
+
+      //map to json
+      final json = jsonDecode(response.body);
+      return BaseResponse.fromJson(json, (data) => BookingDetail.fromMap(data));
+    } catch (e) {
+      return BaseResponse<BookingDetail>(
+        statusCode: 500,
+        message: 'Failed to get booking detail: $e',
       );
     }
   }

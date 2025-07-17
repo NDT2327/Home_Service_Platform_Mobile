@@ -52,7 +52,7 @@ class Account {
     return DateTime.tryParse(value.toString());
   }
 
-    Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'accountId': accountId,
       'email': email,
@@ -65,4 +65,16 @@ class Account {
       'statusId': statusId,
     };
   }
+
+  Map<String, dynamic> toMap() => {
+    'accountId': accountId,
+    'email': email,
+    'password': password,
+    'fullName': fullName,
+    'avatar': avatar,
+    'address': address,
+    'phone': phone,
+    'roleId': roleId,
+    'statusId': statusId,
+  };
 }

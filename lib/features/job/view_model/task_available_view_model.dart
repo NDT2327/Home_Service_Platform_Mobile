@@ -10,7 +10,7 @@ class TaskAvailableViewModel {
   TaskAvailableViewModel({
     required this.task,
     required this.serviceName,
-    required this.customerName,
+    required this.customerName, 
     required this.customerPhone,
     required this.customerAddress,
   });

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
+import 'package:hsp_mobile/core/providers/task_claim_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/features/job/widgets/task_list_content.dart';
