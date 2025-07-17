@@ -30,6 +30,13 @@ class _MainListBookingState extends State<MainListBooking> {
     return BookingService().getBookingsForUser(userId);
   }
 
+  // Hàm để refresh danh sách bookings
+  void _refreshBookings() {
+    setState(() {
+      _bookings = _fetchBookings();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +60,10 @@ class _MainListBookingState extends State<MainListBooking> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final booking = snapshot.data![index];
-                return BookingCard(booking: booking);
+                return BookingCard(
+                  booking: booking,
+                  onRefresh: _refreshBookings, // Callback to refresh bookings
+                );
               },
             );
           }
