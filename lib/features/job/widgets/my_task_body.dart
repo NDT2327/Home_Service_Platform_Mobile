@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
-import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
+import 'package:hsp_mobile/core/providers/task_claim_provider.dart';
 import 'package:hsp_mobile/features/job/widgets/task_list_item.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +18,7 @@ String filter = 'ALL'; // hoặc 'COMPLETED' | 'CLAIMED'
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<TaskClaimProvider>(context, listen: false).fetchClaimedTasks();
+      Provider.of<TaskClaimProvider>(context, listen: false).fetchClaimedTasksByHousekeeperId();
     });
   }
 
@@ -27,12 +27,6 @@ String filter = 'ALL'; // hoặc 'COMPLETED' | 'CLAIMED'
     final provider = Provider.of<TaskClaimProvider>(context);
     final allTasks = provider.claimedTasks;
 
-    final filteredTasks = allTasks.where((task) {
-      if (filter == 'ALL') return true;
-      if (filter == 'COMPLETED') return task.statusId == 2;
-      if (filter == 'CLAIMED') return task.statusId == 1;
-      return false;
-    }).toList();
 
     return Column(
       children: [

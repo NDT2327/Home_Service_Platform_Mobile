@@ -4,8 +4,8 @@ import 'package:hsp_mobile/features/account/views/edit_profile_screen.dart';
 import 'package:hsp_mobile/features/booking/views/booking_summary_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
 import 'package:hsp_mobile/features/catalog/view/category_screen.dart';
+import 'package:hsp_mobile/features/home/views/home_page_screen.dart';
 import 'package:hsp_mobile/features/home/views/housekeeper_home_screen.dart';
-import 'package:hsp_mobile/features/home_page.dart';
 import 'package:hsp_mobile/features/auth/views/login_screen.dart';
 import 'package:hsp_mobile/features/introduction/on_boarding_screen.dart';
 import 'package:hsp_mobile/features/auth/views/sign_up_screen.dart';
@@ -47,7 +47,7 @@ class RouteGenerator {
       case AppRoutes.register:
         return MaterialPageRoute(builder: (_) => const SignUpScreen());
       case AppRoutes.home:
-        return MaterialPageRoute(builder: (_) => const HomePage());
+        return MaterialPageRoute(builder: (_) => const HomePageScreen());
       case AppRoutes.bookingSummary:
         return MaterialPageRoute(
           builder: (_) => const BookingSummaryScreen(serviceId: 1),

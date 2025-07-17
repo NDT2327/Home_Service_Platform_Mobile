@@ -60,4 +60,17 @@ class Booking {
     address: json['address'],
   );
 
+  Map<String, dynamic> toMap() => {
+        'bookingId': bookingId,
+        'bookingNumber': bookingNumber,
+        'customerId': customerId,
+        'promotionCode': promotionCode,
+        'bookingDate': bookingDate?.toIso8601String(),
+        'deadline': deadline.toIso8601String(),
+        'totalAmount': totalAmount,
+        'notes': notes,
+        'bookingStatusId': bookingStatusId,
+        'paymentStatusId': paymentStatusId,
+        'address': address,
+      };
 }

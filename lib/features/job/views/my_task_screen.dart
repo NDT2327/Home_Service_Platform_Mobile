@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/task_claim.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
-import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
-import 'package:hsp_mobile/features/job/widgets/task_claim_card.dart';
+import 'package:hsp_mobile/core/providers/task_claim_provider.dart';
+import 'package:hsp_mobile/core/utils/enums/task_claim_status.dart';
+import 'package:hsp_mobile/core/widgets/custom_card.dart';
+import 'package:hsp_mobile/features/job/widgets/task_detail_dialog.dart';
 import 'package:provider/provider.dart';
 
 class MyTaskScreen extends StatefulWidget {
@@ -15,38 +17,32 @@ class MyTaskScreen extends StatefulWidget {
 class _MyTaskScreenState extends State<MyTaskScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<TaskClaim> taskClaims = [];
-  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    // Gọi sau khi widget đã build lần đầu
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadTasks();
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) return;
+      setState(() {}); // Cập nhật giao diện khi đổi tab
     });
   }
 
-Future<void> _loadTasks() async {
-  final provider = Provider.of<TaskClaimProvider>(context, listen: false);
-  await provider.fetchClaimedTasks();
-  if (!mounted) return;
-  setState(() {
-    taskClaims = provider.claimedTasks;
-    isLoading = false;
-  });
-}
-
-  List<TaskClaim> get filteredTasks {
-    final status = ['ALL', 'CLAIMED', 'COMPLETED'][_tabController.index];
-    return status == 'ALL'
-        ? taskClaims
-        : taskClaims.where((e) => e.detail?.status == status).toList();
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<TaskClaimProvider>(context, listen: false);
+
+    // Tải dữ liệu khi màn hình khởi tạo
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      provider.fetchClaimedTasksByHousekeeperId();
+    });
+
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
@@ -65,45 +61,88 @@ Future<void> _loadTasks() async {
             Tab(text: "Active"),
             Tab(text: "Completed"),
           ],
-          onTap: (_) => setState(() {}),
         ),
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: List.generate(3, (_) => _buildTaskList()),
-            ),
-          ),
-        ],
+      body: Consumer<TaskClaimProvider>(
+        builder: (context, provider, child) {
+          return Column(
+            children: [
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildTaskList(provider, null), // All
+                    _buildTaskList(provider, TaskClaimStatus.claimed), // Active
+                    _buildTaskList(
+                      provider,
+                      TaskClaimStatus.completed,
+                    ), // Completed
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildTaskList() {
-    if (isLoading) return const Center(child: CircularProgressIndicator());
-    final tasks = filteredTasks;
+  Widget _buildTaskList(TaskClaimProvider provider, TaskClaimStatus? status) {
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (provider.errorMessage != null) {
+      return Center(child: Text(provider.errorMessage!));
+    }
+
+    final tasks =
+        status != null
+            ? provider.filterByStatus(status)
+            : provider.claimedTasks;
     if (tasks.isEmpty) {
       return const Center(child: Text('No tasks found'));
     }
-    return ListView.builder(
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
       itemCount: tasks.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final task = tasks[index];
-        return TaskClaimCard(claim: task);
-        // return Padding(
-        //   padding: const EdgeInsets.all(8.0),
-        //   child: TaskCard(
-        //     bookingDetail: task.detail!,
-        //     showActions: true,
-        //     onJobDetail: (_) {},
-        //     onClaimJob: (_) {},
-        //     onCompleteJob: (_) {},
-        //   ),
-        // );
+        final claim = task['taskClaim'] as TaskClaim;
+        final detail = task['bookingDetail'] as Map<String, dynamic>?;
+        final service = task['service'] as Map<String, dynamic>?;
+        final booking = task['booking'] as Map<String, dynamic>?;
+
+        final serviceName = service?['serviceName'] ?? 'N/A';
+        final schedule = detail?['scheduleDatetime']?.toString() ?? 'N/A';
+        final address = booking?['address'] ?? 'No address';
+        final price =
+            detail != null
+                ? '${detail['quantity']} × ${detail['unitPrice']} = ${detail['quantity'] * detail['unitPrice']} đ'
+                : 'N/A';
+
+        return CustomCard(
+          title: serviceName,
+          subtitle: address,
+          badge: TaskClaimStatusExt.fromId(claim.statusId).label,
+          footer: "🕒 $schedule\n💰 $price",
+          gradient: LinearGradient(
+            colors: [AppColors.primary, AppColors.primaryLight],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          onTap: () {
+            // Navigate to detail dialog
+            showDialog(
+              context: context,
+              builder: (context) => TaskDetailDialog(task: task),
+            );
+          },
+        );
       },
     );
   }

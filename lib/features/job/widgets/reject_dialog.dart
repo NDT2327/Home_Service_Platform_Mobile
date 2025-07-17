@@ -6,7 +6,7 @@ import 'package:hsp_mobile/core/models/booking_detail.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/core/widgets/custom_text_field.dart';
-import 'package:hsp_mobile/features/job/provider/task_claim_provider.dart';
+import 'package:hsp_mobile/core/providers/task_claim_provider.dart';
 import 'package:provider/provider.dart';
 
 class RejectDialog extends StatefulWidget {
@@ -71,42 +71,42 @@ class _RejectDialogState extends State<RejectDialog> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
                     onPressed: () async {
-                      final reason = _reasonController.text.trim();
-                      if (reason.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('taskClaim.enterReasonError'.tr()),
-                            backgroundColor: AppColors.error,
-                          ),
-                        );
-                        return;
-                      }
+                      // final reason = _reasonController.text.trim();
+                      // if (reason.isEmpty) {
+                      //   ScaffoldMessenger.of(context).showSnackBar(
+                      //     SnackBar(
+                      //       content: Text('taskClaim.enterReasonError'.tr()),
+                      //       backgroundColor: AppColors.error,
+                      //     ),
+                      //   );
+                      //   return;
+                      // }
 
-                      try {
-                        await provider.cancelTaskClaim(widget.detail.detailId, reason);
-                        if (context.mounted) Navigator.pop(context);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'taskClaim.cancelSuccess'.tr(args: [widget.detail.serviceName]),
-                              ),
-                              backgroundColor: AppColors.success,
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'taskClaim.claimError'.tr(args: [e.toString()]),
-                              ),
-                              backgroundColor: AppColors.error,
-                            ),
-                          );
-                        }
-                      }
+                      // try {
+                      //   await provider.cancelTaskClaim(widget.detail.detailId, reason);
+                      //   if (context.mounted) Navigator.pop(context);
+                      //   if (context.mounted) {
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       SnackBar(
+                      //         content: Text(
+                      //           'taskClaim.cancelSuccess'.tr(args: [widget.detail.serviceName]),
+                      //         ),
+                      //         backgroundColor: AppColors.success,
+                      //       ),
+                      //     );
+                      //   }
+                      // } catch (e) {
+                      //   if (context.mounted) {
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       SnackBar(
+                      //         content: Text(
+                      //           'taskClaim.claimError'.tr(args: [e.toString()]),
+                      //         ),
+                      //         backgroundColor: AppColors.error,
+                      //       ),
+                      //     );
+                      //   }
+                      // }
                     },
                     child: Text('taskClaim.submit'.tr()),
                   ),

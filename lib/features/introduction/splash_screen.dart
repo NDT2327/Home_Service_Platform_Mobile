@@ -26,8 +26,10 @@ class _SplashScreenState extends State<SplashScreen> {
     // If yes, navigate to login, otherwise to onboarding
     if (seenOnboard) {
       Navigator.pushReplacementNamed(context, AppRoutes.login);
+      //context.go(AppRoutes.login);
     } else {
       Navigator.pushReplacementNamed(context, AppRoutes.onBoarding);
+      //context.go(AppRoutes.onBoarding);
     }
   }
 

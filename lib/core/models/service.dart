@@ -55,4 +55,17 @@ class Service {
       updatedDate: json['updatedDate'] != null ? DateTime.parse(json['updatedDate']) : null,
     );
   }
+
+    Map<String, dynamic> toMap() => {
+        'serviceId': serviceId,
+        'categoryId': categoryId,
+        'serviceName': serviceName,
+        'description': description,
+        'image': image,
+        'price': price,
+        'duration': duration,
+        'isActive': isActive,
+        'createdDate': createdDate?.toIso8601String(),
+        'updatedDate': updatedDate?.toIso8601String(),
+      };
 }
