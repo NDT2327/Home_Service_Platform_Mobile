@@ -14,16 +14,11 @@ class ServicesSection extends StatelessWidget {
         children: [
           Text("Dịch vụ phổ biến", style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
-          GridView.builder(
+          ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: services.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final service = services[index];
               return Container(
@@ -39,13 +34,24 @@ class ServicesSection extends StatelessWidget {
                     )
                   ],
                 ),
-                child: Column(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(service['icon'], size: 32, color: Colors.blue),
-                    const SizedBox(height: 8),
-                    Text(service['title'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text(service['description'], style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    Icon(service['icon'], size: 36, color: Colors.blue),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(service['title'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 4),
+                          Text(
+                            service['description'],
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               );

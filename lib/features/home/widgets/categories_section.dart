@@ -23,13 +23,13 @@ class CategoriesSection extends StatelessWidget {
                     CircleAvatar(
                       radius: 28,
                       backgroundColor: Colors.blue.shade100,
-                      child: Icon(category['icon'], size: 30, color: Colors.blue),
+                      child: Icon(category['image'], size: 30, color: Colors.blue),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      category['title'],
+                      category['name'],
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 10),
                     ),
                   ],
                 ),

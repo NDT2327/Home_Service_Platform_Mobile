@@ -32,6 +32,8 @@ class AppRoutes {
   static const String privacy = '/privacy';
   static const String termsConditions = '/terms';
   static const String profile = '/profile';
+
+  static const String mainLayout ='/layout';
 }
 
 //Route generator
@@ -48,10 +50,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SignUpScreen());
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomePageScreen());
-      case AppRoutes.bookingSummary:
-        return MaterialPageRoute(
-          builder: (_) => const BookingSummaryScreen(serviceId: 1),
-        );
+      // case AppRoutes.bookingSummary:
+      //   return MaterialPageRoute(
+      //     builder: (_) => const BookingSummaryScreen(serviceId: 1),
+      //   );
       case AppRoutes.jobList:
         return MaterialPageRoute(builder: (_) => const JobListScreen());
       case AppRoutes.housekeeperHome:
