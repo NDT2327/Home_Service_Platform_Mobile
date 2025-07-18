@@ -3,16 +3,8 @@ import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/core/widgets/search_bar_widget.dart';
 
-class HomePageHeader extends StatelessWidget {
-  const HomePageHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}// Header Section Widget - Reusable
 class HeaderSection extends StatelessWidget {
-  final String title;
+  final String customerName;
   final String subtitle;
   final bool showSearch;
   final double fontSize;
@@ -21,7 +13,7 @@ class HeaderSection extends StatelessWidget {
 
   const HeaderSection({
     super.key,
-    this.title = 'Xin chào! 👋',
+    required this.customerName,
     this.subtitle = 'Dịch vụ nhà chuyên nghiệp',
     this.showSearch = true,
     this.fontSize = 24,
@@ -52,7 +44,7 @@ class HeaderSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            'Xin chào, $customerName 👋',
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
