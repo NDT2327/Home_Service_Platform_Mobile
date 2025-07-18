@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+// import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:hsp_mobile/core/providers/catalog_provider.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/services/account_service.dart';
@@ -42,10 +42,7 @@ void main() async {
   );
   HttpOverrides.global = MyHttpOverrides(); // Bỏ qua chứng chỉ SSL không hợp lệ
 
-  //check is logged in or not
-  final isLoggedIn = await SharedPrefsUtils.isLoggedIn();
-
-  usePathUrlStrategy();
+  // usePathUrlStrategy();
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('vi')],
@@ -73,15 +70,14 @@ void main() async {
             create: (_) => CatalogProvider(catalogService: CatalogService()),
           ),
         ],
-        child: MyApp(isLoggedIn: isLoggedIn),
+        child: MyApp(),
       ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final bool isLoggedIn;
-  const MyApp({super.key, required this.isLoggedIn});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -91,9 +87,9 @@ class MyApp extends StatelessWidget {
       locale: context.locale,
       title: AppConstants.appName,
       theme: AppTheme.lightTheme,
-      //initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.login,
       onGenerateRoute: RouteGenerator.generateRoute,
-      home: isLoggedIn ? const NavigationLayout() : const LoginScreen(),
+      home: const NavigationLayout(),
       debugShowCheckedModeBanner: false,
     );
   }

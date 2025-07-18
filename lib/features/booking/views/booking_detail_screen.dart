@@ -400,9 +400,11 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                 color: Colors.black87,
                               ),
                             ),
+                            SizedBox(height: 4),
+                            _buildStatusChip(bookingStatusInfo),
                           ],
                         ),
-                        _buildStatusChip(bookingStatusInfo),
+                        
                       ],
                     ),
                     const SizedBox(height: 20),
