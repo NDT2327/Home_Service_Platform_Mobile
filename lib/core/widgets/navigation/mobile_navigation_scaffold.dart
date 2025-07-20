@@ -18,22 +18,31 @@ class MobileNavigationScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(items.length >= 2, 'Phải có ít nhất 2 mục trong BottomNavigationBar');
+
     return Scaffold(
-      body: screen,
+      body: SafeArea(child: screen),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: selectedIndex,
-        onTap: onTap,
+        currentIndex: selectedIndex.clamp(0, items.length - 1),
+        onTap: (index) {
+          // Đảm bảo không trỏ vào index sai
+          if (index < items.length) {
+            onTap(index);
+          }
+        },
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.primaryLight,
-        items:
-            items
-                .map(
-                  (item) => BottomNavigationBarItem(
-                    icon: Icon(item.icon),
-                    label: item.label,
-                  ),
-                )
-                .toList(),
+        selectedFontSize: 12,
+        unselectedFontSize: 11,
+        items: items
+            .map(
+              (item) => BottomNavigationBarItem(
+                icon: Icon(item.icon),
+                label: item.label,
+              ),
+            )
+            .toList(),
       ),
     );
   }

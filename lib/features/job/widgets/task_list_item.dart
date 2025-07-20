@@ -33,7 +33,7 @@ class TaskListItem extends StatelessWidget {
 
     // Check again if the widget is mounted before showing SnackBar
     if (!context.mounted) return;
-    Helpers.showSnackBar(context, 'Nhận công việc thành công!');
+    Helpers.showSnackBarWithMessenger(ScaffoldMessenger.of(context), 'Nhận công việc thành công!');
 
     // if (provider.errorMessage == null) {
     //   Helpers.showSnackBar(context, 'Nhận công việc thành công!');
@@ -115,8 +115,8 @@ class TaskListItem extends StatelessWidget {
         );
       },
       onCompleteJob: (detailId) {
-        Helpers.showSnackBar(
-          stableContext,
+        Helpers.showSnackBarWithMessenger(
+          ScaffoldMessenger.of(stableContext),
           'Đã hoàn tất công việc ID: $detailId',
         );
       },

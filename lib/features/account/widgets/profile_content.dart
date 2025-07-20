@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/helpers.dart';
@@ -15,7 +16,12 @@ class ProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accountProvider = Provider.of<AccountProvider>(context, listen: false);
+    final accountProvider = Provider.of<AccountProvider>(
+      context,
+      listen: false,
+    );
+    final scaffoldMessenger = ScaffoldMessenger.of(context); // Store reference
+
     return Column(
       children: [
         ProfileHeader(
@@ -33,11 +39,7 @@ class ProfileContent extends StatelessWidget {
                   icon: Icons.edit_rounded,
                   text: 'Edit Profile',
                   onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.editProfile,
-                      arguments: account,
-                    );
+                    context.push(AppRoutes.editProfile, extra: account);
                   },
                 ),
                 ProfileItem(
@@ -48,21 +50,43 @@ class ProfileContent extends StatelessWidget {
                 ProfileItem(
                   icon: Icons.privacy_tip_rounded,
                   text: 'Privacy Policy',
-                  onTap: () {},
+                  onTap: () {
+                    context.push(AppRoutes.privacy);
+                  },
                 ),
                 ProfileItem(
                   icon: Icons.description_rounded,
                   text: 'Terms & Conditions',
-                  onTap: () {},
+                  onTap: () {
+                    context.push(AppRoutes.termsConditions);
+                  },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ProfileItem(
                   icon: Icons.logout_rounded,
                   text: 'Logout',
-                  onTap: () async{
-                    await accountProvider.logout();
-                    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false);
-                    Helpers.showSnackBar(context, 'Logged out successfully');
+                  onTap: () async {
+                    try {
+                      // Perform logout
+                      await accountProvider.logout();
+                      // Show snackbar before navigation
+                      Helpers.showSnackBarWithMessenger(
+                        ScaffoldMessenger.of(context),
+                        'Logged out successfully',
+                      );
+                      // Delay navigation to ensure snackbar is displayed
+                      await Future.delayed(const Duration(milliseconds: 500));
+                      if (context.mounted) {
+                        context.go(AppRoutes.login);
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        Helpers.showSnackBarWithMessenger(
+                          ScaffoldMessenger.of(context),
+                          'Login failed: $e',
+                        );
+                      }
+                    }
                   },
                   isLogout: true,
                 ),
@@ -71,12 +95,6 @@ class ProfileContent extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-    void _navigateToScreen(BuildContext context, Widget screen) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => screen),
     );
   }
 }

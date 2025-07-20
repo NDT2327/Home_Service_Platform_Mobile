@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
+import 'package:hsp_mobile/core/utils/helpers.dart';
 import 'package:hsp_mobile/features/account/account_provider.dart';
 import 'package:hsp_mobile/features/account/widgets/profile_item.dart';
 import 'package:provider/provider.dart';
@@ -8,18 +10,30 @@ import 'package:provider/provider.dart';
 class NavigationList extends StatelessWidget {
   final Account account;
 
-  const NavigationList({
-    super.key,
-    required this.account
-  });
+  const NavigationList({super.key, required this.account});
 
   @override
   Widget build(BuildContext context) {
-    final accountProvider = Provider.of<AccountProvider>(context, listen: false);
+    final accountProvider = Provider.of<AccountProvider>(
+      context,
+      listen: false,
+    );
     final items = [
-      {'icon': Icons.edit_rounded, 'text': 'Edit Profile', 'route': AppRoutes.editProfile},
-      {'icon': Icons.lock_rounded, 'text': 'Change Password', 'route': Placeholder},
-      {'icon': Icons.privacy_tip_rounded, 'text': 'Privacy Policy', 'route': Placeholder},
+      {
+        'icon': Icons.edit_rounded,
+        'text': 'Edit Profile',
+        'route': AppRoutes.editProfile,
+      },
+      {
+        'icon': Icons.lock_rounded,
+        'text': 'Change Password',
+        'route': Placeholder,
+      },
+      {
+        'icon': Icons.privacy_tip_rounded,
+        'text': 'Privacy Policy',
+        'route': Placeholder,
+      },
       {
         'icon': Icons.description_rounded,
         'text': 'Terms & Conditions',
@@ -40,14 +54,10 @@ class NavigationList extends StatelessWidget {
                 text: 'Logout',
                 onTap: () async {
                   await accountProvider.logout();
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.login,
-                    (route) => false,
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Logged out successfully')),
-                  );
+                  if (context.mounted) {
+                    Helpers.showSnackBarWithMessenger(ScaffoldMessenger.of(context), 'Logged out successfully');
+                    context.go(AppRoutes.login);
+                  }
                 },
                 isLogout: true,
               ),
@@ -62,10 +72,7 @@ class NavigationList extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: ListTile(
-              leading: Icon(
-                item['icon'] as IconData,
-                color: Colors.grey[600],
-              ),
+              leading: Icon(item['icon'] as IconData, color: Colors.grey[600]),
               title: Text(
                 item['text'] as String,
                 style: TextStyle(
