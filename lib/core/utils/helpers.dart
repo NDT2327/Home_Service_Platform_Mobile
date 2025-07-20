@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 
 class Helpers {
   //show notifications
-static void showSnackBar(BuildContext context, String message, {bool isError = false}) {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      final scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
-      if (scaffoldMessenger != null) {
-        scaffoldMessenger.showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: isError ? Colors.red : Colors.green,
-          ),
-        );
-      } else {
-        debugPrint("⚠️ ScaffoldMessenger not found for current context.");
-      }
-    });
-  }
+static void showSnackBarWithMessenger(
+    ScaffoldMessengerState messenger, String message, {bool isError = false}) {
+  messenger.showSnackBar(
+    SnackBar(
+      content: Text(message),
+      backgroundColor: isError ? Colors.red : Colors.green,
+    ),
+  );
+}
+
 
 
   //format date

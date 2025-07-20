@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 // import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:hsp_mobile/core/providers/catalog_provider.dart';
 import 'package:hsp_mobile/core/routes/app_router.dart';
@@ -39,8 +40,7 @@ void main() async {
   );
   HttpOverrides.global = MyHttpOverrides(); // Bỏ qua chứng chỉ SSL không hợp lệ
 
-
-  runApp(
+runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('vi')],
       path: 'assets/lang',
@@ -96,10 +96,7 @@ class MyApp extends StatelessWidget {
       locale: context.locale,
       title: AppConstants.appName,
       theme: AppTheme.lightTheme,
-
-      initialRoute: AppRoutes.login,
-      onGenerateRoute: RouteGenerator.generateRoute,
-      home: const NavigationLayout(),
+      debugShowCheckedModeBanner: false,
 
     );
   }

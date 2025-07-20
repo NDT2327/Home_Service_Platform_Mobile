@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         final error = authProvider.errorMessage ?? 'Đăng nhập thất bại';
         if (!mounted) return;
-        Helpers.showSnackBar(context, error, isError: true);
+        Helpers.showSnackBarWithMessenger(ScaffoldMessenger.of(context), error, isError: true);
       }
     }
   }
