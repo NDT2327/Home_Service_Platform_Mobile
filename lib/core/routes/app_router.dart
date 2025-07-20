@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/account.dart';
+import 'package:hsp_mobile/core/models/booking.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/core/widgets/navigation/root_layout.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
@@ -8,6 +9,7 @@ import 'package:hsp_mobile/features/account/views/edit_profile_screen.dart';
 import 'package:hsp_mobile/features/account/views/profile_screen.dart';
 import 'package:hsp_mobile/features/auth/views/login_screen.dart';
 import 'package:hsp_mobile/features/auth/views/sign_up_screen.dart';
+import 'package:hsp_mobile/features/booking/views/booking_detail_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
 import 'package:hsp_mobile/features/catalog/view/category_screen.dart';
 import 'package:hsp_mobile/features/home/views/home_page_screen.dart';
@@ -17,7 +19,6 @@ import 'package:hsp_mobile/features/job/views/job_list_screen.dart';
 import 'package:hsp_mobile/features/job/views/my_task_screen.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-
 final GoRouter router = GoRouter(
   initialLocation: AppRoutes.splash,
   redirect: (context, state) async {
@@ -26,11 +27,12 @@ final GoRouter router = GoRouter(
     final token = await SharedPrefsUtils.getAccessToken();
     final roleId = await SharedPrefsUtils.getRoleId() ?? 0;
 
-    final isProtectedRoute = state.uri.toString().startsWith(AppRoutes.mainLayout) ||
+    final isProtectedRoute =
+        state.uri.toString().startsWith(AppRoutes.mainLayout) ||
         state.uri.toString() == AppRoutes.editProfile;
 
     //check token is expired or not
-    final isTokenExpired = token == null|| JwtDecoder.isExpired(token);
+    final isTokenExpired = token == null || JwtDecoder.isExpired(token);
 
     // Nếu chưa đăng nhập hoặc hết hạn token và cố gắng truy cập tuyến đường bảo vệ, chuyển hướng đến login
     if ((!isLoggedIn || isTokenExpired) && isProtectedRoute) {
@@ -40,7 +42,9 @@ final GoRouter router = GoRouter(
     }
 
     // Nếu đã đăng nhập, chuyển hướng đến màn hình chính của vai trò từ splash
-    if (isLoggedIn && !isTokenExpired && state.uri.toString() == AppRoutes.splash) {
+    if (isLoggedIn &&
+        !isTokenExpired &&
+        state.uri.toString() == AppRoutes.splash) {
       switch (roleId) {
         case 1: // Admin
           return '${AppRoutes.mainLayout}/admin${AppRoutes.home}';
@@ -55,13 +59,21 @@ final GoRouter router = GoRouter(
 
     // Kiểm tra quyền truy cập tuyến đường dựa trên vai trò
     if (isLoggedIn && !isTokenExpired && isProtectedRoute) {
-      if (roleId == 1 && !state.uri.toString().startsWith('${AppRoutes.mainLayout}/admin')) {
+      if (roleId == 1 &&
+          !state.uri.toString().startsWith('${AppRoutes.mainLayout}/admin')) {
         return '${AppRoutes.mainLayout}/admin${AppRoutes.home}';
-      } else if (roleId == 2 && !state.uri.toString().startsWith('${AppRoutes.mainLayout}/customer')) {
+      } else if (roleId == 2 &&
+          !state.uri.toString().startsWith(
+            '${AppRoutes.mainLayout}/customer',
+          )) {
         return '${AppRoutes.mainLayout}/customer${AppRoutes.home}';
-      } else if (roleId == 3 && !state.uri.toString().startsWith('${AppRoutes.mainLayout}/housekeeper')) {
+      } else if (roleId == 3 &&
+          !state.uri.toString().startsWith(
+            '${AppRoutes.mainLayout}/housekeeper',
+          )) {
         return '${AppRoutes.mainLayout}/housekeeper${AppRoutes.jobList}';
-      } else if (roleId == 0 && !state.uri.toString().startsWith('${AppRoutes.mainLayout}/default')) {
+      } else if (roleId == 0 &&
+          !state.uri.toString().startsWith('${AppRoutes.mainLayout}/default')) {
         return '${AppRoutes.mainLayout}/default${AppRoutes.home}';
       }
     }
@@ -103,9 +115,10 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: '${AppRoutes.mainLayout}/customer${AppRoutes.bookingSummary}',
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Booking Summary Screen')),
-          ),
+          builder:
+              (context, state) => const Scaffold(
+                body: Center(child: Text('Booking Summary Screen')),
+              ),
         ),
         GoRoute(
           path: '${AppRoutes.mainLayout}/customer${AppRoutes.profile}',
@@ -119,16 +132,24 @@ final GoRouter router = GoRouter(
           },
         ),
         GoRoute(
+          path: '/booking-detail',
+          builder: (context, state) {
+            final booking = state.extra as Booking;
+            return BookingDetailScreen(booking: booking);
+          },
+        ),
+        GoRoute(
           path: AppRoutes.privacy,
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Privacy Screen')),
-          ),
+          builder:
+              (context, state) =>
+                  const Scaffold(body: Center(child: Text('Privacy Screen'))),
         ),
         GoRoute(
           path: AppRoutes.termsConditions,
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Terms and Conditions Screen')),
-          ),
+          builder:
+              (context, state) => const Scaffold(
+                body: Center(child: Text('Terms and Conditions Screen')),
+              ),
         ),
       ],
     ),
@@ -141,7 +162,8 @@ final GoRouter router = GoRouter(
           builder: (context, state) => const JobListScreen(),
         ),
         GoRoute(
-          path: '${AppRoutes.mainLayout}/housekeeper${AppRoutes.housekeeperMyTask}',
+          path:
+              '${AppRoutes.mainLayout}/housekeeper${AppRoutes.housekeeperMyTask}',
           builder: (context, state) => const MyTaskScreen(),
         ),
         GoRoute(
@@ -157,15 +179,16 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.privacy,
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Privacy Screen')),
-          ),
+          builder:
+              (context, state) =>
+                  const Scaffold(body: Center(child: Text('Privacy Screen'))),
         ),
         GoRoute(
           path: AppRoutes.termsConditions,
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Terms and Conditions Screen')),
-          ),
+          builder:
+              (context, state) => const Scaffold(
+                body: Center(child: Text('Terms and Conditions Screen')),
+              ),
         ),
       ],
     ),
@@ -194,15 +217,16 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.privacy,
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Privacy Screen')),
-          ),
+          builder:
+              (context, state) =>
+                  const Scaffold(body: Center(child: Text('Privacy Screen'))),
         ),
         GoRoute(
           path: AppRoutes.termsConditions,
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Terms and Conditions Screen')),
-          ),
+          builder:
+              (context, state) => const Scaffold(
+                body: Center(child: Text('Terms and Conditions Screen')),
+              ),
         ),
       ],
     ),
@@ -227,20 +251,21 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.privacy,
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Privacy Screen')),
-          ),
+          builder:
+              (context, state) =>
+                  const Scaffold(body: Center(child: Text('Privacy Screen'))),
         ),
         GoRoute(
           path: AppRoutes.termsConditions,
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('Terms and Conditions Screen')),
-          ),
+          builder:
+              (context, state) => const Scaffold(
+                body: Center(child: Text('Terms and Conditions Screen')),
+              ),
         ),
       ],
     ),
   ],
-  errorBuilder: (context, state) => const Scaffold(
-    body: Center(child: Text('No Route defined')),
-  ),
+  errorBuilder:
+      (context, state) =>
+          const Scaffold(body: Center(child: Text('No Route defined'))),
 );
