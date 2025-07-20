@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/booking.dart';
 import 'package:hsp_mobile/core/services/booking_service.dart';
 import 'package:hsp_mobile/core/services/payment_service.dart';
@@ -183,7 +184,8 @@ class BookingCard extends StatelessWidget {
 
       final userId = await SharedPrefsUtils.getAccountId();
       if (userId == null) {
-        Navigator.pop(context); // Close loading dialog
+        //Navigator.pop(context); // Close loading dialog
+        context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('User not found')),
         );
@@ -199,8 +201,9 @@ class BookingCard extends StatelessWidget {
         notes: 'Payment for booking ${booking.bookingNumber}',
       );
 
-      Navigator.pop(context); // Close loading dialog
+      //Navigator.pop(context); // Close loading dialog
 
+      context.pop();
       // Launch payment URL
       if (await canLaunchUrl(Uri.parse(paymentUrl))) {
         await launchUrl(
@@ -214,7 +217,8 @@ class BookingCard extends StatelessWidget {
       }
       if (onRefresh != null) onRefresh!();
     } catch (e) {
-      Navigator.pop(context); // Close loading dialog
+      context.pop();
+      //Navigator.pop(context); // Close loading dialog
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Payment failed: $e')),
       );
@@ -271,14 +275,15 @@ class BookingCard extends StatelessWidget {
 
       await BookingService().completeBooking(booking.bookingId);
 
-      Navigator.pop(context); // Close loading dialog
-
+      //Navigator.pop(context); // Close loading dialog
+      context.pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Booking completed successfully')),
       );
       if (onRefresh != null) onRefresh!(); // Refresh bookings if callback provided
     } catch (e) {
-      Navigator.pop(context); // Close loading dialog
+      //Navigator.pop(context); // Close loading dialog
+      context.pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to complete booking: $e')),
       );
@@ -301,13 +306,15 @@ class BookingCard extends StatelessWidget {
                 actions: [
                   TextButton(
                     onPressed: () {
-                      Navigator.of(dialogContext).pop();
+                      //Navigator.of(dialogContext).pop();
+                      context.pop();
                     },
                     child: const Text('Cancel', style: TextStyle(color: Colors.red)),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.of(dialogContext).pop();
+                      //Navigator.of(dialogContext).pop();
+                      context.pop();
                       _handleCompletedBooking(context);
                     },
                     style: ElevatedButton.styleFrom(
@@ -357,12 +364,14 @@ class BookingCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Navigate to BookingDetail screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BookingDetailScreen(booking: booking),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => BookingDetailScreen(booking: booking),
+        //   ),
+        // );
+                context.push('/booking-detail', extra: booking);
+
       },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
