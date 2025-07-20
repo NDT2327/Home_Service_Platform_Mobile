@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/models/dtos/response/base_response.dart';
 import 'package:hsp_mobile/core/models/dtos/response/login_response.dart';
 import 'package:hsp_mobile/core/services/auth_service.dart';
@@ -52,4 +51,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     return false;
   }
+
+  
 }

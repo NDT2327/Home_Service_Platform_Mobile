@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hsp_mobile/core/utils/app_color.dart';
 
 class AppLogo extends StatelessWidget {
   final double size;
@@ -6,11 +7,10 @@ class AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      'assets/logo/logo.jpg',
-      width: 100,
-      height: 100,
-      fit: BoxFit.cover,
+    return CircleAvatar(
+      radius: 60,
+      backgroundColor: AppColors.secondary,
+      backgroundImage: AssetImage('assets/logo/logo.png'),
     );
   }
 }

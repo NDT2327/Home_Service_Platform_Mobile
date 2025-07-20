@@ -15,25 +15,49 @@ import 'package:hsp_mobile/features/job/views/my_task_screen.dart';
 import 'package:hsp_mobile/features/account/views/profile_screen.dart';
 
 class AppRoutes {
-  static const String onBoarding = '/onBoarding';
+  // static const String onBoarding = '/on-boarding';
+  // static const String splash = '/splash';
+  // static const String home = '/';
+  // static const String login = '/login';
+  // static const String register = '/sign-in';
+  // static const String bookingSummary = '/booking-summary';
+  // static const String jobList = '/task-list';
+  // static const String housekeeperHome = "/housekeeper/home";
+  // static const String mainListBooking = '/main-list-booking';
+  // static const String housekeeperProfile = '/housekeeper/profile';
+  // static const String housekeeperMyTask = '/housekeeper/my-task';
+  // static const String categoryScreen = '/category-screen';
+
+  // static const String editProfile = '/profile/edit';
+  // static const String privacy = '/privacy';
+  // static const String termsConditions = '/terms';
+  // static const String profile = '/profile';
+
+  // static const String mainLayout ='/main';
+
   static const String splash = '/splash';
-  static const String home = '/';
+  static const String onBoarding = '/on-boarding';
   static const String login = '/login';
-  static const String register = '/sign-in';
-  static const String bookingSummary = '/booking-summary';
-  static const String jobList = '/task-list';
-  static const String housekeeperHome = "/housekeeper/home";
-  static const String mainListBooking = '/main-list-booking';
-  static const String housekeeperProfile = '/housekeeper/profile';
-  static const String housekeeperMyTask = '/housekeeper/my-task';
-  static const String categoryScreen = '/category-screen';
+  static const String register = '/register';
 
-  static const String editProfile = '/profile/edit';
-  static const String privacy = '/privacy';
-  static const String termsConditions = '/terms';
+  // Main layout (NavigationLayout)
+  static const String mainLayout = '/cozycare';
+  static const String home = '/home';
+  static const String categoryScreen = '/categories';
+  static const String mainListBooking = '/bookings';
+  static const String bookingSummary = '/bookings/summary';
   static const String profile = '/profile';
+  static const String jobList = '/tasks-list';
+  //static const String housekeeperHome = '/housekeeper-home';
+  //static const String housekeeperProfile = '/housekeeper-profile';
+  static const String housekeeperMyTask = '/my-tasks';
 
-  static const String mainLayout ='/layout';
+  // Static pages
+  static const String privacy = '/main/privacy';
+  static const String termsConditions = '/main/terms';
+
+  // Special routes
+  static const String editProfile = '/main/edit-profile'; // dùng GoRouter extra
 }
 
 //Route generator
@@ -56,14 +80,14 @@ class RouteGenerator {
       //   );
       case AppRoutes.jobList:
         return MaterialPageRoute(builder: (_) => const JobListScreen());
-      case AppRoutes.housekeeperHome:
-        return MaterialPageRoute(builder: (_) => const HousekeeperHomepage());
+      // case AppRoutes.housekeeperHome:
+      //   return MaterialPageRoute(builder: (_) => const HousekeeperHomepage());
       case AppRoutes.mainListBooking:
         return MaterialPageRoute(
           builder: (_) => const MainListBooking(),
         ); // Assuming this is the main
-      case AppRoutes.housekeeperProfile:
-        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      // case AppRoutes.housekeeperProfile:
+      //   return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case AppRoutes.housekeeperMyTask:
         return MaterialPageRoute(builder: (_) => const MyTaskScreen());
       case AppRoutes.categoryScreen:

@@ -217,9 +217,6 @@ class _EditProfileContentState extends State<EditProfileContent> {
                         final avatarUrl = await _uploadImage(
                           widget.account.accountId,
                         );
-                        print(
-                          'Before update: ${provider.currentAccount?.toJson()}',
-                        );
                         await provider.updateAccount(
                           widget.account.accountId,
                           UpdateAccountRequest(
@@ -232,9 +229,6 @@ class _EditProfileContentState extends State<EditProfileContent> {
                         await provider.fetchAccountById(
                           widget.account.accountId,
                         ); // Làm mới dữ liệu
-                        print(
-                          'After update: ${provider.currentAccount?.toJson()}',
-                        );
 
                         if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -252,7 +246,6 @@ class _EditProfileContentState extends State<EditProfileContent> {
                           ); // Trả về dữ liệu mới
                         }
                       } catch (e) {
-                        print('Update failed: $e');
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Update failed: $e')),

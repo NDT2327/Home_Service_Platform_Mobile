@@ -1,13 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
+import 'package:hsp_mobile/core/widgets/navigation/navigation_item.dart';
 import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/features/account/views/edit_profile_screen.dart';
 import 'package:hsp_mobile/features/account/views/profile_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
 import 'package:hsp_mobile/features/catalog/view/category_screen.dart';
 import 'package:hsp_mobile/features/home/views/home_page_screen.dart';
-import 'package:hsp_mobile/features/home_page.dart';
 import 'package:hsp_mobile/features/job/views/job_list_screen.dart';
 import 'package:hsp_mobile/features/job/views/my_task_screen.dart';
 import 'package:provider/provider.dart';
@@ -23,16 +26,41 @@ class NavigationLayout extends StatefulWidget {
 
 class _NavigationLayoutState extends State<NavigationLayout> {
   // Biến lưu trữ chỉ số của tab hiện tại được chọn
-  // 0 = Home, 1 = Profile
   int _selectedIndex = 0;
+  bool _isSidebarCollapsed = false;
 
-  // Danh sách các màn hình tương ứng với từng tab
-  // final List<Widget> _screens = const [
-  //   HomePage(), // Màn hình Home (index 0)
-  //   ProfileScreen(), // Màn hình Profile (index 1)
-  //   CategoryScreen(),
-  //   MainListBooking(),
-  // ];
+  // Danh sách các đường dẫn tương ứng với từng tab
+  List<String> _getNavigationPaths(int roleId) {
+    switch (roleId) {
+      case 1: // Admin
+        return [
+          AppRoutes.home, // Admin dashboard
+          AppRoutes.bookingSummary,
+          AppRoutes.profile,
+        ];
+      case 2: // Customer
+        return [
+          AppRoutes.home,
+          AppRoutes.categoryScreen,
+          AppRoutes.mainListBooking,
+          AppRoutes.profile,
+          AppRoutes.editProfile,
+          AppRoutes.privacy,
+          AppRoutes.termsConditions,
+        ];
+      case 3: // Housekeeper
+        return [
+          AppRoutes.jobList,
+          AppRoutes.housekeeperMyTask,
+          AppRoutes.profile,
+          AppRoutes.editProfile,
+          AppRoutes.privacy,
+          AppRoutes.termsConditions,
+        ];
+      default:
+        return [AppRoutes.home, AppRoutes.profile];
+    }
+  }
 
   /// Lấy dữ liệu navigation dựa trên roleId
   ({List<Widget> screens, List<NavigationItem> items}) _getNavigationData(
@@ -42,7 +70,7 @@ class _NavigationLayoutState extends State<NavigationLayout> {
       case 1: // Admin
         return (
           screens: const [
-            HomePage(), // Admin dashboard (có thể thay bằng AdminDashboardScreen)
+            HomePageScreen(), // Admin dashboard
             MainListBooking(), // Quản lý booking
             ProfileScreen(), // Hồ sơ admin
           ],
@@ -97,18 +125,8 @@ class _NavigationLayoutState extends State<NavigationLayout> {
         );
       case 3: // Housekeeper
         return (
-          screens: const [
-            //HousekeeperHomeScreen(currentUserName: "Housekeeper"),
-            JobListScreen(),
-            MyTaskScreen(),
-            ProfileScreen(),
-          ],
+          screens: const [JobListScreen(), MyTaskScreen(), ProfileScreen()],
           items: [
-            // NavigationItem(
-            //   icon: Icons.home_outlined,
-            //   selectedIcon: Icons.home,
-            //   label: 'navigation.home',
-            // ),
             NavigationItem(
               icon: Icons.work_outline,
               selectedIcon: Icons.work,
@@ -128,7 +146,7 @@ class _NavigationLayoutState extends State<NavigationLayout> {
         );
       default:
         return (
-          screens: const [HomePage(), ProfileScreen()],
+          screens: const [HomePageScreen(), ProfileScreen()],
           items: [
             NavigationItem(
               icon: Icons.home_outlined,
@@ -146,42 +164,19 @@ class _NavigationLayoutState extends State<NavigationLayout> {
   }
 
   /// Hàm xử lý khi người dùng nhấn vào tab
-  /// [index] - chỉ số của tab được nhấn
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index, List<String> paths) {
     setState(() {
-      _selectedIndex = index; // Cập nhật tab hiện tại
+      _selectedIndex = index;
+      context.go(paths[index]); // Navigate using go_router
     });
   }
 
-  // Danh sách thông tin các tab navigation
-  // final List<NavigationItem> _navigationItems = [
-  //   NavigationItem(
-  //     icon: Icons.home_outlined, // Icon khi chưa được chọn
-  //     selectedIcon: Icons.home, // Icon khi được chọn
-  //     label: 'navigation.home', // Text hiển thị (sẽ được dịch)
-  //   ),
-  //   NavigationItem(
-  //     icon: Icons.person_outline, // Icon khi chưa được chọn
-  //     selectedIcon: Icons.person, // Icon khi được chọn
-  //     label: 'navigation.profile', // Text hiển thị (sẽ được dịch)
-  //   ),
-  //   NavigationItem(
-  //     icon: Icons.menu_outlined, // Icon khi chưa được chọn
-  //     selectedIcon: Icons.menu, // Icon khi được chọn
-  //     label: 'navigation.menu', // Text hiển thị (sẽ được dịch)
-  //   ),
-  //   NavigationItem(
-  //     icon: Icons.category_outlined, // Icon khi chưa được chọn
-  //     selectedIcon: Icons.category, // Icon khi được chọn
-  //     label: 'navigation.booking', // Text hiển thị (sẽ được dịch)
-  //   ),
-  // ];
-
   @override
   Widget build(BuildContext context) {
-    //get current account's role
+    // Lấy roleId từ AccountProvider
     final accountProvider = Provider.of<AccountProvider>(context);
     final roleId = accountProvider.currentAccount?.roleId;
+
     // Kiểm tra nếu chưa đăng nhập hoặc roleId không hợp lệ
     if (roleId == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -189,27 +184,21 @@ class _NavigationLayoutState extends State<NavigationLayout> {
 
     // Lấy danh sách màn hình và navigation items dựa trên roleId
     final navigationData = _getNavigationData(roleId);
+    final navigationPaths = _getNavigationPaths(roleId);
 
     // Sử dụng widget Responsive để tự động chọn layout phù hợp
     return Responsive(
-      mobile: _buildMobileLayout(
-        context,
-        navigationData,
-      ), // Layout cho điện thoại
-      tablet: _buildTabletLayout(context, navigationData), // Layout cho tablet
-      desktop: _buildDesktopLayout(
-        context,
-        navigationData,
-      ), // Layout cho desktop
+      mobile: _buildMobileLayout(context, navigationData, navigationPaths),
+      tablet: _buildTabletLayout(context, navigationData, navigationPaths),
+      desktop: _buildDesktopLayout(context, navigationData, navigationPaths),
     );
   }
 
-  /// Xây dựng layout cho mobile (điện thoại)
-  /// Sử dụng BottomNavigationBar ở phía dưới màn hình
   /// Layout cho mobile (BottomNavigationBar)
   Widget _buildMobileLayout(
     BuildContext context,
     ({List<Widget> screens, List<NavigationItem> items}) navigationData,
+    List<String> navigationPaths,
   ) {
     return Scaffold(
       body: navigationData.screens[_selectedIndex],
@@ -218,22 +207,24 @@ class _NavigationLayoutState extends State<NavigationLayout> {
         unselectedItemColor: AppColors.primaryLight,
         backgroundColor: AppColors.backgroundLight,
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (index) => _onItemTapped(index, navigationPaths),
         selectedFontSize: Responsive.getFontSize(context, base: 12),
         unselectedFontSize: Responsive.getFontSize(context, base: 12),
         items:
             navigationData.items
+                .asMap()
+                .entries
                 .map(
-                  (item) => BottomNavigationBarItem(
+                  (entry) => BottomNavigationBarItem(
                     icon: Icon(
-                      item.icon,
+                      entry.value.icon,
                       size: Responsive.getFontSize(context, base: 24),
                     ),
                     activeIcon: Icon(
-                      item.selectedIcon,
+                      entry.value.selectedIcon,
                       size: Responsive.getFontSize(context, base: 24),
                     ),
-                    label: item.label.tr(),
+                    label: entry.value.label.tr(),
                   ),
                 )
                 .toList(),
@@ -245,6 +236,7 @@ class _NavigationLayoutState extends State<NavigationLayout> {
   Widget _buildTabletLayout(
     BuildContext context,
     ({List<Widget> screens, List<NavigationItem> items}) navigationData,
+    List<String> navigationPaths,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -273,7 +265,8 @@ class _NavigationLayoutState extends State<NavigationLayout> {
               Expanded(
                 child: NavigationRail(
                   selectedIndex: _selectedIndex,
-                  onDestinationSelected: _onItemTapped,
+                  onDestinationSelected:
+                      (index) => _onItemTapped(index, navigationPaths),
                   labelType: NavigationRailLabelType.all,
                   backgroundColor: AppColors.white,
                   selectedIconTheme: IconThemeData(
@@ -320,18 +313,39 @@ class _NavigationLayoutState extends State<NavigationLayout> {
   Widget _buildDesktopLayout(
     BuildContext context,
     ({List<Widget> screens, List<NavigationItem> items}) navigationData,
+    List<String> navigationPaths,
   ) {
+    final currentPath = GoRouterState.of(context).uri.toString();
+    Widget currentScreen = navigationData.screens[_selectedIndex];
+
+    // Cập nhật _selectedIndex
+    int newIndex = navigationPaths.indexWhere((path) => currentPath == path);
+    if (newIndex != -1 && newIndex != _selectedIndex) {
+      _selectedIndex = newIndex;
+    }
+
+    // Xử lý các màn hình bổ sung
+    if (currentPath.contains(AppRoutes.editProfile)) {
+      final account = Provider.of<AccountProvider>(context).currentAccount!;
+      currentScreen = EditProfileScreen(account: account);
+    } else if (currentPath.contains(AppRoutes.privacy)) {
+      currentScreen = const Scaffold(body: Center(child: Text('Privacy Screen')));
+    } else if (currentPath.contains(AppRoutes.termsConditions)) {
+      currentScreen = const Scaffold(body: Center(child: Text('Terms and Conditions Screen')));
+    }
+
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: Row(
         children: [
-          Container(
-            width: 240,
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: _isSidebarCollapsed ? 72 : 240,
             decoration: BoxDecoration(
-              color: AppColors.primary, // sidebar
+              color: AppColors.primary,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black,
                   blurRadius: 10,
                   offset: const Offset(2, 0),
                 ),
@@ -343,61 +357,92 @@ class _NavigationLayoutState extends State<NavigationLayout> {
                   height: 80,
                   color: AppColors.primary,
                   child: Center(
-                    child: Image.asset(
-                      'assets/logo/logo.png',
-                      width: 150,
-                      height: 150,
-                    ),
+                    child: _isSidebarCollapsed
+                        ? IconButton(
+                            icon: const Icon(Icons.menu, color: Colors.white),
+                            onPressed: () {
+                              setState(() {
+                                _isSidebarCollapsed = false;
+                              });
+                            },
+                          )
+                        : Image.asset(
+                            'assets/logo/logo.png',
+                            width: 150,
+                            height: 150,
+                          ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                if (!_isSidebarCollapsed) const SizedBox(height: 16),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: navigationData.items.length,
-                    itemBuilder: (ctx, idx) {
-                      final item = navigationData.items[idx];
-                      final isSelected = _selectedIndex == idx;
-                      return Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              isSelected
-                                  ? AppColors.primaryLight.withOpacity(0.3)
-                                  : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ListTile(
-                          leading: Icon(
-                            isSelected ? item.selectedIcon : item.icon,
-                            color:
-                                isSelected
+                  child: _isSidebarCollapsed
+                      ? ListView.builder(
+                          itemCount: navigationData.items.length,
+                          itemBuilder: (ctx, idx) {
+                            final item = navigationData.items[idx];
+                            final isSelected = _selectedIndex == idx;
+                            return IconButton(
+                              icon: Icon(
+                                isSelected ? item.selectedIcon : item.icon,
+                                color: isSelected
                                     ? AppColors.white
                                     : AppColors.tertiaryLight,
-                          ),
-                          title: Text(
-                            item.label.tr(),
-                            style: TextStyle(
-                              color:
-                                  isSelected
+                              ),
+                              onPressed: () => _onItemTapped(idx, navigationPaths),
+                            );
+                          },
+                        )
+                      : ListView.builder(
+                          itemCount: navigationData.items.length,
+                          itemBuilder: (ctx, idx) {
+                            final item = navigationData.items[idx];
+                            final isSelected = _selectedIndex == idx;
+                            return Container(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.primaryLight
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ListTile(
+                                leading: Icon(
+                                  isSelected ? item.selectedIcon : item.icon,
+                                  color: isSelected
                                       ? AppColors.white
                                       : AppColors.tertiaryLight,
-                              fontWeight:
-                                  isSelected
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                              fontSize: 16,
-                            ),
-                          ),
-                          onTap: () => _onItemTapped(idx),
-                          hoverColor: AppColors.primaryLight.withOpacity(0.5),
+                                ),
+                                title: Text(
+                                  item.label.tr(),
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? AppColors.white
+                                        : AppColors.tertiaryLight,
+                                    fontWeight: isSelected
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                onTap: () => _onItemTapped(idx, navigationPaths),
+                                hoverColor: AppColors.primaryLight,
+                              ),
+                            );
+                          },
                         ),
-                      );
+                ),
+                if (!_isSidebarCollapsed)
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      setState(() {
+                        _isSidebarCollapsed = true;
+                      });
                     },
                   ),
-                ),
               ],
             ),
           ),
@@ -405,24 +450,11 @@ class _NavigationLayoutState extends State<NavigationLayout> {
             child: Container(
               color: AppColors.backgroundLight,
               padding: const EdgeInsets.all(32),
-              child: navigationData.screens[_selectedIndex],
+              child: currentScreen,
             ),
           ),
         ],
       ),
     );
   }
-}
-
-/// Class định nghĩa thông tin cho một item navigation
-class NavigationItem {
-  final IconData icon; // Icon khi chưa được chọn
-  final IconData selectedIcon; // Icon khi được chọn
-  final String label; // Text hiển thị
-
-  NavigationItem({
-    required this.icon,
-    required this.selectedIcon,
-    required this.label,
-  });
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
@@ -8,7 +9,6 @@ import 'package:hsp_mobile/core/widgets/custom_text_field.dart';
 import 'package:hsp_mobile/core/widgets/link_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hsp_mobile/features/account/account_provider.dart';
-import 'package:hsp_mobile/features/auth/widgets/otp_dialog.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:provider/provider.dart';
 
@@ -121,7 +121,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       );
 
-      Navigator.pushReplacementNamed(context, AppRoutes.login);
+      //Navigator.pushReplacementNamed(context, AppRoutes.login);
+      context.go(AppRoutes.login);
     } catch (e) {
       _showError('${e.toString()}');
     }
@@ -235,7 +236,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   text: 'signUp.login'.tr(),
                   textColor: AppColors.primary,
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.login);
+                    //Navigator.pushNamed(context, AppRoutes.login);
+                    context.go(AppRoutes.login);
                   },
                 ),
               ],

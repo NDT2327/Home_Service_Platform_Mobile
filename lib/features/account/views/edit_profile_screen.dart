@@ -37,6 +37,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           icon: Icon(Icons.arrow_back, color: AppColors.textLight),
           onPressed: () => Navigator.pop(context),
         ),
+        automaticallyImplyLeading: false,
       ),
       body:
           provider.isLoading

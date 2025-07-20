@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 // import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:hsp_mobile/core/providers/catalog_provider.dart';
-import 'package:hsp_mobile/core/routes/app_routes.dart';
+import 'package:hsp_mobile/core/routes/app_router.dart';
 import 'package:hsp_mobile/core/services/account_service.dart';
 import 'package:hsp_mobile/core/services/booking_detail_service.dart';
 import 'package:hsp_mobile/core/services/booking_service.dart';
@@ -11,13 +11,10 @@ import 'package:hsp_mobile/core/services/catalog_service.dart';
 import 'package:hsp_mobile/core/services/task_service.dart';
 import 'package:hsp_mobile/core/utils/app_theme.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
-import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
-import 'package:hsp_mobile/core/widgets/navigation_layout.dart';
 import 'package:hsp_mobile/features/account/account_provider.dart';
 import 'package:hsp_mobile/core/providers/auth_provider.dart';
 import 'package:hsp_mobile/core/providers/booking_detail_provider.dart';
 import 'package:hsp_mobile/core/providers/task_claim_provider.dart';
-import 'package:hsp_mobile/features/auth/views/login_screen.dart';
 import 'package:hsp_mobile/features/job/repository/task_available_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -42,12 +39,12 @@ void main() async {
   );
   HttpOverrides.global = MyHttpOverrides(); // Bỏ qua chứng chỉ SSL không hợp lệ
 
-  // usePathUrlStrategy();
+
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('vi')],
       path: 'assets/lang',
-      fallbackLocale: const Locale('en', 'US'),
+      fallbackLocale: const Locale('vi', 'Vie'),
       child: MultiProvider(
         providers: [
           //nạp các provider
@@ -81,16 +78,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // return MaterialApp(
+    //   localizationsDelegates: context.localizationDelegates,
+    //   supportedLocales: context.supportedLocales,
+    //   locale: context.locale,
+    //   title: AppConstants.appName,
+    //   theme: AppTheme.lightTheme,
+    //   //initialRoute: AppRoutes.login,
+    //   onGenerateRoute: RouteGenerator.generateRoute,
+    //   home: isLoggedIn ? const NavigationLayout() : const LoginScreen(),
+    //   debugShowCheckedModeBanner: false,
+    // );
+    return MaterialApp.router(
+      routerConfig: router,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       title: AppConstants.appName,
       theme: AppTheme.lightTheme,
+
       initialRoute: AppRoutes.login,
       onGenerateRoute: RouteGenerator.generateRoute,
       home: const NavigationLayout(),
-      debugShowCheckedModeBanner: false,
+
     );
   }
 }

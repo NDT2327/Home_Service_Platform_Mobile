@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/helpers.dart';
+import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/core/widgets/index.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/core/providers/auth_provider.dart';
@@ -36,7 +38,23 @@ class _LoginScreenState extends State<LoginScreen> {
       final success = await authProvider.login(context, input, password);
       if (success) {
         if (!mounted) return;
-        Navigator.pushReplacementNamed(context, AppRoutes.home); // hoặc Home
+        //Navigator.pushReplacementNamed(context, AppRoutes.home); // hoặc Home
+        //context.go(AppRoutes.mainLayout);
+        final roleId = await SharedPrefsUtils.getRoleId();
+
+        switch (roleId) {
+          case 1: // Admin
+            context.go('${AppRoutes.mainLayout}/admin${AppRoutes.home}');
+            break;
+          case 2: // Customer
+            context.go('${AppRoutes.mainLayout}/customer${AppRoutes.home}');
+            break;
+          case 3: // Housekeeper
+            context.go('${AppRoutes.mainLayout}/housekeeper${AppRoutes.jobList}');
+            break;
+          default:
+            context.go(AppRoutes.login);
+        }
       } else {
         final error = authProvider.errorMessage ?? 'Đăng nhập thất bại';
         if (!mounted) return;
@@ -52,7 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _signUp() {
-    Navigator.pushNamed(context, AppRoutes.register);
+    //Navigator.pushNamed(context, AppRoutes.register);
+    context.go(AppRoutes.register);
   }
 
   Widget _buildLoginForm(double maxWidth) {
@@ -152,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return const Center(child: CircularProgressIndicator());
     }
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),

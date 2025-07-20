@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,11 +26,11 @@ class _SplashScreenState extends State<SplashScreen> {
     // Check if the user has seen the onboarding screen
     // If yes, navigate to login, otherwise to onboarding
     if (seenOnboard) {
-      Navigator.pushReplacementNamed(context, AppRoutes.login);
-      //context.go(AppRoutes.login);
+      //Navigator.pushReplacementNamed(context, AppRoutes.login);
+      context.go(AppRoutes.login);
     } else {
-      Navigator.pushReplacementNamed(context, AppRoutes.onBoarding);
-      //context.go(AppRoutes.onBoarding);
+      //Navigator.pushReplacementNamed(context, AppRoutes.onBoarding);
+      context.go(AppRoutes.onBoarding);
     }
   }
 

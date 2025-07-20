@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -36,8 +37,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   void _onSkip() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('seenOnboard', true);
-    Navigator.pushReplacementNamed(context, AppRoutes.login);
-    //context.go(AppRoutes.login);
+    //Navigator.pushReplacementNamed(context, AppRoutes.login);
+    context.go(AppRoutes.login);
   }
 
   void _onNext() {
