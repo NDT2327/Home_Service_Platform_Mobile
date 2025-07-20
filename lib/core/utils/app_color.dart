@@ -17,8 +17,12 @@ class AppColors {
   static const Color tertiaryDark = Color(0xFF625E59); // chicago
 
   // ✅ Accent Colors
-  static const Color accentYellow = Color(0xFFF2D8B5); // dùng sidecar làm điểm nhấn nhẹ
-  static const Color accentOrange = Color(0xFF747167); // flint (nhẹ, phù hợp thiết kế tối giản)
+  static const Color accentYellow = Color(
+    0xFFF2D8B5,
+  ); // dùng sidecar làm điểm nhấn nhẹ
+  static const Color accentOrange = Color(
+    0xFF747167,
+  ); // flint (nhẹ, phù hợp thiết kế tối giản)
 
   // ✅ Neutral Colors
   static const Color white = Color(0xFFFFFFFF);
@@ -32,7 +36,9 @@ class AppColors {
   static const Color backgroundDark = Color(0xFF101819); // bunker
 
   // ✅ Feedback Colors
-  static const Color success = Color(0xFF4CAF50); // vẫn giữ màu xanh lá thông dụng
+  static const Color success = Color(
+    0xFF4CAF50,
+  ); // vẫn giữ màu xanh lá thông dụng
   static const Color error = Color(0xFFF44336);
   static const Color warning = Color(0xFFFFC107);
 
@@ -43,10 +49,7 @@ class AppColors {
   // ✅ Gradients
   static LinearGradient primaryGradient(BuildContext context) {
     return LinearGradient(
-      colors: [
-        getPrimary(context),
-        getPrimary(context).withOpacity(0.7),
-      ],
+      colors: [getPrimary(context), getPrimary(context).withOpacity(0.7)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
@@ -54,10 +57,7 @@ class AppColors {
 
   static LinearGradient secondaryGradient(BuildContext context) {
     return LinearGradient(
-      colors: [
-        secondary,
-        secondaryLight,
-      ],
+      colors: [secondary, secondaryLight],
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
     );
@@ -65,23 +65,33 @@ class AppColors {
 
   // ✅ Helpers theo theme
   static Color getPrimary(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark ? primaryDark : primary;
+    return Theme.of(context).brightness == Brightness.dark
+        ? primaryDark
+        : primary;
   }
 
   static Color getSecondary(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark ? secondaryDark : secondary;
+    return Theme.of(context).brightness == Brightness.dark
+        ? secondaryDark
+        : secondary;
   }
 
   static Color getTertiary(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark ? tertiaryDark : tertiary;
+    return Theme.of(context).brightness == Brightness.dark
+        ? tertiaryDark
+        : tertiary;
   }
 
   static Color getTextColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark ? textDark : textLight;
+    return Theme.of(context).brightness == Brightness.dark
+        ? textDark
+        : textLight;
   }
 
   static Color getBackgroundColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark ? backgroundDark : backgroundLight;
+    return Theme.of(context).brightness == Brightness.dark
+        ? backgroundDark
+        : backgroundLight;
   }
 
   // ✅ Contrast Helper
