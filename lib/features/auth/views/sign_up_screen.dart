@@ -3,12 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
+import 'package:hsp_mobile/core/utils/notification_helpers.dart';
 import 'package:hsp_mobile/core/widgets/app_logo.dart';
 import 'package:hsp_mobile/core/widgets/custom_button.dart';
 import 'package:hsp_mobile/core/widgets/custom_text_field.dart';
 import 'package:hsp_mobile/core/widgets/link_button.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/core/providers/account_provider.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:provider/provider.dart';
 
@@ -129,12 +130,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message, style: const TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.error,
-      ),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: Text(message, style: const TextStyle(color: Colors.white)),
+    //     backgroundColor: AppColors.error,
+    //   ),
+    // );
+    NotificationHelpers.showToast(message: message, isError: true);
   }
 
   Widget _buildSignUpForm(double maxWidth) {

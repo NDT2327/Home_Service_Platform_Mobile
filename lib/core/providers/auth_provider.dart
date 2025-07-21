@@ -3,7 +3,7 @@ import 'package:hsp_mobile/core/models/dtos/response/base_response.dart';
 import 'package:hsp_mobile/core/models/dtos/response/login_response.dart';
 import 'package:hsp_mobile/core/services/auth_service.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/core/providers/account_provider.dart';
 import 'package:provider/provider.dart';
 
 class AuthProvider extends ChangeNotifier {

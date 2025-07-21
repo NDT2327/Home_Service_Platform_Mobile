@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hsp_mobile/core/routes/app_routes.dart';
 
 class CategoriesSection extends StatelessWidget {
   final List<Map<String, dynamic>> categories;
@@ -20,10 +22,41 @@ class CategoriesSection extends StatelessWidget {
               return Expanded(
                 child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: Colors.blue.shade100,
-                      child: Icon(category['image'], size: 30, color: Colors.blue),
+                    GestureDetector(
+                      onTap: () {
+                        GoRouter.of(context).push(
+                          '${AppRoutes.mainLayout}/customer${AppRoutes.service}',
+                          extra: {
+                            'categoryId': category['id'],
+                            'categoryName': category['name'],
+                          },
+                        );
+                      },
+                      child: CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Colors.blue.shade100,
+                        child: category['image'] != null && category['image'].isNotEmpty
+                            ? ClipOval(
+                                child: Image.network(
+                                  category['image'],
+                                  width: 56,
+                                  height: 56,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(
+                                      Icons.broken_image,
+                                      size: 30,
+                                      color: Colors.blue,
+                                    );
+                                  },
+                                ),
+                              )
+                            : Icon(
+                                Icons.category,
+                                size: 30,
+                                color: Colors.blue,
+                              ),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -41,4 +74,3 @@ class CategoriesSection extends StatelessWidget {
     );
   }
 }
-  

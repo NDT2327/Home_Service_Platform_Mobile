@@ -3,9 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/helpers.dart';
+import 'package:hsp_mobile/core/utils/notification_helpers.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
-import 'package:hsp_mobile/features/account/views/edit_profile_screen.dart';
+import 'package:hsp_mobile/core/providers/account_provider.dart';
+import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/features/account/widgets/profile_header.dart';
 import 'package:hsp_mobile/features/account/widgets/profile_item.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +21,6 @@ class ProfileContent extends StatelessWidget {
       context,
       listen: false,
     );
-    final scaffoldMessenger = ScaffoldMessenger.of(context); // Store reference
 
     return Column(
       children: [
@@ -38,14 +38,16 @@ class ProfileContent extends StatelessWidget {
                 ProfileItem(
                   icon: Icons.edit_rounded,
                   text: 'Edit Profile',
-                  onTap: () {
-                    context.push(AppRoutes.editProfile, extra: account);
+                  onTap: () async {
+                    final roleId = await SharedPrefsUtils.getRoleId() ?? 0;
+                    final editProfileRoute = AppRoutes.getEditProfileRoute(
+                      roleId,
+                    );
+                    context.push(editProfileRoute, extra: account);
+                    debugPrint(
+                      "Navigating to $editProfileRoute with account: ${account.fullName}",
+                    );
                   },
-                ),
-                ProfileItem(
-                  icon: Icons.lock_rounded,
-                  text: 'Change Password',
-                  onTap: () {},
                 ),
                 ProfileItem(
                   icon: Icons.privacy_tip_rounded,
@@ -69,16 +71,11 @@ class ProfileContent extends StatelessWidget {
                     try {
                       // Perform logout
                       await accountProvider.logout();
-                      // Show snackbar before navigation
-                      Helpers.showSnackBarWithMessenger(
-                        ScaffoldMessenger.of(context),
-                        'Logged out successfully',
-                      );
                       // Delay navigation to ensure snackbar is displayed
-                      await Future.delayed(const Duration(milliseconds: 500));
-                      if (context.mounted) {
-                        context.go(AppRoutes.login);
-                      }
+                      context.go(AppRoutes.login);
+                      NotificationHelpers.showToast(
+                        message: "Logout successlly!",
+                      );
                     } catch (e) {
                       if (context.mounted) {
                         Helpers.showSnackBarWithMessenger(

@@ -57,7 +57,24 @@ class AppRoutes {
   static const String termsConditions = '/main/terms';
 
   // Special routes
-  static const String editProfile = '/main/edit-profile'; // dùng GoRouter extra
+  static const String editProfile = '/profile/edit'; 
+
+  static const String service = '/service';
+  static const String serviceDetail = '/service-detail';
+
+
+    static String getEditProfileRoute(int roleId) {
+    switch (roleId) {
+      case 1:
+        return '$mainLayout/admin$editProfile';
+      case 2:
+        return '$mainLayout/customer$editProfile';
+      case 3:
+        return '$mainLayout/housekeeper$editProfile';
+      default:
+        return '$mainLayout/default$editProfile';
+    }
+  }
 }
 
 //Route generator

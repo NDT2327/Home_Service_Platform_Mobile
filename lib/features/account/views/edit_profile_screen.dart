@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/core/providers/account_provider.dart';
 import 'package:hsp_mobile/features/account/widgets/edit_profile_content.dart';
 import 'package:provider/provider.dart';
 
@@ -32,10 +32,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.textLight),
-          onPressed: () => Navigator.pop(context),
         ),
         automaticallyImplyLeading: false,
       ),

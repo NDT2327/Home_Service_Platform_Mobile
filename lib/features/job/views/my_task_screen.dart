@@ -3,6 +3,7 @@ import 'package:hsp_mobile/core/models/task_claim.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/providers/task_claim_provider.dart';
 import 'package:hsp_mobile/core/utils/enums/task_claim_status.dart';
+import 'package:hsp_mobile/core/utils/helpers.dart';
 import 'package:hsp_mobile/core/widgets/custom_card.dart';
 import 'package:hsp_mobile/features/job/widgets/task_detail_dialog.dart';
 import 'package:provider/provider.dart';
@@ -122,14 +123,14 @@ class _MyTaskScreenState extends State<MyTaskScreen>
         final address = booking?['address'] ?? 'No address';
         final price =
             detail != null
-                ? '${detail['quantity']} × ${detail['unitPrice']} = ${detail['quantity'] * detail['unitPrice']} đ'
+                ? '${detail['quantity']} × ${Helpers.formatMoney(detail['unitPrice'])} = ${Helpers.formatMoney(detail['quantity'] * detail['unitPrice'])}'
                 : 'N/A';
 
         return CustomCard(
           title: serviceName,
           subtitle: address,
           badge: TaskClaimStatusExt.fromId(claim.statusId).label,
-          footer: "🕒 $schedule\n💰 $price",
+          footer: "$schedule\n$price",
           gradient: LinearGradient(
             colors: [AppColors.primary, AppColors.primaryLight],
             begin: Alignment.topLeft,

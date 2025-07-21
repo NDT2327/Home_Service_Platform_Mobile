@@ -17,12 +17,8 @@ class AppColors {
   static const Color tertiaryDark = Color(0xFF625E59); // chicago
 
   // ✅ Accent Colors
-  static const Color accentYellow = Color(
-    0xFFF2D8B5,
-  ); // dùng sidecar làm điểm nhấn nhẹ
-  static const Color accentOrange = Color(
-    0xFF747167,
-  ); // flint (nhẹ, phù hợp thiết kế tối giản)
+  static const Color accentYellow = Color(0xFFF2D8B5); // dùng sidecar làm điểm nhấn nhẹ
+  static const Color accentOrange = Color(0xFF747167); // flint (nhẹ, phù hợp thiết kế tối giản)
 
   // ✅ Neutral Colors
   static const Color white = Color(0xFFFFFFFF);
@@ -36,15 +32,18 @@ class AppColors {
   static const Color backgroundDark = Color(0xFF101819); // bunker
 
   // ✅ Feedback Colors
-  static const Color success = Color(
-    0xFF4CAF50,
-  ); // vẫn giữ màu xanh lá thông dụng
+  static const Color success = Color(0xFF4CAF50); // vẫn giữ màu xanh lá thông dụng
   static const Color error = Color(0xFFF44336);
   static const Color warning = Color(0xFFFFC107);
 
   // ✅ Text Colors
   static const Color textLight = Color(0xFF000000);
   static const Color textDark = Color(0xFFFFFFFF);
+
+  // ✅ Task Card specific colors
+  static const Color cardPrimary = Color(0xFF1A3343); // primary
+  static const Color cardSecondary = Color(0xFF57AEBB); // secondary
+  static const Color cardAccent = Color(0xFFF2D8B5); // tertiary
 
   // ✅ Gradients
   static LinearGradient primaryGradient(BuildContext context) {
@@ -63,44 +62,85 @@ class AppColors {
     );
   }
 
+  // ✅ Card gradient for task items
+  static Gradient getCardGradient() {
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        primary,
+        primary.withOpacity(0.9),
+        secondary,
+      ],
+    );
+  }
+
+  // ✅ Alternative card gradients
+  static Gradient getCardGradientLight() {
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        primaryLight,
+        primaryLight.withOpacity(0.8),
+        secondary,
+      ],
+    );
+  }
+
+  static Gradient getCardGradientDark() {
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        primaryDark,
+        primary,
+        secondaryDark,
+      ],
+    );
+  }
+
   // ✅ Helpers theo theme
   static Color getPrimary(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? primaryDark
-        : primary;
+    return Theme.of(context).brightness == Brightness.dark ? primaryDark : primary;
   }
 
   static Color getSecondary(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? secondaryDark
-        : secondary;
+    return Theme.of(context).brightness == Brightness.dark ? secondaryDark : secondary;
   }
 
   static Color getTertiary(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? tertiaryDark
-        : tertiary;
+    return Theme.of(context).brightness == Brightness.dark ? tertiaryDark : tertiary;
   }
 
   static Color getTextColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? textDark
-        : textLight;
+    return Theme.of(context).brightness == Brightness.dark ? textDark : textLight;
   }
 
   static Color getBackgroundColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? backgroundDark
-        : backgroundLight;
+    return Theme.of(context).brightness == Brightness.dark ? backgroundDark : backgroundLight;
   }
 
-  // ✅ Contrast Helper
-  static Color adjustContrast(Color color, {double factor = 1.0}) {
-    return Color.fromRGBO(
-      (color.red * factor).clamp(0, 255).toInt(),
-      (color.green * factor).clamp(0, 255).toInt(),
-      (color.blue * factor).clamp(0, 255).toInt(),
-      1.0,
-    );
+  // ✅ Get status color
+  static Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return warning;
+      case 'completed':
+        return success;
+      case 'cancelled':
+        return error;
+      case 'in_progress':
+        return secondary;
+      case 'available':
+        return primaryLight;
+      default:
+        return mediumGray;
+    }
+  }
+
+  // ✅ Get status color with opacity for badges
+  static Color getStatusColorWithOpacity(String status) {
+    return getStatusColor(status).withOpacity(0.2);
   }
 }

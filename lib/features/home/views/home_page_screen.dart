@@ -32,7 +32,6 @@ Widget build(BuildContext context) {
   final catalogProvider = context.watch<CatalogProvider>();
 
   final customerName = authProvider.loginData?.account.fullName ?? 'Khách';
-  print(authProvider.loginData?.account.fullName);
   final isLoading = catalogProvider.isLoadingCategories;
 
   return Scaffold(

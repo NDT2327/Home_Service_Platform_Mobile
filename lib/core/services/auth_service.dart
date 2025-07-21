@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:hsp_mobile/core/models/dtos/response/base_response.dart';
 import 'package:hsp_mobile/core/models/dtos/response/login_response.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
@@ -29,8 +30,9 @@ class AuthService {
               'Failed to login with status: ${response.statusCode}',
         );
       }
-    } catch (e) {
-      throw Exception('Network error: $e');
+    } on SocketException {
+      // ✨ CHỈ BẮT LỖI MẠNG (KHÔNG CÓ KẾT NỐI INTERNET)
+      throw Exception('Network error: Please check your internet connection.');
     }
   }
 }

@@ -71,7 +71,7 @@ class AccountProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateAccount(
+  Future<bool> updateAccount(
     int accountId,
     UpdateAccountRequest request,
   ) async {
@@ -80,11 +80,13 @@ class AccountProvider extends ChangeNotifier {
     if (response.message != null && response.statusCode != 500) {
       _currentAccount = response.data;
       _errorMessage = null;
+      return true;
     } else {
       _errorMessage = response.message ?? "Falied to update account";
     }
     _setLoading(false);
     notifyListeners();
+    return false;
   }
 
   //Fetch account by id
@@ -111,7 +113,6 @@ class AccountProvider extends ChangeNotifier {
   Future<void> loadCurrentAccount() async {
     final accountId = await SharedPrefsUtils.getAccountId();
     if (accountId == null) {
-      print("Account ID not found in SharedPreferences");
       return;
     }
 
