@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hsp_mobile/core/providers/booking_provider.dart';
 // import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:hsp_mobile/core/providers/catalog_provider.dart';
 import 'package:hsp_mobile/core/routes/app_router.dart';
@@ -66,6 +67,7 @@ runApp(
           ChangeNotifierProvider(
             create: (_) => CatalogProvider(catalogService: CatalogService()),
           ),
+          ChangeNotifierProvider(create: (_) => BookingProvider())
         ],
         child: MyApp(),
       ),

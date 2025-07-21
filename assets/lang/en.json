@@ -1,16 +1,16 @@
 {
   "appName": "Cozy Care",
-  "common":{
+  "common": {
     "close": "Close"
   },
-  "navigation":{
+  "navigation": {
     "home": "Home",
     "profile": "Profile",
     "menu": "Menu",
     "category": "Category",
     "bookings": "Booking",
     "jobs": "Jobs",
-    "my_tasks":"Tasks"
+    "my_tasks": "Tasks"
   },
   "onboarding": {
     "skip": "Skip",
@@ -24,11 +24,19 @@
     "desc3": "Multiple safe, fast, and convenient payment methods."
   },
   "home": {
-    "title": "Home",
-    "welcome": "Welcome to Cozy Care",
-    "services": "Services",
-    "bookNow": "Book Now",
-    "viewAll": "View All"
+    "recent_booking": "Recent Booking",
+    "view_all": "View All",
+    "no_bookings": "No recent bookings found.",
+    "booking_number": "Booking #{number}",
+    "deadline": "Deadline: {date}",
+    "total": "Total: ${amount}",
+    "status": "Status: {status}"
+  },
+  "bookingStatus": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled",
+    "completed": "Completed"
   },
   "login": {
     "welcomeBack": "Welcome Back",
@@ -99,8 +107,8 @@
     "fullNameRequired": "Full name is required",
     "phoneRequired": "Phone number is required",
     "addressRequired": "Address is required",
-    "availableTasks":"Available tasks",
-    "myTasks":"My tasks",
+    "availableTasks": "Available tasks",
+    "myTasks": "My tasks",
     "noTasks": "Currently, there are no tasks available to claim.",
     "noBookings": "You have no bookings yet.",
     "rejectReason": "Reason for Rejection",
