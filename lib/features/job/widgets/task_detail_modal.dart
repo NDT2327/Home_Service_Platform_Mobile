@@ -61,15 +61,15 @@ class TaskDetailModal extends StatelessWidget {
               ),
               _buildDetailRow(
                 Icons.confirmation_number,
-                'Số lượng: ${bookingDetail.task.quantity}',
+                'Quantity: ${bookingDetail.task.quantity}',
               ),
               _buildDetailRow(
                 Icons.monetization_on,
-                'Đơn giá: ${Helpers.formatMoney(bookingDetail.task.unitPrice)}',
+                'Price: ${Helpers.formatMoney(bookingDetail.task.unitPrice)}',
               ),
               _buildDetailRow(
                 Icons.calculate,
-                'Tổng tiền: ${Helpers.formatMoney(
+                'Total amount: ${Helpers.formatMoney(
                   bookingDetail.task.quantity * bookingDetail.task.unitPrice,
                 )}',
               ),

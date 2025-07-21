@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
-import 'package:hsp_mobile/core/widgets/search_bar_widget.dart';
 
 class HeaderSection extends StatelessWidget {
   final String customerName;
@@ -14,7 +13,7 @@ class HeaderSection extends StatelessWidget {
   const HeaderSection({
     super.key,
     required this.customerName,
-    this.subtitle = 'Dịch vụ nhà chuyên nghiệp',
+    this.subtitle = 'Professional Home Services',
     this.showSearch = true,
     this.fontSize = 24,
     this.padding,
@@ -44,7 +43,7 @@ class HeaderSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Xin chào, $customerName 👋',
+            'Hello, $customerName',
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
@@ -59,10 +58,6 @@ class HeaderSection extends StatelessWidget {
               color: AppColors.secondary,
             ),
           ),
-          if (showSearch) ...[
-            const SizedBox(height: 20),
-            SearchBarWidget(onChanged: onSearchChanged),
-          ]
         ],
       ),
     );
