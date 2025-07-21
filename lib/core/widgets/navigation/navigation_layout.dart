@@ -5,7 +5,7 @@ import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/core/widgets/navigation/navigation_item.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/core/providers/account_provider.dart';
 import 'package:hsp_mobile/features/account/views/edit_profile_screen.dart';
 import 'package:hsp_mobile/features/account/views/profile_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';

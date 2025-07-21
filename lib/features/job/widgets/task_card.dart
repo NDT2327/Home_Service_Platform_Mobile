@@ -1,16 +1,16 @@
+// lib/features/job/widgets/task_card.dart
+
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/enums/booking_status.dart';
 import 'package:hsp_mobile/core/utils/helpers.dart';
-import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/features/job/view_model/task_available_view_model.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskAvailableViewModel task;
   final bool showActions;
-  final Function(TaskAvailableViewModel) onJobDetail;
-  final Function(int) onClaimJob;
-  final Function(int) onCompleteJob;
+  final VoidCallback onJobDetail;
+  final VoidCallback onClaimJob;
 
   const TaskCard({
     super.key,
@@ -18,91 +18,42 @@ class TaskCard extends StatelessWidget {
     required this.showActions,
     required this.onJobDetail,
     required this.onClaimJob,
-    required this.onCompleteJob,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bookingStatus = BookingStatusExt.fromId(task.task.bookingStatusId);
+    final status = BookingStatusExt.fromId(task.task.bookingStatusId);
+
     return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      elevation: 4,
+      shadowColor: Colors.black.withOpacity(0.2),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
-        onTap: () => onJobDetail(task),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: Responsive.getPadding(context),
+        onTap: onJobDetail,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppColors.primary, AppColors.primaryLight],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title + status badge
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      task.serviceName,
-                      style: TextStyle(
-                        fontSize: Responsive.getFontSize(context, base: 18),
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.black,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  _buildStatusBadge(context, bookingStatus.label),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-              _buildDetailRow(context, Icons.person, task.customerName),
-              _buildDetailRow(context, Icons.location_on, task.customerAddress),
-              _buildDetailRow(context, Icons.calendar_today,
-                  Helpers.formatDate(task.task.scheduleDatetime)),
-              _buildDetailRow(context, Icons.attach_money,
-                  Helpers.formatMoney(task.task.unitPrice)),
-
-              const SizedBox(height: 16),
-
-              // Action buttons
-              Align(
-                alignment: Alignment.centerRight,
-                child: Wrap(
-                  spacing: 12,
-                  children: [
-                    OutlinedButton.icon(
-                      onPressed: () => onJobDetail(task),
-                      icon: const Icon(Icons.visibility, size: 18),
-                      label: Text(
-                        "View detail",
-                        style: TextStyle(
-                          fontSize: Responsive.getFontSize(context, base: 14),
-                          color: AppColors.black,
-                        ),
-                      ),
-                    ),
-                    if (showActions && task.task.bookingStatusId == 1)
-                      ElevatedButton.icon(
-                        onPressed: () => onClaimJob(task.task.detailId),
-                        icon: const Icon(Icons.check_circle, size: 18),
-                        label: const Text("Claim", style: TextStyle(
-                          color: AppColors.lightGray
-                        ),),
-                      ),
-                    if (showActions && task.task.bookingStatusId == 'CLAIMED')
-                      ElevatedButton.icon(
-                        onPressed: () => onCompleteJob(task.task.detailId),
-                        icon: const Icon(Icons.check_circle, size: 18),
-                        label: const Text("Complete"),
-                      ),
-                  ],
-                ),
-              ),
+              _buildHeader(context, status),
+              const SizedBox(height: 12),
+              const Divider(color: Colors.white70),
+              const SizedBox(height: 12),
+              _buildInfoSection(context),
+              if (showActions) ...[
+                const SizedBox(height: 16),
+                _buildActionButtons(status),
+              ],
             ],
           ),
         ),
@@ -110,41 +61,118 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge(BuildContext context, String status) {
-    Color color = _getStatusColor(status);
+  Widget _buildHeader(BuildContext context, BookingStatus status) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(Icons.work_history_outlined, color: AppColors.primaryLight, size: 40),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                task.serviceName,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textDark,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Booking Number: ${task.task.bookingNumber}',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: AppColors.lightGray),
+              ),
+            ],
+          ),
+        ),
+        _buildStatusBadge(status),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge(BookingStatus status) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: status.color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(
-        status,
+        status.label, // Lấy nhãn từ extension
         style: TextStyle(
-          color: color,
+          color: status.color, // Lấy màu từ extension
           fontSize: 12,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 
-  Widget _buildDetailRow(BuildContext context, IconData icon, String text) {
+  Widget _buildInfoSection(BuildContext context) {
+    return Column(
+      children: [
+        _buildDetailRow(
+          context,
+          Icons.person_outline,
+          'Customer',
+          task.customerName,
+        ),
+        _buildDetailRow(
+          context,
+          Icons.location_on_outlined,
+          'Address',
+          task.customerAddress,
+        ),
+        _buildDetailRow(
+          context,
+          Icons.calendar_today_outlined,
+          'Time',
+          Helpers.formatDate(task.task.scheduleDatetime),
+        ),
+        _buildDetailRow(
+          context,
+          Icons.monetization_on_outlined,
+          'Price',
+          Helpers.formatMoney(task.task.unitPrice * task.task.quantity),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: AppColors.mediumGray),
-          const SizedBox(width: 8),
+          Icon(icon, size: 18, color: AppColors.lightGray),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 90,
+            child: Text(
+              label,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.lightGray),
+            ),
+          ),
           Expanded(
             child: Text(
-              text,
-              style: TextStyle(
-                fontSize: Responsive.getFontSize(context, base: 14),
-                color: AppColors.mediumGray,
+              value,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textDark,
               ),
-              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -152,16 +180,41 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toUpperCase()) {
-      case 'PENDING':
-        return AppColors.accentOrange;
-      case 'CLAIMED':
-        return AppColors.primary;
-      case 'COMPLETED':
-        return AppColors.success;
-      default:
-        return AppColors.mediumGray;
-    }
+  Widget _buildActionButtons(BookingStatus status) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        // Nút "Claim" chỉ hiển thị khi trạng thái là "Có sẵn"
+        if (status == BookingStatus.pending)
+          ElevatedButton.icon(
+            onPressed: onClaimJob,
+            icon: const Icon(Icons.check_circle_outline, size: 18),
+            label: const Text("Claimed"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+
+        // Nút xem chi tiết luôn hiển thị
+        const SizedBox(width: 10),
+        OutlinedButton(
+          onPressed: onJobDetail,
+          child: const Text(
+            "View detail",
+            style: TextStyle(color: AppColors.textDark),
+          ),
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: AppColors.backgroundLight),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

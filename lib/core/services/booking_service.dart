@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:hsp_mobile/core/models/booking.dart';
 import 'package:hsp_mobile/core/models/booking_detail.dart';
-import 'package:hsp_mobile/core/models/dtos/response/base_response.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:http/http.dart' as http;

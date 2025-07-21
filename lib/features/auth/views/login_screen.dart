@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
-import 'package:hsp_mobile/core/utils/helpers.dart';
-import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
+import 'package:hsp_mobile/core/utils/notification_helpers.dart';
+import 'package:hsp_mobile/core/utils/validators.dart';
 import 'package:hsp_mobile/core/widgets/index.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/core/providers/auth_provider.dart';
@@ -23,6 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscureText = true;
 
+  bool _isLogginIn = false;
+
   void _togglePasswordVisibility() {
     setState(() {
       _obscureText = !_obscureText;
@@ -30,44 +32,70 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    if (_formKey.currentState!.validate()) {
+    // 1. Validate form and get input
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    //Bắt đầu quá trình đăng nhập, cập nhật UI
+    setState(() {
+      _isLogginIn = true;
+    });
+
+    try {
       final input = _emailController.text.trim();
       final password = _passwordController.text.trim();
-
       final authProvider = context.read<AuthProvider>();
-      final success = await authProvider.login(context, input, password);
-      if (success) {
-        if (!mounted) return;
-        //Navigator.pushReplacementNamed(context, AppRoutes.home); // hoặc Home
-        //context.go(AppRoutes.mainLayout);
-        final roleId = await SharedPrefsUtils.getRoleId();
 
-        switch (roleId) {
-          case 1: // Admin
-            context.go('${AppRoutes.mainLayout}/admin${AppRoutes.home}');
-            break;
-          case 2: // Customer
-            context.go('${AppRoutes.mainLayout}/customer${AppRoutes.home}');
-            break;
-          case 3: // Housekeeper
-            context.go('${AppRoutes.mainLayout}/housekeeper${AppRoutes.jobList}');
-            break;
-          default:
-            context.go(AppRoutes.login);
-        }
+      final success = await authProvider.login(context, input, password);
+
+      if (!mounted) return;
+
+      if (success) {
+        NotificationHelpers.showToast(message: "Login successful!");
+        final roleId = authProvider.loginData?.account.roleId;
+        _navigateToHomeScreen(roleId);
       } else {
-        final error = authProvider.errorMessage ?? 'Đăng nhập thất bại';
-        if (!mounted) return;
-        Helpers.showSnackBarWithMessenger(ScaffoldMessenger.of(context), error, isError: true);
+        final error = authProvider.errorMessage ?? 'Login Failed';
+        NotificationHelpers.showToast(message: error, isError: true);
+      }
+    } finally {
+      // ✨ LUÔN LUÔN dừng quá trình loading, dù thành công hay thất bại.
+      if (mounted) {
+        setState(() {
+          _isLogginIn = false;
+        });
       }
     }
   }
 
-  void _forgotPassword() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Quên mật khẩu?')));
+  /// ✨ NEW: Helper method to handle navigation logic, keeping _login clean.
+  void _navigateToHomeScreen(int? roleId) {
+    switch (roleId) {
+      case 1: // Admin
+        context.go('${AppRoutes.mainLayout}/admin${AppRoutes.home}');
+        break;
+      case 2: // Customer
+        context.go('${AppRoutes.mainLayout}/customer${AppRoutes.home}');
+        break;
+      case 3: // Housekeeper
+        context.go('${AppRoutes.mainLayout}/housekeeper${AppRoutes.jobList}');
+        break;
+      default:
+        // Fallback to login screen if roleId is unknown or null
+        NotificationHelpers.showToast(
+          message: 'Unknown user role. Please contact support.',
+          isError: true,
+        );
+        context.go(AppRoutes.login);
+    }
   }
+
+  // void _forgotPassword() {
+  //   ScaffoldMessenger.of(
+  //     context,
+  //   ).showSnackBar(SnackBar(content: Text('Quên mật khẩu?')));
+  // }
 
   void _signUp() {
     //Navigator.pushNamed(context, AppRoutes.register);
@@ -106,6 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: _emailController,
               labelText: 'login.email'.tr(),
               keyboardType: TextInputType.emailAddress,
+              validator: Validators.validateEmail,
             ),
             const SizedBox(height: 16),
             // Password input
@@ -113,6 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: _passwordController,
               labelText: 'login.password'.tr(),
               keyboardType: TextInputType.visiblePassword,
+              validator: Validators.validatePassword,
               obscureText: _obscureText,
               suffixIcon: IconButton(
                 icon: Icon(
@@ -124,19 +154,20 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 16),
             // Forgot Password
-            Align(
-              alignment: Alignment.centerRight,
-              child: LinkButton(
-                text: 'login.forgotPassword'.tr(),
-                onPressed: _forgotPassword,
-                textColor: AppColors.primaryLight,
-              ),
-            ),
-            const SizedBox(height: 24),
+            // Align(
+            //   alignment: Alignment.centerRight,
+            //   child: LinkButton(
+            //     text: 'login.forgotPassword'.tr(),
+            //     onPressed: _forgotPassword,
+            //     textColor: AppColors.primaryLight,
+            //   ),
+            // ),
+            // const SizedBox(height: 24),
             // Login Button
             CustomButton(
               text: 'login.loginButton'.tr(),
-              onPressed: _login,
+              onPressed: _isLogginIn ? null : _login,
+              isLoading: _isLogginIn,
               backgroundColor: AppColors.primary,
               textColor: AppColors.white,
             ),

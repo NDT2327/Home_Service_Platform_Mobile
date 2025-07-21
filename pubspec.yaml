@@ -58,6 +58,8 @@ dependencies:
   go_router: ^16.0.0
   google_fonts: ^6.2.1
   jwt_decoder: ^2.0.1
+  #notification
+  fluttertoast: ^8.2.12
   
 
 dev_dependencies:

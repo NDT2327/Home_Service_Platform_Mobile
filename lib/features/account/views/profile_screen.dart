@@ -3,7 +3,7 @@ import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/utils/app_color.dart';
 import 'package:hsp_mobile/core/utils/responsive.dart';
 import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/core/providers/account_provider.dart';
 import 'package:hsp_mobile/features/account/views/edit_profile_screen.dart';
 import 'package:hsp_mobile/features/account/widgets/navigation_list.dart';
 import 'package:hsp_mobile/features/account/widgets/profile_content.dart';

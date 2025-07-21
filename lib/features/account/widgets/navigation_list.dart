@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/account.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
-import 'package:hsp_mobile/core/utils/helpers.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/core/utils/notification_helpers.dart';
+import 'package:hsp_mobile/core/providers/account_provider.dart';
+import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/features/account/widgets/profile_item.dart';
 import 'package:provider/provider.dart';
 
@@ -18,21 +19,18 @@ class NavigationList extends StatelessWidget {
       context,
       listen: false,
     );
+
     final items = [
       {
         'icon': Icons.edit_rounded,
         'text': 'Edit Profile',
         'route': AppRoutes.editProfile,
-      },
-      {
-        'icon': Icons.lock_rounded,
-        'text': 'Change Password',
-        'route': Placeholder,
+        'isEdit': true,
       },
       {
         'icon': Icons.privacy_tip_rounded,
         'text': 'Privacy Policy',
-        'route': Placeholder,
+        'route': AppRoutes.privacy,
       },
       {
         'icon': Icons.description_rounded,
@@ -54,10 +52,8 @@ class NavigationList extends StatelessWidget {
                 text: 'Logout',
                 onTap: () async {
                   await accountProvider.logout();
-                  if (context.mounted) {
-                    Helpers.showSnackBarWithMessenger(ScaffoldMessenger.of(context), 'Logged out successfully');
-                    context.go(AppRoutes.login);
-                  }
+                  NotificationHelpers.showToast(message: 'Logout successfully');
+                  context.go(AppRoutes.login);
                 },
                 isLogout: true,
               ),
@@ -80,15 +76,14 @@ class NavigationList extends StatelessWidget {
                   fontWeight: FontWeight.normal,
                 ),
               ),
-              onTap: () {
-                if (item['route'] == AppRoutes.editProfile) {
-                  Navigator.pushNamed(
-                    context,
-                    item['route'] as String,
-                    arguments: account,
-                  );
+              onTap: () async{
+                if (item['isEdit'] == true) {
+                  final roleId = await SharedPrefsUtils.getRoleId() ?? 0;
+                  final route = AppRoutes.getEditProfileRoute(roleId);
+                  context.push(route, extra: account);
+                  debugPrint("Navigating to $route with account: ${account.fullName}");
                 } else {
-                  Navigator.pushNamed(context, item['route'] as String);
+                  context.push(item['route'] as String);
                 }
               },
             ),

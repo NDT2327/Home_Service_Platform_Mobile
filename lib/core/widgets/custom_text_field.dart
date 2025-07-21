@@ -9,6 +9,7 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final VoidCallback? onSuffixIconPressed;
   final String? Function(String?)? validator;
+  final int maxLines;
 
   const CustomTextField({
     super.key,
@@ -19,6 +20,7 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.onSuffixIconPressed,
     this.validator,
+    this.maxLines = 1,
   });
 
   @override
@@ -28,25 +30,24 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,
+      maxLines: obscureText ? 1 : maxLines,
       decoration: InputDecoration(
         labelText: labelText,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
         filled: true,
         fillColor: AppColors.backgroundLight,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 18,
         ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: AppColors.secondary),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: AppColors.primary,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: AppColors.primary, width: 2),
         ),
         suffixIcon: suffixIcon,
       ),

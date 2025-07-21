@@ -7,7 +7,7 @@ import 'package:hsp_mobile/core/widgets/navigation/desktop_navigation_scaffold.d
 import 'package:hsp_mobile/core/widgets/navigation/mobile_navigation_scaffold.dart';
 import 'package:hsp_mobile/core/widgets/navigation/nav_item.dart';
 import 'package:hsp_mobile/core/widgets/navigation/tablet_navigation_scaffold.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/core/providers/account_provider.dart';
 import 'package:hsp_mobile/features/account/views/profile_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
 import 'package:hsp_mobile/features/catalog/view/category_screen.dart';

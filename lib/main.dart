@@ -12,7 +12,7 @@ import 'package:hsp_mobile/core/services/catalog_service.dart';
 import 'package:hsp_mobile/core/services/task_service.dart';
 import 'package:hsp_mobile/core/utils/app_theme.dart';
 import 'package:hsp_mobile/core/utils/constants.dart';
-import 'package:hsp_mobile/features/account/account_provider.dart';
+import 'package:hsp_mobile/core/providers/account_provider.dart';
 import 'package:hsp_mobile/core/providers/auth_provider.dart';
 import 'package:hsp_mobile/core/providers/booking_detail_provider.dart';
 import 'package:hsp_mobile/core/providers/task_claim_provider.dart';
@@ -44,7 +44,7 @@ runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('vi')],
       path: 'assets/lang',
-      fallbackLocale: const Locale('vi', 'Vie'),
+      fallbackLocale: const Locale('en', 'En'),
       child: MultiProvider(
         providers: [
           //nạp các provider

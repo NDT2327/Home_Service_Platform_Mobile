@@ -125,9 +125,11 @@ final GoRouter router = GoRouter(
           builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
-          path: AppRoutes.editProfile,
+          path: '${AppRoutes.mainLayout}/customer${AppRoutes.editProfile}',
           builder: (context, state) {
             final account = state.extra as Account;
+            print("Edit Profile route: $account"); // Debug tại đây
+
             return EditProfileScreen(account: account);
           },
         ),
@@ -171,9 +173,11 @@ final GoRouter router = GoRouter(
           builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
-          path: AppRoutes.editProfile,
+          path: '${AppRoutes.mainLayout}/housekeeper${AppRoutes.editProfile}',
           builder: (context, state) {
             final account = state.extra as Account;
+            debugPrint("Edit Profile route: $account"); // Debug tại đây
+
             return EditProfileScreen(account: account);
           },
         ),

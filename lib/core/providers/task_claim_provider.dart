@@ -153,36 +153,45 @@ class TaskClaimProvider with ChangeNotifier {
   }
 
   //Claim task
-  Future<void> claimTask({
-    required int detailId,
-    required int housekeeperId,
-    required int bookingId,
-  }) async {
+Future<bool> claimTask({
+  required int detailId,
+  required int housekeeperId,
+  required int bookingId,
+}) async {
+  _isLoading = true;
+  _errorMessage = null;
+  notifyListeners();
+
+  try {
+    final response = await _taskService.claimTask(detailId, housekeeperId);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // Cập nhật trạng thái task và booking sau khi claim thành công
+      await fetchClaimedTasksByHousekeeperId();
+      await loadAvailableTasks();
+
+      final bookingService = BookingService();
+      await bookingService.updateBooking(
+        bookingId: bookingId,
+        bookingStatusId: 2,
+      );
+
+      return true;
+    } else {
+      _errorMessage = response.message ?? 'Failed to claim task';
+      debugPrint('❌ Claim failed with status ${response.statusCode}: $_errorMessage');
+      return false;
+    }
+  } catch (e, stackTrace) {
+    _errorMessage = '⚠️ Error while claiming task: $e';
+    debugPrint('❌ Exception during claim: $e');
+    debugPrintStack(stackTrace: stackTrace);
+    return false;
+  } finally {
     _isLoading = false;
     notifyListeners();
-
-    try {
-      final response = await _taskService.claimTask(detailId, housekeeperId);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        //fetch claimed tasks again or update state
-        _errorMessage = null;
-        await fetchClaimedTasksByHousekeeperId();
-        await loadAvailableTasks();
-        final bookingService = BookingService();
-        await bookingService.updateBooking(
-          bookingId: bookingId,
-          bookingStatusId: 2,
-        );
-      } else {
-        _errorMessage = response.message ?? 'Failed to claim task';
-      }
-    } catch (e) {
-      _errorMessage = 'Error while claiming task: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
+}
 
   //Fetch claimed task by housekeeperID
   Future<void> fetchClaimedTasksByHousekeeperId() async {

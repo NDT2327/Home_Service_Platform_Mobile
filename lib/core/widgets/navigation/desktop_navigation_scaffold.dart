@@ -26,10 +26,6 @@ class DesktopNavigationScaffold extends StatelessWidget {
             width: 200,
             decoration: BoxDecoration(
               color: AppColors.primaryLight,
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
               boxShadow: const [
                 BoxShadow(color: Colors.black12, blurRadius: 4),
               ],

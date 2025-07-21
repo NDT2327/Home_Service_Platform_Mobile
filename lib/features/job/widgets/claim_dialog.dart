@@ -9,16 +9,16 @@ class ClaimDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Xác nhận nhận công việc'),
-      content: const Text('Bạn có chắc chắn muốn nhận công việc này?'),
+      title: const Text('Confirm Task Claim'),
+      content: const Text('Are you sure you want to claim this task?'),
       actions: [
         TextButton(
           onPressed: onCancel ?? () => Navigator.of(context).pop(),
-          child: const Text('Hủy'),
+          child: const Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: onConfirm,
-          child: const Text('Xác nhận'),
+          child: const Text('Confirm'),
         ),
       ],
       shape: RoundedRectangleBorder(
