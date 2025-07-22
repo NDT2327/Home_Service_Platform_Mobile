@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/category.dart';
+import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/services/catalog_service.dart';
 import 'package:hsp_mobile/features/catalog/view/service_screen.dart';
 
@@ -13,7 +15,7 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   late Future<List<Category>> _futureCategories;
   final _service = CatalogService();
-  
+
   // Search related variables
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
@@ -35,11 +37,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   void _onSearchChanged() {
     setState(() {
-      _filteredCategories = _allCategories.where((category) {
-        final searchTerm = _searchController.text.toLowerCase();
-        return category.categoryName.toLowerCase().contains(searchTerm) ||
-               (category.description?.toLowerCase().contains(searchTerm) ?? false);
-      }).toList();
+      _filteredCategories =
+          _allCategories.where((category) {
+            final searchTerm = _searchController.text.toLowerCase();
+            return category.categoryName.toLowerCase().contains(searchTerm) ||
+                (category.description?.toLowerCase().contains(searchTerm) ??
+                    false);
+          }).toList();
     });
   }
 
@@ -57,18 +61,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _isSearching 
-            ? TextField(
-                controller: _searchController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Searching Categories...',
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(color: Colors.grey),
-                ),
-                style: const TextStyle(color: Colors.black),
-              )
-            : const Text('All Categories'),
+        title:
+            _isSearching
+                ? TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Searching Categories...',
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.grey),
+                  ),
+                  style: const TextStyle(color: Colors.black),
+                )
+                : const Text('All Categories'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         actions: [
@@ -87,12 +92,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
           if (snap.hasError) {
             return Center(child: Text('Error: ${snap.error}'));
           }
-          
+
           _allCategories = snap.data!;
-          final categoriesToShow = _isSearching ? _filteredCategories : _allCategories;
-          
+          final categoriesToShow =
+              _isSearching ? _filteredCategories : _allCategories;
+
           // Show empty state when searching with no results
-          if (_isSearching && _searchController.text.isNotEmpty && _filteredCategories.isEmpty) {
+          if (_isSearching &&
+              _searchController.text.isNotEmpty &&
+              _filteredCategories.isEmpty) {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -107,7 +115,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               ),
             );
           }
-          
+
           return ListView.separated(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
             itemCount: categoriesToShow.length,
@@ -116,14 +124,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
               final cat = categoriesToShow[index];
               return InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ServiceScreen(
-                        categoryId: cat.categoryId, 
-                        categoryName: cat.categoryName
-                      ),
-                    ),
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) => ServiceScreen(
+                  //       categoryId: cat.categoryId,
+                  //       categoryName: cat.categoryName
+                  //     ),
+                  //   ),
+                  // );
+                  context.go(
+                    '${AppRoutes.mainLayout}/customer${AppRoutes.service}/${cat.categoryId}',
+                    extra: cat.categoryName,
                   );
                 },
                 child: Container(
@@ -149,8 +161,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           width: 48,
                           height: 48,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
-                              const Icon(Icons.image_not_supported, size: 48),
+                          errorBuilder:
+                              (_, __, ___) => const Icon(
+                                Icons.image_not_supported,
+                                size: 48,
+                              ),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -180,7 +195,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       const Icon(Icons.chevron_right, color: Colors.grey),
                     ],
                   ),
-                )
+                ),
               );
             },
           );

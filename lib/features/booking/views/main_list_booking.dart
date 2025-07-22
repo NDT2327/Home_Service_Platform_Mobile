@@ -45,6 +45,7 @@ class _MainListBookingState extends State<MainListBooking> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<List<Booking>>(
         future: _bookings,
@@ -52,9 +53,9 @@ class _MainListBookingState extends State<MainListBooking> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Lỗi: ${snapshot.error}'));
+            return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Không tìm thấy đặt lịch nào'));
+            return const Center(child: Text('No Booking'));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,

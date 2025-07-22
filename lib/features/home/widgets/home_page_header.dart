@@ -23,7 +23,8 @@ class HeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: padding ?? Responsive.getPadding(context),
+      width: double.infinity,
+      padding: padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: const BorderRadius.only(
@@ -40,6 +41,7 @@ class HeaderSection extends StatelessWidget {
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(

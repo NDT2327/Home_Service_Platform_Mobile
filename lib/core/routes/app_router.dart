@@ -6,12 +6,16 @@ import 'package:hsp_mobile/core/utils/shared_prefs_utils.dart';
 import 'package:hsp_mobile/core/widgets/navigation/root_layout.dart';
 import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/features/account/views/edit_profile_screen.dart';
+import 'package:hsp_mobile/features/account/views/privacy_screen.dart';
 import 'package:hsp_mobile/features/account/views/profile_screen.dart';
+import 'package:hsp_mobile/features/account/views/term_condition_screen.dart';
 import 'package:hsp_mobile/features/auth/views/login_screen.dart';
 import 'package:hsp_mobile/features/auth/views/sign_up_screen.dart';
 import 'package:hsp_mobile/features/booking/views/booking_detail_screen.dart';
+import 'package:hsp_mobile/features/booking/views/booking_summary_screen.dart';
 import 'package:hsp_mobile/features/booking/views/main_list_booking.dart';
 import 'package:hsp_mobile/features/catalog/view/category_screen.dart';
+import 'package:hsp_mobile/features/catalog/view/service_screen.dart';
 import 'package:hsp_mobile/features/home/views/home_page_screen.dart';
 import 'package:hsp_mobile/features/introduction/on_boarding_screen.dart';
 import 'package:hsp_mobile/features/introduction/splash_screen.dart';
@@ -128,9 +132,27 @@ final GoRouter router = GoRouter(
           path: '${AppRoutes.mainLayout}/customer${AppRoutes.editProfile}',
           builder: (context, state) {
             final account = state.extra as Account;
-            print("Edit Profile route: $account"); // Debug tại đây
-
             return EditProfileScreen(account: account);
+          },
+        ),
+        GoRoute(
+          path:
+              '${AppRoutes.mainLayout}/customer${AppRoutes.service}/:categoryId',
+          builder: (context, state) {
+            final categoryId = int.parse(state.pathParameters['categoryId']!);
+            final categoryName = state.extra as String? ?? 'Unknown';
+            return ServiceScreen(
+              categoryId: categoryId,
+              categoryName: categoryName,
+            );
+          },
+        ),
+        GoRoute(
+          path:
+              '${AppRoutes.mainLayout}/customer${AppRoutes.bookingSummary}/:serviceId',
+          builder: (context, state) {
+            final serviceId = int.parse(state.pathParameters['serviceId']!);
+            return BookingSummaryScreen(serviceId: serviceId);
           },
         ),
         GoRoute(
@@ -142,16 +164,11 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.privacy,
-          builder:
-              (context, state) =>
-                  const Scaffold(body: Center(child: Text('Privacy Screen'))),
+          builder: (context, state) => const PrivacyScreen(),
         ),
         GoRoute(
           path: AppRoutes.termsConditions,
-          builder:
-              (context, state) => const Scaffold(
-                body: Center(child: Text('Terms and Conditions Screen')),
-              ),
+          builder: (context, state) => const TermsConditionsScreen(),
         ),
       ],
     ),
@@ -183,16 +200,11 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.privacy,
-          builder:
-              (context, state) =>
-                  const Scaffold(body: Center(child: Text('Privacy Screen'))),
+          builder: (context, state) => const PrivacyScreen(),
         ),
         GoRoute(
           path: AppRoutes.termsConditions,
-          builder:
-              (context, state) => const Scaffold(
-                body: Center(child: Text('Terms and Conditions Screen')),
-              ),
+          builder: (context, state) => const TermsConditionsScreen(),
         ),
       ],
     ),
@@ -221,16 +233,11 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.privacy,
-          builder:
-              (context, state) =>
-                  const Scaffold(body: Center(child: Text('Privacy Screen'))),
+          builder: (context, state) => const PrivacyScreen(),
         ),
         GoRoute(
           path: AppRoutes.termsConditions,
-          builder:
-              (context, state) => const Scaffold(
-                body: Center(child: Text('Terms and Conditions Screen')),
-              ),
+          builder: (context, state) => const TermsConditionsScreen(),
         ),
       ],
     ),

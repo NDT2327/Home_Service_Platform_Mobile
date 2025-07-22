@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsp_mobile/core/models/service.dart';
+import 'package:hsp_mobile/core/routes/app_routes.dart';
 import 'package:hsp_mobile/core/services/catalog_service.dart';
+import 'package:hsp_mobile/core/utils/helpers.dart';
 import 'package:hsp_mobile/features/booking/views/booking_summary_screen.dart';
 import 'package:hsp_mobile/features/catalog/view/service_detail_screen.dart';
 import 'package:intl/intl.dart';
@@ -19,10 +22,9 @@ class ServiceScreen extends StatefulWidget {
   State<ServiceScreen> createState() => _ServiceScreenState();
 }
 
-  String _formatVND(double amount) {
-    
-    return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
-  }
+String _formatVND(double amount) {
+  return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
+}
 
 class _ServiceScreenState extends State<ServiceScreen> {
   late Future<List<Service>> _futureServices;
@@ -67,7 +69,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               final providerAvatar = 'https://placehold.co/90/png';
 
               // Giả sử bạn muốn hiển thị số sao và count reviews:
-              final rating =  5.0; // ví dụ trung bình sao
+              final rating = 5.0; // ví dụ trung bình sao
               final reviewCount = 0;
 
               // Ví dụ giá gốc và giá sale:
@@ -77,17 +79,19 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => ServiceDetailScreen(
-                        serviceId: svc.serviceId,
-                        serviceName: svc.serviceName,
-                        serviceImage: svc.image ?? '',
-                        price: svc.price,
-                        originalPrice: originalPrice,
-                        rating: rating,
-                        reviewCount: reviewCount,  // dù bỏ review, vẫn dùng nếu bạn còn cần hiển thị count
-                        providerName: providerName,
-                        providerAvatar: providerAvatar,
-                      ),
+                      builder:
+                          (_) => ServiceDetailScreen(
+                            serviceId: svc.serviceId,
+                            serviceName: svc.serviceName,
+                            serviceImage: svc.image ?? '',
+                            price: svc.price,
+                            originalPrice: originalPrice,
+                            rating: rating,
+                            reviewCount:
+                                reviewCount, // dù bỏ review, vẫn dùng nếu bạn còn cần hiển thị count
+                            providerName: providerName,
+                            providerAvatar: providerAvatar,
+                          ),
                     ),
                   );
                 },
@@ -108,18 +112,21 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     children: [
                       // Ảnh service
                       ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(12),
+                        ),
                         child: Image.network(
                           svc.image != null
                               ? '${svc.image}'
                               : 'https://placehold.co/180/png',
                           height: 180,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            height: 180,
-                            color: Colors.grey[200],
-                            child: const Icon(Icons.broken_image, size: 60),
-                          ),
+                          errorBuilder:
+                              (_, __, ___) => Container(
+                                height: 180,
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.broken_image, size: 60),
+                              ),
                         ),
                       ),
 
@@ -135,11 +142,18 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                 const SizedBox(width: 4),
                                 Text(
                                   rating.toStringAsFixed(1),
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 const SizedBox(width: 8),
-                                Text('($reviewCount Reviews)',
-                                    style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                                Text(
+                                  '($reviewCount Reviews)',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -148,7 +162,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             Text(
                               svc.serviceName,
                               style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             const SizedBox(height: 8),
 
@@ -156,13 +172,15 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             Row(
                               children: [
                                 Text(
-                                  _formatVND(svc.price),
+                                  Helpers.formatMoney(svc.price),
                                   style: const TextStyle(
-                                      fontSize: 16, fontWeight: FontWeight.bold),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  _formatVND(originalPrice),
+                                  Helpers.formatMoney(originalPrice),
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
@@ -179,12 +197,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                 // Avatar provider
                                 CircleAvatar(
                                   radius: 16,
-                                  backgroundImage: providerAvatar.isNotEmpty
-                                      ? NetworkImage(providerAvatar)
-                                      : null,
-                                  child: providerAvatar.isEmpty
-                                      ? const Icon(Icons.person)
-                                      : null,
+                                  backgroundImage:
+                                      providerAvatar.isNotEmpty
+                                          ? NetworkImage(providerAvatar)
+                                          : null,
+                                  child:
+                                      providerAvatar.isEmpty
+                                          ? const Icon(Icons.person)
+                                          : null,
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
@@ -195,11 +215,17 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => BookingSummaryScreen(serviceId: svc.serviceId),
-                                      ),
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (_) => BookingSummaryScreen(serviceId: svc.serviceId),
+                                    //   ),
+                                    // );
+                                    context.goNamed(
+                                      '${AppRoutes.mainLayout}/customer${AppRoutes.bookingSummary}/:serviceId',
+                                      pathParameters: {
+                                        'serviceId': svc.serviceId.toString(),
+                                      },
                                     );
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -208,8 +234,10 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 12,
+                                    ),
                                   ),
                                   child: const Text('Add'),
                                 ),
@@ -220,10 +248,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
                       ),
                     ],
                   ),
-                )
-            
+                ),
               );
-              
             },
           );
         },
