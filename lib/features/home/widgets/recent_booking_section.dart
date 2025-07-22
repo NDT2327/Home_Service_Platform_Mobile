@@ -16,7 +16,7 @@ class RecentBookingSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get the most recent booking (first item after sorting by deadline)
-    final recentBooking = bookings.isNotEmpty ? bookings.first : null;
+    final recentBookings = bookings.take(2).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,25 +39,32 @@ class RecentBookingSection extends StatelessWidget {
                   text: 'home.view_all'.tr(),
                   textColor: AppColors.primary,
                   onPressed: () {
-                    context.push('${AppRoutes.mainLayout}/customer${AppRoutes.mainListBooking}');
+                    context.push(
+                      '${AppRoutes.mainLayout}/customer${AppRoutes.mainListBooking}',
+                    );
                   },
                 ),
             ],
           ),
         ),
         const SizedBox(height: 12),
-        recentBooking == null
+        recentBookings.isEmpty
             ? Padding(
               padding: Responsive.getPadding(context),
               child: Text(
-                'home.no_bookings'.tr(),
+                'No bookings available.',
                 style: TextStyle(
                   fontSize: Responsive.getFontSize(context, base: 16),
                   color: Colors.grey[600],
                 ),
               ),
             )
-            : _buildBookingCard(context, recentBooking),
+            : Column(
+              children:
+                  recentBookings
+                      .map((booking) => _buildBookingCard(context, booking))
+                      .toList(),
+            ),
       ],
     );
   }
@@ -66,45 +73,55 @@ class RecentBookingSection extends StatelessWidget {
     final status = BookingStatusExt.fromId(booking['statusId'] as int);
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-      elevation: 2,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Text(
-              booking['bookingNumber'],
-              style: TextStyle(
-                fontSize: Responsive.getFontSize(context, base: 16),
-                fontWeight: FontWeight.bold,
-                color: AppColors.textLight,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              Helpers.formatDate(booking['deadline'] as DateTime),
-
-              style: TextStyle(
-                fontSize: Responsive.getFontSize(context, base: 14),
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              Helpers.formatMoney(booking['totalAmount'] as double),
-              style: TextStyle(
-                fontSize: Responsive.getFontSize(context, base: 14),
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              status.label,
-              style: TextStyle(
-                fontSize: Responsive.getFontSize(context, base: 14),
-                color: status.color,
+            Icon(Icons.receipt_long, color: AppColors.primary, size: 40),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    booking['bookingNumber'],
+                    style: TextStyle(
+                      fontSize: Responsive.getFontSize(context, base: 15),
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textLight,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        Helpers.formatDate(booking['deadline']),
+                        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                      ),
+                      Text(
+                        Helpers.formatMoney(booking['totalAmount']),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    status.label,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: status.color,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

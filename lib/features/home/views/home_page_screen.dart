@@ -50,13 +50,13 @@ class _HomePageScreenState extends State<HomePageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
                   HeaderSection(customerName: customerName),
                   const SizedBox(height: 16),
                   CategoriesSection(
                     categories: catalogProvider.categories
                         .map((cat) => {
-                              'icon': Icons.cleaning_services,
+                              'id': cat.categoryId,
+                              'image': cat.image,
                               'name': cat.categoryName,
                             })
                         .toList(),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hsp_mobile/core/models/service.dart';
+import 'package:hsp_mobile/core/utils/helpers.dart';
 
 class SuggestedServiceCard extends StatelessWidget {
   final Service service;
@@ -19,6 +20,7 @@ class SuggestedServiceCard extends StatelessWidget {
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -27,7 +29,9 @@ class SuggestedServiceCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 image: DecorationImage(
-                  image: NetworkImage(service.image ?? 'https://placehold.co/180x120/png'),
+                  image: NetworkImage(
+                    service.image ?? 'https://placehold.co/180x120/png',
+                  ),
                   // image: NetworkImage('https://placehold.co/180x120/png'),
                   fit: BoxFit.cover,
                 ),
@@ -41,21 +45,40 @@ class SuggestedServiceCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        ...List.generate(5, (_) => Icon(Icons.star, color: Colors.amber, size: 14)),
+                        ...List.generate(
+                          5,
+                          (_) =>
+                              Icon(Icons.star, color: Colors.amber, size: 14),
+                        ),
                         SizedBox(width: 4),
-                        Text('5.0', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                        Text(
+                          '5.0',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 8),
                     Text(
                       service.serviceName,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 8),
-                    Text('\$${service.price.toStringAsFixed(0)}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    Spacer(),
+                    Text(
+                      '${Helpers.formatMoney(service.price)}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
                     SizedBox(
                       width: double.infinity,
                       height: 36,
@@ -64,8 +87,17 @@ class SuggestedServiceCard extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                        child: Text('Add', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'Add',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ],

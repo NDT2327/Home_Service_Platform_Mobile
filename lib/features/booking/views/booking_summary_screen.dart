@@ -177,6 +177,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           elevation: 0,
+          automaticallyImplyLeading: false,
         ),
         body: Center(child: CircularProgressIndicator()),
       );
@@ -196,6 +197,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
